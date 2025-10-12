@@ -24,7 +24,7 @@ public class AuthController {
 
     @Autowired
     public AuthController(AuthService authService) {
-        _authService = authService;
+        this._authService = authService;
     }
 
     @PostMapping("/register")

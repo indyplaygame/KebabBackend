@@ -25,4 +25,5 @@ replay_pid*
 
 .gradle
 /.idea/dataSources.xml
+/.idea/inspectionProfiles/
 /build
