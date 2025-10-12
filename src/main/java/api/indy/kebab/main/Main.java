@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "api.indy.kebab.repository")
 @EntityScan(basePackages = "api.indy.kebab.model")
-@ComponentScan(basePackages = {"api.indy.kebab.service"})
+@ComponentScan(basePackages = {"api.indy.kebab.config", "api.indy.kebab.controller", "api.indy.kebab.service"})
 public class Main {
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
