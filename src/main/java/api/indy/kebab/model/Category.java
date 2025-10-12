@@ -13,8 +13,7 @@ public class Category {
 
     public Category() {}
 
-    public Category(long categoryId, String name, String iconUrl, String description) {
-        this._categoryId = categoryId;
+    public Category(String name, String iconUrl, String description) {
         this._name = name;
         this._iconUrl = iconUrl;
         this._description = description;
@@ -31,7 +30,7 @@ public class Category {
         this._categoryId = categoryId;
     }
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 30)
     public String getName() {
         return this._name;
     }
@@ -49,7 +48,7 @@ public class Category {
         this._iconUrl = iconUrl;
     }
 
-    @Column(name = "description",nullable = false)
+    @Column(name = "description", nullable = true, length = 1000)
     public String getDescription() {
         return this._description;
     }
