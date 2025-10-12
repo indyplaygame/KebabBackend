@@ -3,32 +3,16 @@ package api.indy.kebab.model;
 import jakarta.persistence.*;
 
 @Entity
+@Access(AccessType.PROPERTY)
 @Table(name = "users")
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", nullable = false)
     private long _userId;
-
-    @Column(name = "username", nullable = false, unique = true, length = 20)
     private String _username;
-
-    @Column(name = "email", nullable = false, unique = true, length = 100)
     private String _email;
-
-    @Column(name = "first_name", nullable = false, length = 50)
     private String _firstName;
-
-    @Column(name = "middle_name", nullable = true, length = 50)
     private String _middleName;
-
-    @Column(name = "last_name", nullable = false, length = 50)
     private String _lastName;
-
-    @Column(name = "passwordHash", nullable = false, length = 100)
     private String _passwordHash;
-
-    @Column(name = "date_of_birth", nullable = false, length = 10)
     private String _dateOfBirth;
 
     public User() {}
@@ -44,6 +28,9 @@ public class User {
     }
 
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id", nullable = false)
     public long getUserId() {
         return this._userId;
     }
@@ -52,6 +39,7 @@ public class User {
         this._userId = userId;
     }
 
+    @Column(name = "username", nullable = false, unique = true, length = 20)
     public String getUsername() {
         return this._username;
     }
@@ -60,6 +48,7 @@ public class User {
         this._username = username;
     }
 
+    @Column(name = "email", nullable = false, unique = true, length = 100)
     public String getEmail() {
         return this._email;
     }
@@ -68,6 +57,7 @@ public class User {
         this._email = email;
     }
 
+    @Column(name = "first_name", nullable = false, length = 50)
     public String getFirstName() {
         return this._firstName;
     }
@@ -76,6 +66,7 @@ public class User {
         this._firstName = firstName;
     }
 
+    @Column(name = "middle_name", nullable = true, length = 50)
     public String getMiddleName() {
         return this._middleName;
     }
@@ -84,6 +75,7 @@ public class User {
         this._middleName = middleName;
     }
 
+    @Column(name = "last_name", nullable = false, length = 50)
     public String getLastName() {
         return this._lastName;
     }
@@ -92,6 +84,7 @@ public class User {
         this._lastName = lastName;
     }
 
+    @Column(name = "passwordHash", nullable = false, length = 200)
     public String getPasswordHash() {
         return this._passwordHash;
     }
@@ -100,6 +93,7 @@ public class User {
         this._passwordHash = passwordHash;
     }
 
+    @Column(name = "date_of_birth", nullable = false, length = 10)
     public String getDateOfBirth() {
         return this._dateOfBirth;
     }
