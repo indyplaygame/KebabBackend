@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
+    private final String ACTIVE_USER_SESSION_KEY = "activeUser";
+
     private final UserRepository _userRepository;
     private final BCryptPasswordEncoder _encoder;
 
@@ -42,7 +44,7 @@ public class AuthService {
         String passwordHash = this.hashPassword(password);
         User user = new User(username, email, firstName, middleName, lastName, passwordHash, dateOfBirth);
 
-        session.setAttribute("activeUser", user);
+        this.setActiveUser(session, user);
 
         return this._userRepository.save(user);
     }
@@ -53,12 +55,21 @@ public class AuthService {
         if(user == null || !this.verifyPassword(password, user.getPasswordHash()))
             throw new InvalidLoginCredentialsException();
 
-        session.setAttribute("activeUser", user);
+        this.setActiveUser(session, user);
 
         return user;
     }
 
     public void logout(HttpSession session) {
         if(session != null) session.invalidate();
+    }
+
+    public User getActiveUser(HttpSession session) {
+        if(session == null) return null;
+        return (User) session.getAttribute(this.ACTIVE_USER_SESSION_KEY);
+    }
+
+    public void setActiveUser(HttpSession session, User user) {
+        if(session != null) session.setAttribute(this.ACTIVE_USER_SESSION_KEY, user);
     }
 }
