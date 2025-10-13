@@ -1,5 +1,6 @@
 package api.indy.kebab.controller;
 
+import api.indy.kebab.auth.AuthRequired;
 import api.indy.kebab.model.Category;
 import api.indy.kebab.model.request.CreateCategoryRequest;
 import api.indy.kebab.model.response.ErrorResponse;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/categories")
@@ -22,6 +24,7 @@ public class CategoryController {
         this._categoryService = categoryService;
     }
 
+    @AuthRequired
     @PostMapping("/create")
     public ResponseEntity<Object> createCategory(@Valid @ModelAttribute CreateCategoryRequest body) {
         try {
@@ -42,7 +45,7 @@ public class CategoryController {
         Category category = this._categoryService.getCategory(id);
 
         if(category == null)
-            return new ResponseEntity<>(new ErrorResponse("Category not found"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorResponse("No category found with the provided ID"), HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
@@ -50,6 +53,9 @@ public class CategoryController {
     @PutMapping("/{id}/update")
     public ResponseEntity<Object> updateCategory(@PathVariable long id, @Valid @ModelAttribute CreateCategoryRequest body) {
         Category category = this._categoryService.getCategory(id);
+
+        if(category == null)
+            return new ResponseEntity<>(new ErrorResponse("No category found with the provided ID"), HttpStatus.NOT_FOUND);
 
         try {
             Category updatedCategory = this._categoryService.updateCategory(

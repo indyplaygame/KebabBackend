@@ -15,7 +15,7 @@ public record CreateCategoryRequest (
         String name,
 
         @FileNotEmpty(message = "Icon file cannot be empty")
-        @AllowedContentTypes(value = {"image/png", "image/jpeg", "image/jpg", "image/gif", "image/svg+xml", "image/webp"}, message = "Icon must be a PNG, JPEG, or GIF image")
+        @AllowedContentTypes(value = {"image/png", "image/jpeg", "image/jpg", "image/gif", "image/svg+xml", "image/webp"}, message = "Icon must be a PNG, JPEG, GIF, SVG or WEBP image")
         @MaxFileSize(value = 5 * 1024 * 1024, message = "Icon file size cannot exceed 5MB")
         MultipartFile icon,
 
