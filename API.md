@@ -1,10 +1,34 @@
-# Table of Contents
+# Table of Contents'
+- **[Model](#model)**
+  - **[Category](#category)**
 - **[Authentication](#authentication)**
-    - [<code style="color: rgb(250, 224, 124)">POST</code> Register](#register)
-    - [<code style="color: rgb(250, 224, 124)">POST</code> Login](#login)
-    - [<code style="color: rgb(250, 224, 124)">POST</code> Logout](#logout)
+    - [<code style="color: rgb(250, 224, 124)">POST</code> Register](#code-stylecolor-rgb250-224-124postcode-register)
+    - [<code style="color: rgb(250, 224, 124)">POST</code> Login](#code-stylecolor-rgb250-224-124postcode-login)
+    - [<code style="color: rgb(250, 224, 124)">POST</code> Logout](#code-stylecolor-rgb250-224-124postcode-logout)
+- **[Categories](#categories)**
+    - [<code style="color: rgb(250, 224, 124)">POST</code> Create](#code-stylecolor-rgb250-224-124postcode-create)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> Get](#code-stylecolor-rgb95-221-154getcode-get)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> List](#code-stylecolor-rgb95-221-154getcode-list)
+    - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#code-stylecolor-rgb103-174-246putcode-update)
+    - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#code-stylecolor-rgb234-154-142deletecode-delete)
+
+# Model
+Application data models.
+
+## Category
+Defines the structure of a category object.
+```json
+{
+  "categoryId": "Long",
+  "name": "String",
+  "imageUrl": "String",
+  "description": "String (Optional)"
+}
+```
 
 # Authentication
+Endpoints for user authentication and session management.
+
 ## <code style="color: rgb(250, 224, 124)">POST</code> Register
 **URL:** `/auth/register`<br>
 **Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
@@ -157,7 +181,7 @@
 **URL:** `/auth/logout`<br>
 **Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
 **Authentication:** Not required<br>
-**Content-Type:** `application/json`<br>
+**Content-Type:** None<br>
 **Description:** Log out of the current session.<br>
 
 ### **Request Body:**
@@ -171,4 +195,188 @@ None
 {
   "message": "Logged out successfully"
 }
+```
+
+# Categories
+Endpoints for managing categories.
+
+## <code style="color: rgb(250, 224, 124)">POST</code> Create
+**URL:** `/categories/create`<br>
+**Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
+**Authentication:** Required<br>
+**Content-Type:** `multipart/form-data`<br>
+**Description:** Create a new category.<br>
+
+### **Request Body:**
+- `name`: String
+- `icon`: File (png, jpeg, jpg, gif, svg, webp)
+- `description`: String (optional)
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">201 Created</code><br>
+**Description**: Category created successfully.<br>
+**Body**: `Category`
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+  "errors": {
+    "name": [
+      "Name cannot be empty",
+      "Name can only contain alphanumeric characters and spaces",
+      "Name must be between 3 and 50 characters"
+    ],
+    "icon": [
+      "Icon file cannot be empty",
+      "Icon must be a PNG, JPEG, GIF, SVG or WEBP image",
+      "Icon file size cannot exceed 5MB"
+    ],
+    "description": [
+      "Description cannot exceed 1000 characters"
+    ]
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">500 Internal Server Error</code><br>
+**Description**: Failed to upload icon.<br>
+
+```json
+{
+  "error": "Failed to upload icon: {message}"
+}
+```
+
+## <code style="color: rgb(95, 221, 154)">GET</code> Get
+**URL:** `/categories/{id}`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a category by its `id`.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Category retrieved successfully.<br>
+**Body**: `Category`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No category found with the provided `id`.<br>
+
+```json
+{
+  "error": "No category found with the provided ID"
+}
+```
+<br>
+
+## <code style="color: rgb(95, 221, 154)">GET</code> List
+**URL:** `/categories/list`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a list of all categories.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Categories retrieved successfully.<br>
+**Body**: `List[Category]`<br>
+<br>
+
+## <code style="color: rgb(103, 174, 246)">PUT</code> Update
+**URL:** `/categories/list`<br>
+**Method:** <code style="color: rgb(103, 174, 246)">PUT</code><br>
+**Authentication:** Required<br>
+**Content-Type:** `multipart/form-data`<br>
+**Description:** Update an existing category.<br>
+
+### **Request Body:**
+- `name`: String (optional)
+- `icon`: File (png, jpeg, jpg, gif, svg, webp) (optional)
+- `description`: String (optional)
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Category updated successfully.<br>
+**Body**: `Category`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+  "errors": {
+    "name": [
+      "Name cannot be empty",
+      "Name can only contain alphanumeric characters and spaces",
+      "Name must be between 3 and 50 characters"
+    ],
+    "icon": [
+      "Icon file cannot be empty",
+      "Icon must be a PNG, JPEG, GIF, SVG or WEBP image",
+      "Icon file size cannot exceed 5MB"
+    ],
+    "description": [
+      "Description cannot exceed 1000 characters"
+    ]
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No category found with the provided `id`.<br>
+
+```json
+{
+  "error": "No category found with the provided ID"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">500 Internal Server Error</code><br>
+**Description**: Failed to upload icon.<br>
+
+```json
+{
+  "error": "Failed to upload icon: {message}"
+}
+```
+
+## <code style="color: rgb(234, 154, 142)">DELETE</code> Delete
+**URL:** `/categories/{id}/delete`<br>
+**Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
+**Authentication:** Required<br>
+**Content-Type:** None<br>
+**Description:** Delete an existing category.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">204 No Content</code><br>
+**Description**: Category deleted successfully.<br>
+**Body**: None<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No category found with the provided `id`.<br>
+
+```json
+{
+  "error": "No category found with the provided ID"
+}
+```
+<br>
 ```

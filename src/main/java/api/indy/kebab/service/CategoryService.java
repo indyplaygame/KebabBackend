@@ -56,7 +56,7 @@ public class CategoryService {
         if(name == null || icon == null || icon.isEmpty())
             throw new IllegalArgumentException("Name and icon cannot be null");
 
-        String iconUrl = uploadIcon(icon);
+        String iconUrl = this.uploadIcon(icon);
 
         Category category = new Category(name, iconUrl, description);
         return this._categoryRepository.save(category);
