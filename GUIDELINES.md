@@ -127,6 +127,7 @@
  ```
  main 
  └─ development ┬─ feature/<feature-name>
+                ├─ refactor/<refactor-description>
                 └─ issue-fix/<issue-id>
  ```
 
