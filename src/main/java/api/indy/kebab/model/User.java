@@ -30,7 +30,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "userId", nullable = false)
     public long getUserId() {
         return this._userId;
     }
@@ -57,7 +57,7 @@ public class User {
         this._email = email;
     }
 
-    @Column(name = "first_name", nullable = false, length = 50)
+    @Column(name = "firstName", nullable = false, length = 50)
     public String getFirstName() {
         return this._firstName;
     }
@@ -66,7 +66,7 @@ public class User {
         this._firstName = firstName;
     }
 
-    @Column(name = "middle_name", nullable = true, length = 50)
+    @Column(name = "middleName", nullable = true, length = 50)
     public String getMiddleName() {
         return this._middleName;
     }
@@ -75,7 +75,7 @@ public class User {
         this._middleName = middleName;
     }
 
-    @Column(name = "last_name", nullable = false, length = 50)
+    @Column(name = "lastName", nullable = false, length = 50)
     public String getLastName() {
         return this._lastName;
     }
@@ -93,7 +93,7 @@ public class User {
         this._passwordHash = passwordHash;
     }
 
-    @Column(name = "date_of_birth", nullable = false, length = 10)
+    @Column(name = "dateOfBirth", nullable = false, length = 10)
     public String getDateOfBirth() {
         return this._dateOfBirth;
     }
