@@ -12,8 +12,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Map;
 
+/**
+ * Controller for managing categories.
+ * Provides endpoints for creating, retrieving, updating, deleting, and listing categories.
+ *
+ * @see CategoryService
+ * @see Category
+ */
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {
@@ -24,6 +30,12 @@ public class CategoryController {
         this._categoryService = categoryService;
     }
 
+    /**
+     * Handles requests to create a new category.
+     *
+     * @param body {@link CreateCategoryRequest} object containing new category data.
+     * @return {@link ResponseEntity} containing the created category or an error.
+     */
     @AuthRequired
     @PostMapping("/create")
     public ResponseEntity<Object> createCategory(@Valid @ModelAttribute CreateCategoryRequest body) {
@@ -40,6 +52,12 @@ public class CategoryController {
         }
     }
 
+    /**
+     * Handles requests to retrieve a category by its ID.
+     *
+     * @param id the category identifier.
+     * @return {@link ResponseEntity} containing the category or an error.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Object> getCategory(@PathVariable long id) {
         Category category = this._categoryService.getCategory(id);
@@ -50,6 +68,13 @@ public class CategoryController {
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
 
+    /**
+     * Handles requests to update an existing category.
+     *
+     * @param id the identifier of the category to update.
+     * @param body {@link CreateCategoryRequest} object containing new category data.
+     * @return {@link ResponseEntity} containing the updated category or an error.
+     */
     @PutMapping("/{id}/update")
     public ResponseEntity<Object> updateCategory(@PathVariable long id, @Valid @ModelAttribute CreateCategoryRequest body) {
         Category category = this._categoryService.getCategory(id);
@@ -71,6 +96,12 @@ public class CategoryController {
         }
     }
 
+    /**
+     * Handles requests to delete a category by its ID.
+     *
+     * @param id the identifier of the category to delete.
+     * @return {@link ResponseEntity} with status code.
+     */
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Object> deleteCategory(@PathVariable long id) {
         Category category = this._categoryService.getCategory(id);
@@ -82,6 +113,11 @@ public class CategoryController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * Handles requests to list all categories.
+     *
+     * @return {@link ResponseEntity} containing the list of categories.
+     */
     @GetMapping("/list")
     public ResponseEntity<Object> listCategories() {
         return new ResponseEntity<>(this._categoryService.listCategories(), HttpStatus.OK);
