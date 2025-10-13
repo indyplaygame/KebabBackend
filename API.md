@@ -1,7 +1,7 @@
 # Table of Contents
 - **[Authentication](#authentication)**
-    - [<code style="color: rgb(250, 224, 124)">POST</code> Register](#code-stylecolor-rgb250-224-124postcode-register)
-    - [<code style="color: rgb(250, 224, 124)">POST</code> Login](#code-stylecolor-rgb250-224-124postcode-login)
+    - [<code style="color: rgb(250, 224, 124)">POST</code> Register](#register)
+    - [<code style="color: rgb(250, 224, 124)">POST</code> Login](#login)
     - [<code style="color: rgb(250, 224, 124)">POST</code> Logout](#logout)
 
 # Authentication
