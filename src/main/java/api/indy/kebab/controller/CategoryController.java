@@ -38,12 +38,8 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getCategory(@PathVariable String id) {
-        if(!id.matches("\\d+"))
-            return new ResponseEntity<>(new ErrorResponse("Invalid category id format"), HttpStatus.BAD_REQUEST);
-
-        long categoryId = Long.parseLong(id);
-        Category category = this._categoryService.getCategory(categoryId);
+    public ResponseEntity<Object> getCategory(@PathVariable long id) {
+        Category category = this._categoryService.getCategory(id);
 
         if(category == null)
             return new ResponseEntity<>(new ErrorResponse("Category not found"), HttpStatus.NOT_FOUND);
@@ -52,16 +48,12 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}/update")
-    public ResponseEntity<Object> updateCategory(@PathVariable String id, @Valid @ModelAttribute CreateCategoryRequest body) {
-        if(!id.matches("\\d+"))
-            return new ResponseEntity<>(new ErrorResponse("Invalid category id format"), HttpStatus.BAD_REQUEST);
-
-        long categoryId = Long.parseLong(id);
-        Category category = this._categoryService.getCategory(categoryId);
+    public ResponseEntity<Object> updateCategory(@PathVariable long id, @Valid @ModelAttribute CreateCategoryRequest body) {
+        Category category = this._categoryService.getCategory(id);
 
         try {
             Category updatedCategory = this._categoryService.updateCategory(
-                    categoryId,
+                    id,
                     body.name(),
                     body.icon(),
                     body.description()
@@ -74,17 +66,13 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<Object> deleteCategory(@PathVariable String id) {
-        if(!id.matches("\\d+"))
-            return new ResponseEntity<>(new ErrorResponse("Invalid category id format"), HttpStatus.BAD_REQUEST);
-
-        long categoryId = Long.parseLong(id);
-        Category category = this._categoryService.getCategory(categoryId);
+    public ResponseEntity<Object> deleteCategory(@PathVariable long id) {
+        Category category = this._categoryService.getCategory(id);
 
         if(category == null)
             return new ResponseEntity<>(new ErrorResponse("Category not found"), HttpStatus.NOT_FOUND);
 
-        this._categoryService.deleteCategory(categoryId);
+        this._categoryService.deleteCategory(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
