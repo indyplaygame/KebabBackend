@@ -53,10 +53,10 @@ public class CategoryController {
 
         try {
             Category updatedCategory = this._categoryService.updateCategory(
-                    id,
-                    body.name(),
-                    body.icon(),
-                    body.description()
+                id,
+                body.name(),
+                body.icon(),
+                body.description()
             );
 
             return new ResponseEntity<>(updatedCategory, HttpStatus.OK);

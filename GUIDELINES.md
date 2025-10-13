@@ -123,12 +123,15 @@
  - **Main (or Master) Branch**: Always reflects the latest stable release.
  - **Development Branch**: For integrating new features and preparing the next release.
    - **Feature Branches**: Use for individual features or changes.
+   - **Refactor Branches**: Use for code refactoring or restructuring.
+   - **Documentation Branches**: Use for documentation updates or additions.
    - **Issue-Fix Branches**: Use for individual bug or issue fixes.
  - **Branching Structure**:
  ```
  main 
  └─ development ┬─ feature/<feature-name>
                 ├─ refactor/<refactor-description>
+                ├─ docs/<docs-description>
                 └─ issue-fix/<issue-id>
  ```
 
