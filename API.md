@@ -2,15 +2,15 @@
 - **[Model](#model)**
   - **[Category](#category)**
 - **[Authentication](#authentication)**
-    - [<code style="color: rgb(250, 224, 124)">POST</code> Register](#code-stylecolor-rgb250-224-124postcode-register)
-    - [<code style="color: rgb(250, 224, 124)">POST</code> Login](#code-stylecolor-rgb250-224-124postcode-login)
-    - [<code style="color: rgb(250, 224, 124)">POST</code> Logout](#code-stylecolor-rgb250-224-124postcode-logout)
+    - [<code style="color: rgb(250, 224, 124)">POST</code> Register](#register)
+    - [<code style="color: rgb(250, 224, 124)">POST</code> Login](#login)
+    - [<code style="color: rgb(250, 224, 124)">POST</code> Logout](#logout)
 - **[Categories](#categories)**
-    - [<code style="color: rgb(250, 224, 124)">POST</code> Create](#code-stylecolor-rgb250-224-124postcode-create)
-    - [<code style="color: rgb(95, 221, 154)">GET</code> Get](#code-stylecolor-rgb95-221-154getcode-get)
-    - [<code style="color: rgb(95, 221, 154)">GET</code> List](#code-stylecolor-rgb95-221-154getcode-list)
-    - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#code-stylecolor-rgb103-174-246putcode-update)
-    - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#code-stylecolor-rgb234-154-142deletecode-delete)
+    - [<code style="color: rgb(250, 224, 124)">POST</code> Create](#create)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> Get](#get)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> List](#list)
+    - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update)
+    - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete)
 
 # Model
 Application data models.
@@ -29,7 +29,7 @@ Defines the structure of a category object.
 # Authentication
 Endpoints for user authentication and session management.
 
-## <code style="color: rgb(250, 224, 124)">POST</code> Register
+## Register
 **URL:** `/auth/register`<br>
 **Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
 **Authentication:** Not required<br>
@@ -124,7 +124,7 @@ Endpoints for user authentication and session management.
 ```
 <br>
 
-## <code style="color: rgb(250, 224, 124)">POST</code> Login
+## Login
 **URL:** `/auth/login`<br>
 **Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
 **Authentication:** Not required<br>
@@ -177,7 +177,7 @@ Endpoints for user authentication and session management.
 ```
 <br>
 
-## <code style="color: rgb(250, 224, 124)">POST</code> Logout
+## Logout
 **URL:** `/auth/logout`<br>
 **Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
 **Authentication:** Not required<br>
@@ -200,7 +200,7 @@ None
 # Categories
 Endpoints for managing categories.
 
-## <code style="color: rgb(250, 224, 124)">POST</code> Create
+## Create
 **URL:** `/categories/create`<br>
 **Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
 **Authentication:** Required<br>
@@ -251,7 +251,7 @@ Endpoints for managing categories.
 }
 ```
 
-## <code style="color: rgb(95, 221, 154)">GET</code> Get
+## Get
 **URL:** `/categories/{id}`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
 **Authentication:** Not Required<br>
@@ -277,7 +277,7 @@ None
 ```
 <br>
 
-## <code style="color: rgb(95, 221, 154)">GET</code> List
+## List
 **URL:** `/categories/list`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
 **Authentication:** Not Required<br>
@@ -293,7 +293,7 @@ None
 **Body**: `List[Category]`<br>
 <br>
 
-## <code style="color: rgb(103, 174, 246)">PUT</code> Update
+## Update
 **URL:** `/categories/list`<br>
 **Method:** <code style="color: rgb(103, 174, 246)">PUT</code><br>
 **Authentication:** Required<br>
@@ -354,7 +354,7 @@ None
 }
 ```
 
-## <code style="color: rgb(234, 154, 142)">DELETE</code> Delete
+## Delete
 **URL:** `/categories/{id}/delete`<br>
 **Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
 **Authentication:** Required<br>
