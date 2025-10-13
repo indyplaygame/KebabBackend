@@ -38,6 +38,20 @@ public class CategoryService {
         return iconUrl;
     }
 
+    private boolean deleteIcon(String iconUrl) {
+        if(iconUrl == null || iconUrl.isEmpty()) return false;
+
+        Path baseDir = Paths.get(System.getProperty("user.dir"));
+        Path iconPath = baseDir.resolve(iconUrl);
+        File iconFile = iconPath.toFile();
+
+        try {
+            return iconFile.delete();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public Category createCategory(String name, MultipartFile icon, String description) throws IOException {
         if(name == null || icon == null || icon.isEmpty())
             throw new IllegalArgumentException("Name and icon cannot be null");
@@ -56,13 +70,19 @@ public class CategoryService {
         Category category = this._categoryRepository.getCategoryById(id);
 
         if(name != null) category.setName(name);
-        if(icon != null && !icon.isEmpty()) category.setIconUrl(this.uploadIcon(icon));
         if(description != null) category.setDescription(description);
+        if(icon != null && !icon.isEmpty()) {
+            this.deleteIcon(category.getIconUrl());
+            category.setIconUrl(this.uploadIcon(icon));
+        }
 
         return this._categoryRepository.save(category);
     }
 
     public void deleteCategory(long id) {
+        Category category = this._categoryRepository.getCategoryById(id);
+
+        this.deleteIcon(category.getIconUrl());
         this._categoryRepository.deleteById(id);
     }
 
