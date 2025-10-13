@@ -4,6 +4,7 @@ import api.indy.kebab.model.Category;
 import api.indy.kebab.model.request.CreateCategoryRequest;
 import api.indy.kebab.model.response.ErrorResponse;
 import api.indy.kebab.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,16 +23,7 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Object> createCategory(@ModelAttribute CreateCategoryRequest body) {
-        if(body.name() == null || body.icon() == null || body.icon().isEmpty())
-            return new ResponseEntity<>(new ErrorResponse("Missing required fields"), HttpStatus.BAD_REQUEST);
-
-        if(!body.name().matches("[a-zA-Z0-9 ]{3,50}"))
-            return new ResponseEntity<>(new ErrorResponse("Invalid category name format"), HttpStatus.BAD_REQUEST);
-
-        if(body.description() != null && !body.description().matches(".{0,1000}"))
-            return new ResponseEntity<>(new ErrorResponse("Invalid description format"), HttpStatus.BAD_REQUEST);
-
+    public ResponseEntity<Object> createCategory(@Valid @ModelAttribute CreateCategoryRequest body) {
         try {
             Category category = this._categoryService.createCategory(
                 body.name(),
@@ -46,12 +38,8 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getCategory(@PathVariable String id) {
-        if(!id.matches("\\d+"))
-            return new ResponseEntity<>(new ErrorResponse("Invalid category id format"), HttpStatus.BAD_REQUEST);
-
-        long categoryId = Long.parseLong(id);
-        Category category = this._categoryService.getCategory(categoryId);
+    public ResponseEntity<Object> getCategory(@PathVariable long id) {
+        Category category = this._categoryService.getCategory(id);
 
         if(category == null)
             return new ResponseEntity<>(new ErrorResponse("Category not found"), HttpStatus.NOT_FOUND);
@@ -60,25 +48,12 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}/update")
-    public ResponseEntity<Object> updateCategory(@PathVariable String id, @ModelAttribute CreateCategoryRequest body) {
-        if(!id.matches("\\d+"))
-            return new ResponseEntity<>(new ErrorResponse("Invalid category id format"), HttpStatus.BAD_REQUEST);
-
-        long categoryId = Long.parseLong(id);
-        Category category = this._categoryService.getCategory(categoryId);
-
-        if(category == null)
-            return new ResponseEntity<>(new ErrorResponse("Category not found"), HttpStatus.NOT_FOUND);
-
-        if(body.name() != null && !body.name().matches("[a-zA-Z0-9 ]{3,50}"))
-            return new ResponseEntity<>(new ErrorResponse("Invalid category name format"), HttpStatus.BAD_REQUEST);
-
-        if(body.description() != null && !body.description().matches(".{0,1000}"))
-            return new ResponseEntity<>(new ErrorResponse("Invalid description format"), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> updateCategory(@PathVariable long id, @Valid @ModelAttribute CreateCategoryRequest body) {
+        Category category = this._categoryService.getCategory(id);
 
         try {
             Category updatedCategory = this._categoryService.updateCategory(
-                    categoryId,
+                    id,
                     body.name(),
                     body.icon(),
                     body.description()
@@ -91,17 +66,13 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<Object> deleteCategory(@PathVariable String id) {
-        if(!id.matches("\\d+"))
-            return new ResponseEntity<>(new ErrorResponse("Invalid category id format"), HttpStatus.BAD_REQUEST);
-
-        long categoryId = Long.parseLong(id);
-        Category category = this._categoryService.getCategory(categoryId);
+    public ResponseEntity<Object> deleteCategory(@PathVariable long id) {
+        Category category = this._categoryService.getCategory(id);
 
         if(category == null)
             return new ResponseEntity<>(new ErrorResponse("Category not found"), HttpStatus.NOT_FOUND);
 
-        this._categoryService.deleteCategory(categoryId);
+        this._categoryService.deleteCategory(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

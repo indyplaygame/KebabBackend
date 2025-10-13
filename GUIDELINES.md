@@ -92,7 +92,8 @@
 │   │   │       ├── model                           # Data models and entities
 │   │   │       ├── repository                      # Data access layer
 │   │   │       ├── service                         # Application logic layer
-│   │   │       └── util                            # Utility classes
+│   │   │       ├── util                            # Utility classes
+│   │   │       └── validation                      # Validation annotations and logic
 │   │   └── resources/
 │   │       ├── static/                             # Static resources (eg. CSS, images)
 │   │       ├── templates/                          # Template files
