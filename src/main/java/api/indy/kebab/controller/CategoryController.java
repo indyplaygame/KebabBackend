@@ -7,11 +7,17 @@ import api.indy.kebab.model.response.ErrorResponse;
 import api.indy.kebab.service.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 /**
  * Controller for managing categories.
@@ -66,6 +72,37 @@ public class CategoryController {
             return new ResponseEntity<>(new ErrorResponse("No category found with the provided ID"), HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(category, HttpStatus.OK);
+    }
+
+    /**
+     * Handles requests to retrieve a category's icon by its ID.
+     *
+     * @param id the category identifier.
+     * @return {@link ResponseEntity} containing the icon as a byte array resource or an error.
+     */
+    @GetMapping("/{id}/icon")
+    public ResponseEntity<Object> getCategoryIcon(@PathVariable long id) {
+        Category category = this._categoryService.getCategory(id);
+
+        if(category == null)
+            return new ResponseEntity<>(new ErrorResponse("No category found with the provided ID"), HttpStatus.NOT_FOUND);
+
+        try {
+            File iconFile = this._categoryService.getCategoryIcon(id);
+            if(iconFile == null || !iconFile.exists())
+                return new ResponseEntity<>(new ErrorResponse("Couldn't find icon for category with the provided ID"), HttpStatus.NOT_FOUND);
+
+            byte[] data = Files.readAllBytes(iconFile.toPath());
+            ByteArrayResource resource = new ByteArrayResource(data);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.valueOf(Files.probeContentType(iconFile.toPath())));
+            headers.setContentLength(data.length);
+
+            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+        } catch(IOException e) {
+            return new ResponseEntity<>(new ErrorResponse("Failed to retrieve icon: %s".formatted(e.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**

@@ -52,6 +52,23 @@ public class CategoryService {
     }
 
     /**
+     * Retrieves an icon file based on its URL.
+     *
+     * @param iconUrl The URL of the icon to retrieve.
+     * @return The {@link File} representing the icon, or null if not found.
+     */
+    private File retrieveIcon(String iconUrl) {
+        if(iconUrl == null || iconUrl.isEmpty()) return null;
+
+        Path baseDir = Paths.get(System.getProperty("user.dir"));
+        Path iconPath = baseDir.resolve(iconUrl);
+        File iconFile = iconPath.toFile();
+
+        if(iconFile.exists() && iconFile.isFile()) return iconFile;
+        else return null;
+    }
+
+    /**
      * Deletes an icon file based on its URL.
      *
      * @param iconUrl The URL of the icon to delete.
@@ -92,13 +109,26 @@ public class CategoryService {
     }
 
     /**
-     * Retrieves a Category entity by its unique identifier.
+     * Retrieves a {@link Category} entity by its unique identifier.
      *
      * @param id The unique identifier of the category.
      * @return The {@link Category} entity with the specified ID, or null if not found.
      */
     public Category getCategory(long id) {
         return this._categoryRepository.getCategoryById(id);
+    }
+
+    /**
+     * Retrieves a category's icon file by the category's unique identifier.
+     *
+     * @param id The unique identifier of the category.
+     * @return The {@link File} representing the category's icon, or null if not found.
+     */
+    public File getCategoryIcon(long id) {
+        Category category = this._categoryRepository.getCategoryById(id);
+        if(category == null) return null;
+
+        return this.retrieveIcon(category.getIconUrl());
     }
 
     /**
