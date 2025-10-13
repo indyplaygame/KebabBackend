@@ -8,6 +8,7 @@
 - **[Categories](#categories)**
     - [<code style="color: rgb(250, 224, 124)">POST</code> Create](#create)
     - [<code style="color: rgb(95, 221, 154)">GET</code> Get](#get)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> Get Icon](#get-icon)
     - [<code style="color: rgb(95, 221, 154)">GET</code> List](#list)
     - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update)
     - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete)
@@ -273,6 +274,42 @@ None
 ```json
 {
   "error": "No category found with the provided ID"
+}
+```
+<br>
+
+## Get Icon
+**URL:** `/categories/{id}/icon`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a category's icon by its `id`.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Category icon retrieved successfully.<br>
+**Body**: `Image`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No category found with the provided `id`.<br>
+
+```json
+{
+  "error": "No category found with the provided ID"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: Couldn't find icon for category with the provided `id`.<br>
+
+```json
+{
+  "error": "Couldn't find icon for category with the provided ID"
 }
 ```
 <br>
