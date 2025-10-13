@@ -2,10 +2,18 @@ package api.indy.kebab.service;
 
 import api.indy.kebab.model.Category;
 import api.indy.kebab.repository.CategoryRepository;
+import api.indy.kebab.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -17,9 +25,24 @@ public class CategoryService {
         this._categoryRepository = categoryRepository;
     }
 
-    public Category createCategory(String name, String iconUrl, String description) {
-        if(name == null || iconUrl == null)
-            throw new IllegalArgumentException("Name and icon url cannot be null");
+    private String uploadIcon(MultipartFile file) throws IOException {
+        String fileName = "%s.%s".formatted(UUID.randomUUID(), Util.getFileExtension(file.getOriginalFilename()));
+        String iconUrl = "uploads/categories/%s".formatted(fileName);
+
+        Path baseDir = Paths.get(System.getProperty("user.dir"));
+        Path uploadPath = baseDir.resolve(iconUrl);
+        Files.createDirectories(uploadPath.getParent());
+
+        file.transferTo(uploadPath.toFile());
+
+        return iconUrl;
+    }
+
+    public Category createCategory(String name, MultipartFile icon, String description) throws IOException {
+        if(name == null || icon == null || icon.isEmpty())
+            throw new IllegalArgumentException("Name and icon cannot be null");
+
+        String iconUrl = uploadIcon(icon);
 
         Category category = new Category(name, iconUrl, description);
         return this._categoryRepository.save(category);
@@ -29,11 +52,11 @@ public class CategoryService {
         return this._categoryRepository.getCategoryById(id);
     }
 
-    public Category updateCategory(long id, String name, String iconUrl, String description) {
+    public Category updateCategory(long id, String name, MultipartFile icon, String description) throws IOException {
         Category category = this._categoryRepository.getCategoryById(id);
 
         if(name != null) category.setName(name);
-        if(iconUrl != null) category.setIconUrl(iconUrl);
+        if(icon != null && !icon.isEmpty()) category.setIconUrl(this.uploadIcon(icon));
         if(description != null) category.setDescription(description);
 
         return this._categoryRepository.save(category);
