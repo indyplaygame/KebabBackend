@@ -18,6 +18,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller class for handling authentication-related endpoints.
+ * Provides endpoints for user registration, login, and logout.
+ *
+ * @see AuthService
+ * @see User
+ */
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -28,6 +35,17 @@ public class AuthController {
         this._authService = authService;
     }
 
+    /**
+     * Handles user registration requests.
+     *
+     * <p>Registers a new user with the provided details. Returns a success message
+     * if the registration is successful, or an error response if the user already exists
+     * or if there is an illegal argument.</p>
+     *
+     * @param body the {@link RegisterRequest} containing user registration details.
+     * @param session the {@link HttpSession} associated with the request.
+     * @return a {@link ResponseEntity} containing a success or error response.
+     */
     @PostMapping("/register")
     public ResponseEntity<Object> register(@Valid @RequestBody RegisterRequest body, HttpSession session) {
         try {
@@ -49,6 +67,16 @@ public class AuthController {
         }
     }
 
+    /**
+     * Handles user login requests.
+     *
+     * <p>Authenticates a user with the provided login credentials. Returns a success message
+     * if the login is successful, or an error response if the credentials are invalid.</p>
+     *
+     * @param body the {@link LoginRequest} containing login credentials.
+     * @param session the {@link HttpSession} associated with the request.
+     * @return a {@link ResponseEntity} containing a success or error response.
+     */
     @PostMapping("/login")
     public ResponseEntity<Object> login(@Valid @RequestBody LoginRequest body, HttpSession session) {
         try {
@@ -60,6 +88,15 @@ public class AuthController {
         }
     }
 
+    /**
+     * Handles user logout requests.
+     *
+     * <p>Logs out the currently authenticated user. Returns a success message
+     * upon successful logout.</p>
+     *
+     * @param session the {@link HttpSession} associated with the request.
+     * @return a {@link ResponseEntity} containing a success response.
+     */
     @PostMapping("/logout")
     public ResponseEntity<Object> logout(HttpSession session) {
         this._authService.logout(session);

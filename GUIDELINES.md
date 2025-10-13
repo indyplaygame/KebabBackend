@@ -6,7 +6,7 @@
  - **Methods, static functions and public fields**: Use `camelCase` for names of methods and static functions.
  - **Constants and Enum values**: Use `UPPER_SNAKE_CASE` for names of constants and enum values.
  - **Short and Descriptive Names**: Use meaningful names only in **English**.
- - **Nouns or Noun Phrases**: Use nouns or noun phrases for naming classes, interfaces, enums, and structs.
+ - **Nouns or Noun Phrases**: Use nouns or noun phrases for naming classes, interfaces, enums and records.
  - **Avoid Numbers in Names**: Avoid using numbers in names, unless they add meaningful context.
  - **Avoid Unnecessary Prefixes**: Avoid prefixes like `do`, `perform` in names unless they clearly improve clarity.
 
@@ -157,6 +157,8 @@ Description: <Description>
    - `low-priority`: For tasks that can be delayed
    - `help-wanted`: For issues that need extra attention
    - `wontfix`: For issues that will not be worked on
+   - `invalid`: For issues that are not valid or relevant
+   - `refactor`: For code refactoring and restructuring
  - **Prioritization**: Prioritize issues based on urgency and impact:
    - **Critical**: Blocks progress or affects key functionality
    - **High**: Impacts functionality but has a workaround

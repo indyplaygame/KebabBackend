@@ -5,6 +5,18 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
+/**
+ * Represents a registration request containing user details and credentials.
+ * Includes validation constraints for each field.
+ *
+ * @param username The username of the user. Must not be empty, can only contain alphanumeric characters and underscores, and must be between 3 and 20 characters.
+ * @param email The email address of the user. Must not be empty, must be a valid email format, and must be between 5 and 100 characters.
+ * @param firstName The first name of the user. Must not be empty, can only contain alphabetic characters, and must be up to 50 characters.
+ * @param middleName The middle name of the user. Optional field, can only contain alphabetic characters, and must be up to 50 characters.
+ * @param lastName The last name of the user. Must not be empty, can only contain alphabetic characters, and must be up to 50 characters.
+ * @param dateOfBirth The date of birth of the user. Must not be empty and must follow the format DD/MM/YYYY.
+ * @param password The password for the user account. Must not be empty, can only contain alphanumeric characters and specific special characters (!@#$%^&*-_), and must be between 6 and 20 characters.
+ */
 public record RegisterRequest (
     @NotBlank(message = "Username cannot be empty")
     @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Username can only contain alphanumeric characters and underscores")
