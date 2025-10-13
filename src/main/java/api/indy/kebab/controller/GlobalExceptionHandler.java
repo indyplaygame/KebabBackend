@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
         });
 
         return new ResponseEntity<>(Map.of(
-            "error", errors
+            "errors", errors
         ), HttpStatus.BAD_REQUEST);
     }
 }
