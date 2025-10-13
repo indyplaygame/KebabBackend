@@ -149,7 +149,8 @@ Description: <Description>
 ```
  - **Tags for Categorization**: Use tags to classify and prioritize issues:
    - `bug`: For errors or unintended behavior
-   - `enhancement`: For feature requests or improvements
+   - `enhancement`: For code improvements or optimizations
+   - `feature`: For new functionality requests
    - `question`: For requests for further information
    - `documentation`: For improvements or additions to documentation
    - `duplicate`: For issues or pull requests that already exist
@@ -158,7 +159,7 @@ Description: <Description>
    - `help-wanted`: For issues that need extra attention
    - `wontfix`: For issues that will not be worked on
    - `invalid`: For issues that are not valid or relevant
-   - `refactor`: For code refactoring and restructuring
+   - `refactorization`: For code refactoring and restructuring
  - **Prioritization**: Prioritize issues based on urgency and impact:
    - **Critical**: Blocks progress or affects key functionality
    - **High**: Impacts functionality but has a workaround
