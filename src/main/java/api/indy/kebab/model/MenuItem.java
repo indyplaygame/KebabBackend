@@ -2,9 +2,13 @@ package api.indy.kebab.model;
 
 import jakarta.persistence.*;
 
+/**
+ * Entity representing a menu item in the application.
+ * Mapped to the {@code menu_items} table in the database.
+ */
 @Entity
 @Access(AccessType.PROPERTY)
-@Table(name = "menuItems")
+@Table(name = "menu_items")
 @SuppressWarnings("AssociationNotMarkedInspection")
 public class MenuItem {
     private int _menuItemId;
