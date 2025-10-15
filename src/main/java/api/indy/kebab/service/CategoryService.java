@@ -1,5 +1,6 @@
 package api.indy.kebab.service;
 
+import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.Category;
 import api.indy.kebab.repository.CategoryRepository;
 import api.indy.kebab.util.Util;
@@ -56,7 +57,7 @@ public class CategoryService {
      * @return The {@link Category} entity with the specified ID, or null if not found.
      */
     public Category getCategory(long id) {
-        return this._categoryRepository.getCategoryById(id);
+        return this._categoryRepository.findByCategoryId(id);
     }
 
     /**
@@ -66,7 +67,7 @@ public class CategoryService {
      * @return The {@link File} representing the category's icon, or null if not found.
      */
     public File getCategoryIcon(long id) {
-        Category category = this._categoryRepository.getCategoryById(id);
+        Category category = this._categoryRepository.findByCategoryId(id);
         if(category == null) return null;
 
         return Util.retrieveFile(category.getIconUrl());
@@ -83,7 +84,8 @@ public class CategoryService {
      * @throws IOException If an I/O error occurs during icon upload.
      */
     public Category updateCategory(long id, String name, MultipartFile icon, String description) throws IOException {
-        Category category = this._categoryRepository.getCategoryById(id);
+        Category category = this._categoryRepository.findByCategoryId(id);
+        if(category == null) throw new EntityNotFoundException(Category.class, id);
 
         if(name != null) category.setName(name);
         if(description != null) category.setDescription(description);
@@ -101,7 +103,7 @@ public class CategoryService {
      * @param id The unique identifier of the category to delete.
      */
     public void deleteCategory(long id) {
-        Category category = this._categoryRepository.getCategoryById(id);
+        Category category = this._categoryRepository.findByCategoryId(id);
 
         Util.deleteFile(category.getIconUrl());
         this._categoryRepository.deleteById(id);
