@@ -7,10 +7,8 @@ import jakarta.persistence.Enumerated;
 
 @Embeddable
 public class Location  {
-
-    private Double _latitude;
-    private Double _longitude;
-
+    private double _latitude;
+    private double _longitude;
     private String _country;
     private Voivodeship _voivodeship;
     private String _postalCode;
@@ -20,17 +18,19 @@ public class Location  {
 
     protected Location() {}
 
-    public Location(Double latitude,
-                    Double longitude,
-                    String country,
-                    Voivodeship voivodeship,
-                    String postalCode,
-                    String city,
-                    String street,
-                    String buildingNumber) {
+    public Location(
+        double latitude,
+        double longitude,
+        String country,
+        Voivodeship voivodeship,
+        String postalCode,
+        String city,
+        String street,
+        String buildingNumber
+    ) {
         this._latitude = latitude;
         this._longitude = longitude;
-        this._country = (country == null) ? "Poland" : country;
+        this._country = country;
         this._voivodeship = voivodeship;
         this._postalCode = postalCode;
         this._city = city;
@@ -39,37 +39,35 @@ public class Location  {
     }
 
     @Column(name = "latitude", nullable = true)
-    public Double getLatitude() {return _latitude;}
-    public void setLatitude(Double latitude) {this._latitude = latitude;}
+    public Double getLatitude() { return _latitude; }
+    public void setLatitude(double latitude) { this._latitude = latitude; }
 
     @Column(name = "longitude", nullable = true)
-    public Double getLongitude() {return this._longitude;}
-    public void setLongitude(Double longitude) {this._longitude = longitude;}
+    public Double getLongitude() { return this._longitude; }
+    public void setLongitude(double longitude) { this._longitude = longitude; }
 
-    @Column(name = "country", nullable = false, length = 50)
-    public String getCountry() {return this._country;}
-    public void setCountry(String country) {this._country = country;}
+    @Column(name = "country", nullable = false, columnDefinition = "varchar(50) default 'Poland'")
+    public String getCountry() { return this._country; }
+    public void setCountry(String country) { this._country = country; }
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "voivodeship", nullable = true, length = 50)
-    public Voivodeship getVoivodeship() {return this._voivodeship;}
-    public void setVoivodeship(Voivodeship voivodeship) {this._voivodeship = voivodeship;}
+    @Column(name = "voivodeship", nullable = true)
+    public Voivodeship getVoivodeship() { return this._voivodeship; }
+    public void setVoivodeship(Voivodeship voivodeship) { this._voivodeship = voivodeship; }
 
-    @Column(name = "postalCode", nullable = false, length = 50)
-    public String getPostalCode() {return this._postalCode;}
-    public void setPostalCode(String postalCode) {this._postalCode = postalCode;}
+    @Column(name = "postalCode", nullable = false, length = 6)
+    public String getPostalCode() { return this._postalCode; }
+    public void setPostalCode(String postalCode) { this._postalCode = postalCode; }
 
     @Column(name = "city", nullable = false, length = 50)
-    public String getCity() {return this._city;}
-    public void setCity(String city) {this._city = city;}
+    public String getCity() { return this._city; }
+    public void setCity(String city) { this._city = city; }
 
     @Column(name = "street", nullable = false, length = 50)
-    public String getStreet() {return this._street;}
-    public void setStreet(String street) {this._street = street;}
+    public String getStreet() { return this._street; }
+    public void setStreet(String street) { this._street = street; }
 
     @Column(name = "buildingNumber", nullable = false, length = 50)
-    public String getBuildingNumber() {return this._buildingNumber;}
-    public void setBuildingNumber(String buildingNumber) {this._buildingNumber = buildingNumber;}
-
-
+    public String getBuildingNumber() { return this._buildingNumber; }
+    public void setBuildingNumber(String buildingNumber) { this._buildingNumber = buildingNumber; }
 }

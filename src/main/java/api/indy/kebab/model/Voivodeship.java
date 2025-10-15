@@ -1,5 +1,6 @@
 package api.indy.kebab.model;
 
+@SuppressWarnings("SpellCheckingInspection")
 public enum Voivodeship {
     DOLNOSLASKIE,
     KUJAWSKO_POMORSKIE,
