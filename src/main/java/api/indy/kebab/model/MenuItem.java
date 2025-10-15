@@ -1,5 +1,7 @@
 package api.indy.kebab.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 /**
@@ -23,13 +25,12 @@ public class MenuItem {
 
     protected MenuItem() {}
 
-    public MenuItem(String name, String description, String imageUrl, Category category, boolean available, double rating, double price, double deliveryFee) {
+    public MenuItem(String name, String description, String imageUrl, Category category, boolean available, double price, double deliveryFee) {
         this._name = name;
         this._description = description;
         this._imageUrl = imageUrl;
         this._category = category;
         this._available = available;
-        this._rating = rating;
         this._price = price;
         this._deliveryFee = deliveryFee;
     }
@@ -52,16 +53,17 @@ public class MenuItem {
     public String getImageUrl() { return _imageUrl; }
     public void setImageUrl(String imageUrl) { this._imageUrl = imageUrl; }
 
+    @JsonIgnore
     @ManyToOne(optional = true)
     @JoinColumn(name = "categoryId", nullable = false)
     public Category getCategory() { return _category; }
     public void setCategory(Category category) { this._category = category; }
 
-    @Column(name = "available", nullable = false)
+    @Column(name = "available", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     public boolean isAvailable() { return _available; }
     public void setAvailable(boolean available) { this._available = available; }
 
-    @Column(name = "rating", nullable = false)
+    @Column(name = "rating", nullable = false, columnDefinition = "DOUBLE DEFAULT 0.0")
     public double getRating() { return _rating; }
     public void setRating(double rating) { this._rating = rating; }
 
@@ -72,4 +74,7 @@ public class MenuItem {
     @Column(name = "deliveryFee", nullable = false)
     public double getDeliveryFee() { return _deliveryFee; }
     public void setDeliveryFee(double deliveryFee) { this._deliveryFee = deliveryFee; }
+
+    @JsonProperty("categoryId")
+    public long getCategoryId() { return this._category != null ? this._category.getCategoryId() : 0; }
 }

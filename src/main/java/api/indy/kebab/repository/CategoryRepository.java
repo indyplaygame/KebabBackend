@@ -21,6 +21,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
      * @param id The unique identifier of the category.
      * @return The {@link Category} entity with the specified ID, or null if not found.
      */
-    @Query("SELECT c FROM Category c WHERE c.categoryId = ?1")
-    public Category getCategoryById(long id);
+    public Category findByCategoryId(long id);
 }
