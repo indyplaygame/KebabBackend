@@ -9,11 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Service class for managing {@link Category} entities.
@@ -24,68 +20,13 @@ import java.util.UUID;
  */
 @Service
 public class CategoryService {
+    private static final String ICONS_PATH = "uploads/categories/%s";
+
     private final CategoryRepository _categoryRepository;
 
     @Autowired
     public CategoryService(CategoryRepository categoryRepository) {
         this._categoryRepository = categoryRepository;
-    }
-
-    /**
-     * Uploads an icon file and returns its URL.
-     *
-     * @param file The {@link MultipartFile} representing the icon to upload.
-     * @return The URL of the uploaded icon.
-     * @throws IOException If an I/O error occurs during file upload.
-     */
-    private String uploadIcon(MultipartFile file) throws IOException {
-        String fileName = "%s.%s".formatted(UUID.randomUUID(), Util.getFileExtension(file.getOriginalFilename()));
-        String iconUrl = "uploads/categories/%s".formatted(fileName);
-
-        Path baseDir = Paths.get(System.getProperty("user.dir"));
-        Path uploadPath = baseDir.resolve(iconUrl);
-        Files.createDirectories(uploadPath.getParent());
-
-        file.transferTo(uploadPath.toFile());
-
-        return iconUrl;
-    }
-
-    /**
-     * Retrieves an icon file based on its URL.
-     *
-     * @param iconUrl The URL of the icon to retrieve.
-     * @return The {@link File} representing the icon, or null if not found.
-     */
-    private File retrieveIcon(String iconUrl) {
-        if(iconUrl == null || iconUrl.isEmpty()) return null;
-
-        Path baseDir = Paths.get(System.getProperty("user.dir"));
-        Path iconPath = baseDir.resolve(iconUrl);
-        File iconFile = iconPath.toFile();
-
-        if(iconFile.exists() && iconFile.isFile()) return iconFile;
-        else return null;
-    }
-
-    /**
-     * Deletes an icon file based on its URL.
-     *
-     * @param iconUrl The URL of the icon to delete.
-     * @return True if the icon was successfully deleted, false otherwise.
-     */
-    private boolean deleteIcon(String iconUrl) {
-        if(iconUrl == null || iconUrl.isEmpty()) return false;
-
-        Path baseDir = Paths.get(System.getProperty("user.dir"));
-        Path iconPath = baseDir.resolve(iconUrl);
-        File iconFile = iconPath.toFile();
-
-        try {
-            return iconFile.delete();
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     /**
@@ -102,7 +43,7 @@ public class CategoryService {
         if(name == null || icon == null || icon.isEmpty())
             throw new IllegalArgumentException("Name and icon cannot be null");
 
-        String iconUrl = this.uploadIcon(icon);
+        String iconUrl = Util.uploadFile(icon, ICONS_PATH);
 
         Category category = new Category(name, iconUrl, description);
         return this._categoryRepository.save(category);
@@ -128,7 +69,7 @@ public class CategoryService {
         Category category = this._categoryRepository.getCategoryById(id);
         if(category == null) return null;
 
-        return this.retrieveIcon(category.getIconUrl());
+        return Util.retrieveFile(category.getIconUrl());
     }
 
     /**
@@ -147,8 +88,8 @@ public class CategoryService {
         if(name != null) category.setName(name);
         if(description != null) category.setDescription(description);
         if(icon != null && !icon.isEmpty()) {
-            this.deleteIcon(category.getIconUrl());
-            category.setIconUrl(this.uploadIcon(icon));
+            Util.deleteFile(category.getIconUrl());
+            category.setIconUrl(Util.uploadFile(icon, ICONS_PATH));
         }
 
         return this._categoryRepository.save(category);
@@ -162,7 +103,7 @@ public class CategoryService {
     public void deleteCategory(long id) {
         Category category = this._categoryRepository.getCategoryById(id);
 
-        this.deleteIcon(category.getIconUrl());
+        Util.deleteFile(category.getIconUrl());
         this._categoryRepository.deleteById(id);
     }
 
