@@ -6,6 +6,7 @@ import api.indy.kebab.model.Category;
 import api.indy.kebab.model.request.CreateCategoryRequest;
 import api.indy.kebab.model.response.ErrorResponse;
 import api.indy.kebab.service.CategoryService;
+import api.indy.kebab.validation.ValidationGroups;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -45,7 +47,7 @@ public class CategoryController {
      */
     @AuthRequired
     @PostMapping("/create")
-    public ResponseEntity<Object> createCategory(@Valid @ModelAttribute CreateCategoryRequest body) {
+    public ResponseEntity<Object> createCategory(@Validated(ValidationGroups.OnCreate.class) @ModelAttribute CreateCategoryRequest body) {
         try {
             Category category = this._categoryService.createCategory(
                 body.name(),
