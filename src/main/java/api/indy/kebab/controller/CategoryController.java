@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Controller for managing categories.
@@ -55,6 +56,8 @@ public class CategoryController {
             return new ResponseEntity<>(category, HttpStatus.CREATED);
         } catch(IOException e) {
             return new ResponseEntity<>(new ErrorResponse("Failed to upload icon: %s".formatted(e.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch(IllegalArgumentException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -82,26 +85,24 @@ public class CategoryController {
      */
     @GetMapping("/{id}/icon")
     public ResponseEntity<Object> getCategoryIcon(@PathVariable long id) {
-        Category category = this._categoryService.getCategory(id);
-
-        if(category == null)
-            return new ResponseEntity<>(new ErrorResponse("No category found with the provided ID"), HttpStatus.NOT_FOUND);
-
         try {
             File iconFile = this._categoryService.getCategoryIcon(id);
             if(iconFile == null || !iconFile.exists())
                 return new ResponseEntity<>(new ErrorResponse("Couldn't find icon for category with the provided ID"), HttpStatus.NOT_FOUND);
 
-            byte[] data = Files.readAllBytes(iconFile.toPath());
+            Path path = iconFile.toPath();
+            byte[] data = Files.readAllBytes(path);
             ByteArrayResource resource = new ByteArrayResource(data);
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.valueOf(Files.probeContentType(iconFile.toPath())));
+            headers.setContentType(MediaType.valueOf(Files.probeContentType(path)));
             headers.setContentLength(data.length);
 
             return new ResponseEntity<>(resource, headers, HttpStatus.OK);
         } catch(IOException e) {
             return new ResponseEntity<>(new ErrorResponse("Failed to retrieve icon: %s".formatted(e.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch(EntityNotFoundException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -126,6 +127,8 @@ public class CategoryController {
             return new ResponseEntity<>(new ErrorResponse("Failed to upload icon: %s".formatted(e.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch(EntityNotFoundException e) {
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch(IllegalArgumentException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -137,13 +140,12 @@ public class CategoryController {
      */
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Object> deleteCategory(@PathVariable long id) {
-        Category category = this._categoryService.getCategory(id);
-
-        if(category == null)
-            return new ResponseEntity<>(new ErrorResponse("Category not found"), HttpStatus.NOT_FOUND);
-
-        this._categoryService.deleteCategory(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        try {
+            this._categoryService.deleteCategory(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch(EntityNotFoundException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+        }
     }
 
     /**

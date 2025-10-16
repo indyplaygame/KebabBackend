@@ -28,19 +28,21 @@ public class MenuService {
     }
 
     public MenuItem createMenuItem(
-        String name, String description, MultipartFile image, long categoryId, boolean available, double price, double deliveryFee
+        String name, String description, MultipartFile image, Long categoryId, boolean available, double price, double deliveryFee
     ) throws IOException {
-        if(name == null || description == null || image == null || image.isEmpty())
-            throw new IllegalArgumentException("Name, description, and image cannot be null");
+        if(name == null || image == null || image.isEmpty())
+            throw new IllegalArgumentException("Name and image cannot be null");
 
-        if(price <= 0 || deliveryFee < 0)
-            throw new IllegalArgumentException("Price must be greater than 0 and delivery fee cannot be negative");
+        if(price < 0 || deliveryFee < 0)
+            throw new IllegalArgumentException("Price and delivery fee cannot be negative");
 
         String imageUrl = Util.uploadFile(image, IMAGES_PATH);
-        Category category = this._categoryRepository.findByCategoryId(categoryId);
 
-        if(categoryId > 0 && category == null)
-            throw new IllegalArgumentException("Category with ID %d does not exist".formatted(categoryId));
+        Category category = null;
+        if(categoryId != null) category = this._categoryRepository.findByCategoryId(categoryId);
+
+        if(categoryId != null && category == null)
+            throw new EntityNotFoundException(Category.class, categoryId);
 
         MenuItem menuItem = new MenuItem(name, description, imageUrl, category, available, price, deliveryFee);
         return this._menuRepository.save(menuItem);
@@ -58,20 +60,20 @@ public class MenuService {
     }
 
     public MenuItem updateMenuItem(
-        long id, String name, String description, MultipartFile image, long categoryId, boolean available, double price, double deliveryFee
+        long id, String name, String description, MultipartFile image, Long categoryId, boolean available, double price, double deliveryFee
     ) throws IOException {
         MenuItem menuItem = this._menuRepository.findByMenuItemId(id);
         if(menuItem == null) throw new EntityNotFoundException(MenuItem.class, id);
 
         if(name != null) menuItem.setName(name);
         if(description != null) menuItem.setDescription(description);
-        if(price > 0) menuItem.setPrice(price);
+        if(price >= 0) menuItem.setPrice(price);
         if(deliveryFee >= 0) menuItem.setDeliveryFee(deliveryFee);
         if(image != null && !image.isEmpty()) {
             Util.deleteFile(menuItem.getImageUrl());
             menuItem.setImageUrl(Util.uploadFile(image, IMAGES_PATH));
         }
-        if(categoryId > 0) {
+        if(categoryId != null) {
             Category category = this._categoryRepository.findByCategoryId(categoryId);
             if(category == null) throw new EntityNotFoundException(Category.class, categoryId);
 
@@ -84,6 +86,8 @@ public class MenuService {
 
     public void deleteMenuItem(long id) {
         MenuItem menuItem = this._menuRepository.findByMenuItemId(id);
+
+        if(menuItem == null) throw new EntityNotFoundException(MenuItem.class, id);
 
         Util.deleteFile(menuItem.getImageUrl());
         this._menuRepository.delete(menuItem);

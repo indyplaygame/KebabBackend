@@ -68,7 +68,7 @@ public class CategoryService {
      */
     public File getCategoryIcon(long id) {
         Category category = this._categoryRepository.findByCategoryId(id);
-        if(category == null) return null;
+        if(category == null) throw new EntityNotFoundException(Category.class, id);
 
         return Util.retrieveFile(category.getIconUrl());
     }
@@ -104,6 +104,8 @@ public class CategoryService {
      */
     public void deleteCategory(long id) {
         Category category = this._categoryRepository.findByCategoryId(id);
+
+        if(category == null) throw new EntityNotFoundException(Category.class, id);
 
         Util.deleteFile(category.getIconUrl());
         this._categoryRepository.deleteById(id);
