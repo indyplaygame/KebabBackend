@@ -18,8 +18,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     /**
      * Finds a category by its unique identifier.
      *
-     * @param id The unique identifier of the category.
-     * @return The {@link Category} entity with the specified ID, or null if not found.
+     * @param id the unique identifier of the category.
+     * @return the {@link Category} entity with the specified ID, or null if not found.
      */
     public Category findByCategoryId(long id);
 }

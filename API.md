@@ -1,6 +1,7 @@
 # Table of Contents'
 - **[Model](#model)**
   - **[Category](#category)**
+  - **[MenuItem](#menuitem)**
 - **[Authentication](#authentication)**
     - [<code style="color: rgb(250, 224, 124)">POST</code> Register](#register)
     - [<code style="color: rgb(250, 224, 124)">POST</code> Login](#login)
@@ -12,6 +13,13 @@
     - [<code style="color: rgb(95, 221, 154)">GET</code> List](#list)
     - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update)
     - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete)
+- **[Menu](#menu)**
+    - [<code style="color: rgb(250, 224, 124)">POST</code> Create](#create-1)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> Get](#get-1)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> Get Image](#get-image)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> List](#list-1)
+    - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-1)
+    - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-1)
 
 # Model
 Application data models.
@@ -24,6 +32,22 @@ Defines the structure of a category object.
   "name": "String",
   "imageUrl": "String",
   "description": "String (Optional)"
+}
+```
+
+## MenuItem
+Defines the structure of a menu item object.
+```json
+{
+  "menuItemId": "Long", 
+  "name": "String",
+  "description": "String (Optional)",
+  "imageUrl": "String",
+  "categoryId": "Long",
+  "available": "Boolean",
+  "rating": "Double",
+  "price": "Double",
+  "deliveryFee": "Double"
 }
 ```
 
@@ -273,7 +297,7 @@ None
 
 ```json
 {
-  "error": "No category found with the provided ID"
+  "error": "Could not find Category with ID {id}"
 }
 ```
 <br>
@@ -299,7 +323,7 @@ None
 
 ```json
 {
-  "error": "No category found with the provided ID"
+  "error": "Could not find Category with ID {id}"
 }
 ```
 <br>
@@ -331,7 +355,7 @@ None
 <br>
 
 ## Update
-**URL:** `/categories/update`<br>
+**URL:** `/categories/{id}/update`<br>
 **Method:** <code style="color: rgb(103, 174, 246)">PUT</code><br>
 **Authentication:** Required<br>
 **Content-Type:** `multipart/form-data`<br>
@@ -375,7 +399,7 @@ None
 
 ```json
 {
-  "error": "No category found with the provided ID"
+  "error": "NCould not find Category with ID {id}"
 }
 ```
 <br>
@@ -410,8 +434,263 @@ None
 
 ```json
 {
-  "error": "No category found with the provided ID"
+  "error": "Could not find Category with ID {id}"
 }
 ```
 <br>
 ```
+
+# Menu
+Endpoints for managing menu items.
+
+## Create
+**URL:** `/menu/create`<br>
+**Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
+**Authentication:** Required<br>
+**Content-Type:** `multipart/form-data`<br>
+**Description:** Create a new menu item.<br>
+
+### **Request Body:**
+- `name`: String
+- `description`: String (optional)
+- `image`: File (png, jpeg, jpg, gif, svg, webp)
+- `price`: Double
+- `deliveryFee`: Double (optional, default: 0.0)
+- `available`: Boolean (optional, default: true)
+- `categoryId`: Long (optional)
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">201 Created</code><br>
+**Description**: Menu item created successfully.<br>
+**Body**: `MenuItem`
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+  "errors": {
+    "name": [
+      "Name cannot be empty",
+      "Name can only contain alphanumeric characters, apostrophes and spaces",
+      "Name must be between 3 and 50 characters"
+    ],
+    "description": [
+      "Description cannot exceed 1000 characters"
+    ],
+    "image": [
+      "Image file cannot be empty",
+      "Image must be a PNG, JPEG, GIF, SVG or WEBP image",
+      "Image file size cannot exceed 5MB"
+    ],
+    "price": [
+      "Price cannot be empty",
+      "Price must be a positive number"
+    ],
+    "deliveryFee": [
+      "Delivery fee cannot be empty",
+      "Delivery fee must be a non-negative number"
+    ],
+    "categoryId": [
+      "Category ID must be a positive number"
+    ]
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No category found with the provided `categoryId`.<br>
+
+```json
+{
+  "error": "Could not find Category with ID {id}"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">500 Internal Server Error</code><br>
+**Description**: Failed to upload image.<br>
+
+```json
+{
+  "error": "Failed to upload image: {message}"
+}
+```
+
+## Get
+**URL:** `/menu/{id}`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a menu item by its `id`.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Menu item retrieved successfully.<br>
+**Body**: `MenuItem`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No menu item found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find MenuItem with ID {id}"
+}
+```
+<br>
+
+## Get Image
+**URL:** `/menu/{id}/image`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a menu item's image by its `id`.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Menu item image retrieved successfully.<br>
+**Body**: `Image`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No menu item found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find MenuItem with ID {id}"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: Couldn't find image for menu item with the provided `id`.<br>
+
+```json
+{
+  "error": "Couldn't find image for menu item with the provided ID"
+}
+```
+<br>
+
+## List
+**URL:** `/menu/list`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a list of all menu items.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Menu items retrieved successfully.<br>
+**Body**: `List[MenuItem]`<br>
+<br>
+
+## Update
+**URL:** `/menu/{id}/update`<br>
+**Method:** <code style="color: rgb(103, 174, 246)">PUT</code><br>
+**Authentication:** Required<br>
+**Content-Type:** `multipart/form-data`<br>
+**Description:** Update an existing menu item.<br>
+
+### **Request Body:**
+- `name`: String (optional)
+- `description`: String (optional)
+- `image`: File (png, jpeg, jpg, gif, svg, webp) (optional)
+- `price`: Double (optional)
+- `deliveryFee`: Double (optional, default: 0.0) (optional)
+- `available`: Boolean (optional, default: true) (optional)
+- `categoryId`: Long (optional)
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Menu item updated successfully.<br>
+**Body**: `MenuItem`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+  "errors": {
+    "name": [
+      "Name can only contain alphanumeric characters, apostrophes and spaces",
+      "Name must be between 3 and 50 characters"
+    ],
+    "description": [
+      "Description cannot exceed 1000 characters"
+    ],
+    "image": [
+      "Image must be a PNG, JPEG, GIF, SVG or WEBP image",
+      "Image file size cannot exceed 5MB"
+    ],
+    "price": [
+      "Price must be a positive number"
+    ],
+    "deliveryFee": [
+      "Delivery fee must be a non-negative number"
+    ],
+    "categoryId": [
+      "Category ID must be a positive number"
+    ]
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No menu item found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find MenuItem with ID {id}"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">500 Internal Server Error</code><br>
+**Description**: Failed to upload image.<br>
+
+```json
+{
+  "error": "Failed to upload image: {message}"
+}
+```
+
+## Delete
+**URL:** `/menu/{id}/delete`<br>
+**Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
+**Authentication:** Required<br>
+**Content-Type:** None<br>
+**Description:** Delete an existing menu item.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">204 No Content</code><br>
+**Description**: Menu item deleted successfully.<br>
+**Body**: None<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No menu item found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find MenuItem with ID {id}"
+}
+```
+<br>

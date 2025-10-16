@@ -32,12 +32,12 @@ public class AuthInterceptor implements HandlerInterceptor {
      * Verifies if the handler method or its class is annotated with {@link AuthRequired}.
      * If the session is invalid or the user is not authenticated, responds with HTTP {@code 401 Unauthorized}.
      *
-     * @param request  The HTTP request.
-     * @param response The HTTP response.
-     * @param handler  The handler (controller method) being executed.
-     * @return True if the request is authorized, false otherwise.
+     * @param request  the HTTP request.
+     * @param response the HTTP response.
+     * @param handler  the handler (controller method) being executed.
+     * @return true if the request is authorized, false otherwise.
      * 
-     * @throws IOException If an error occurs while sending the error response.
+     * @throws IOException if an error occurs while sending the error response.
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {

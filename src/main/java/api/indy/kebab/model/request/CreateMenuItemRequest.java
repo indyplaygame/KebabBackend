@@ -9,9 +9,21 @@ import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Represents a request to create a new menu entry.
+ * Contains the necessary fields and validation constraints for creating a menu entry.
+ *
+ * @param name The name of the menu item. Must not be blank, only alphanumeric characters, spaces and apostrophes allowed, length between 3 and 50 characters.
+ * @param description The description of the category. Optional, but if provided, must not exceed 1000 characters.
+ * @param image The image file for the menu item. Must not be empty, must be one of the allowed types (PNG, JPEG, GIF, SVG, WEBP), size not exceeding 5MB.
+ * @param price The price of the menu item. Must not be null, must be a positive number.
+ * @param deliveryFee The delivery fee for the menu item. Must not be null, must be a non-negative number.
+ * @param available Whether the menu item is available. Defaults to true if not provided.
+ * @param categoryId The ID of the category the menu item belongs to. Must be a positive number if provided.
+ */
 public record CreateMenuItemRequest (
     @NotBlank(groups = {ValidationGroups.OnCreate.class}, message = "Name cannot be empty")
-    @Pattern(regexp = "^[a-zA-Z0-9 ']+$", message = "Name can only contain alphanumeric characters and spaces")
+    @Pattern(regexp = "^[a-zA-Z0-9 ']+$", message = "Name can only contain alphanumeric characters, apostrophes and spaces")
     @Length(min = 3, max = 50, message = "Name must be between 3 and 50 characters")
     String name,
 
