@@ -34,21 +34,17 @@ public class Review {
         String description,
         String imageUrl,
         String createdAt,
-        String updatedAt,
         User user,
-        boolean anonymous,
         float rating,
-        long likes
-        ) {
+        boolean anonymous
+    ) {
         this._title = title;
         this._description = description;
         this._imageUrl = imageUrl;
         this._createdAt = createdAt;
-        this._updatedAt = updatedAt;
         this._user = user;
         this._anonymous = anonymous;
         this._rating = rating;
-        this._likes = likes;
     }
 
 

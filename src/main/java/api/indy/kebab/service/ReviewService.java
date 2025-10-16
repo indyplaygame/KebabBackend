@@ -1,21 +1,18 @@
 package api.indy.kebab.service;
 
-
 import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.Review;
 import api.indy.kebab.model.User;
 import api.indy.kebab.repository.ReviewRepository;
 import api.indy.kebab.util.Util;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Instant;
 import java.util.List;
-
-
 
 /**
  * Service class for managing {@link Review} entities.
@@ -26,49 +23,42 @@ import java.util.List;
  */
 @Service
 public class ReviewService {
-    private static final String IMAGES_PATH="uploads/reviews/%s";
+    private static final String IMAGES_PATH = "uploads/reviews/%s";
 
     private final ReviewRepository _reviewRepository;
+    private final AuthService _authService;
 
     @Autowired
-    public ReviewService(ReviewRepository reviewRepository) { this._reviewRepository = reviewRepository; }
+    public ReviewService(ReviewRepository reviewRepository, AuthService authService) {
+        this._reviewRepository = reviewRepository;
+        this._authService = authService;
+    }
 
     /**
-     * Create and persist a new Review.
+     * Create a new {@link Review} entity and saves it to the repository.
      *
-     * @param title       The title of review (optional).
-     * @param description A brief description of the review (optional).
-     * @param image       The {@link MultipartFile} representing the review's image (optional).
-     * @param rating      numeric rating between 0 and 5
-     * @param user        authoring user
-     * @param anonymous   whether review is anonymous
-     * @return saved Review
+     * @param session     The current HTTP session to identify the user creating the review.
+     * @param title       The title of review.
+     * @param description A brief description of the review.
+     * @param image       The {@link MultipartFile} representing the review's image.
+     * @param rating      Numeric rating between 0 and 5
+     * @param anonymous   Whether the review is anonymous
+     * @return The created {@link Review} entity.
      * @throws IOException If an I/O error occurs during icon upload.
      */
-    public Review createReview(String title, String description, MultipartFile image, float rating, User user, boolean anonymous) throws IOException {
-        if (rating < 0f || rating > 5f) {
-            throw new IllegalArgumentException("rating must be between 0 and 5");
-        }
-
-        String imageUrl = null;
-        if (image != null && !image.isEmpty()) {
-            imageUrl = Util.uploadFile(image, IMAGES_PATH);
-        }
-
-        String now = Instant.now().toString();
-
-        long likes = 0L;
+    public Review createReview(HttpSession session, String title, String description, MultipartFile image, float rating, Boolean anonymous) throws IOException {
+        String imageUrl = image != null && !image.isEmpty() ? Util.uploadFile(image, IMAGES_PATH) : null;
+        String createdAt = Util.getTimestamp();
+        User user = this._authService.getActiveUser(session);
 
         Review review = new Review(
-                title,
-                description,
-                imageUrl,
-                now,     // createdAt
-                now,     // updatedAt
-                user,
-                anonymous,
-                rating,
-                likes
+            title,
+            description,
+            imageUrl,
+            createdAt,
+            user,
+            rating,
+            anonymous
         );
 
         return this._reviewRepository.save(review);
@@ -80,7 +70,9 @@ public class ReviewService {
      * @param id The unique identifier of the review.
      * @return The {@link Review} entity with the specified ID, or null if not found.
      */
-    public Review getReview(long id) {return this._reviewRepository.findByReviewId(id);}
+    public Review getReview(long id) {
+        return this._reviewRepository.findByReviewId(id);
+    }
 
     /**
      * Retrieves a review's image file by the review's unique identifier.
@@ -108,25 +100,23 @@ public class ReviewService {
      * @return The updated {@link Review} entity.
      * @throws IOException If an I/O error occurs during icon upload.
      */
-    public Review updateReview(long id, String title, String description, MultipartFile image, Float rating, Boolean anonymous ) throws IOException {
+    public Review updateReview(long id, String title, String description, MultipartFile image, Float rating, Boolean anonymous) throws IOException {
         Review review = this._reviewRepository.findByReviewId(id);
         if(review == null) throw new EntityNotFoundException(Review.class, id);
 
         if(title != null && !title.isEmpty()) review.setTitle(title);
         if(description != null && !description.isEmpty()) review.setDescription(description);
-        if (image != null && !image.isEmpty()) {
+        if(anonymous != null) review.setAnonymous(anonymous);
+        if(image != null && !image.isEmpty()) {
             Util.deleteFile((review.getImageUrl()));
             review.setImageUrl(Util.uploadFile(image, IMAGES_PATH));
         }
-
-        if (rating !=null) {
-            if (rating < 0f || rating > 5f) throw new IllegalArgumentException("rating must be between 0 and 5");
+        if(rating != null) {
+            if(rating < 0F || rating > 5F) throw new IllegalArgumentException("Rating must be a number between 0 and 5");
             review.setRating(rating);
         }
 
-        if (anonymous!= null) review.setAnonymous(anonymous);
-
-        review.setUpdatedAt(Instant.now().toString());
+        review.setUpdatedAt(Util.getTimestamp());
 
         return this._reviewRepository.save(review);
     }
