@@ -46,7 +46,7 @@ public class AuthService {
      *
      * @param password the plain text password
      * @param hash     the hashed password
-     * @return True if the password matches the hash, false otherwise
+     * @return true if the password matches the hash, false otherwise
      */
     public boolean verifyPassword(String password, String hash) {
         return this._encoder.matches(password, hash);
@@ -57,7 +57,7 @@ public class AuthService {
      *
      * @param username the username to check
      * @param email    the email address to check
-     * @return True if a user with the given username exists, false otherwise
+     * @return true if a user with the given username exists, false otherwise
      */
     public boolean userWithUsernameOrEmailExists(String username, String email) {
         return this._userRepository.findByUsernameOrEmail(username, email) != null;

@@ -42,8 +42,8 @@ public class CategoryController {
     /**
      * Handles requests to create a new category.
      *
-     * @param body {@link CreateCategoryRequest} object containing new category data.
-     * @return {@link ResponseEntity} containing the created category or an error.
+     * @param body the {@link CreateCategoryRequest} object containing new category data.
+     * @return a {@link ResponseEntity} containing the created category or an error.
      */
     @AuthRequired
     @PostMapping("/create")
@@ -67,7 +67,7 @@ public class CategoryController {
      * Handles requests to retrieve a category by its ID.
      *
      * @param id the category identifier.
-     * @return {@link ResponseEntity} containing the category or an error.
+     * @return a {@link ResponseEntity} containing the category or an error.
      */
     @GetMapping("/{id}")
     public ResponseEntity<Object> getCategory(@PathVariable long id) {
@@ -83,7 +83,7 @@ public class CategoryController {
      * Handles requests to retrieve a category's icon by its ID.
      *
      * @param id the category identifier.
-     * @return {@link ResponseEntity} containing the icon as a byte array resource or an error.
+     * @return a {@link ResponseEntity} containing the icon as a {@link ByteArrayResource} or an error.
      */
     @GetMapping("/{id}/icon")
     public ResponseEntity<Object> getCategoryIcon(@PathVariable long id) {
@@ -112,8 +112,8 @@ public class CategoryController {
      * Handles requests to update an existing category.
      *
      * @param id the identifier of the category to update.
-     * @param body {@link CreateCategoryRequest} object containing new category data.
-     * @return {@link ResponseEntity} containing the updated category or an error.
+     * @param body the {@link CreateCategoryRequest} object containing new category data.
+     * @return a {@link ResponseEntity} containing the updated category or an error.
      */
     @PutMapping("/{id}/update")
     public ResponseEntity<Object> updateCategory(@PathVariable long id, @Valid @ModelAttribute CreateCategoryRequest body) {
@@ -138,7 +138,7 @@ public class CategoryController {
      * Handles requests to delete a category by its ID.
      *
      * @param id the identifier of the category to delete.
-     * @return {@link ResponseEntity} with status code.
+     * @return a {@link ResponseEntity} with status code.
      */
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Object> deleteCategory(@PathVariable long id) {
@@ -153,7 +153,7 @@ public class CategoryController {
     /**
      * Handles requests to list all categories.
      *
-     * @return {@link ResponseEntity} containing the list of categories.
+     * @return a {@link ResponseEntity} containing the list of categories.
      */
     @GetMapping("/list")
     public ResponseEntity<Object> listCategories() {

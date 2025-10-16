@@ -90,6 +90,11 @@ public class Util {
         }
     }
 
+    /**
+     * Returns the current timestamp in {@code ISO-8601} format.
+     *
+     * @return String representing the current time as text.
+     */
     public static String getTimestamp() {
         return Instant.now().toString();
     }
