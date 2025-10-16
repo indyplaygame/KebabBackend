@@ -9,6 +9,19 @@ import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Request model for creating a review.
+ *
+ * @param title       The review title. Must be between 3 and 255 characters.
+ * @param description The detailed review text. Optional, max 2000 characters.
+ * @param image       Optional uploaded image for the review. Allowed content
+ *                    types: image/png, image/jpeg, image/jpg, image/gif,
+ *                    image/svg+xml, image/webp. Max size 5MB.
+ * @param rating      Numeric rating for the review. Required for create
+ *                    operations and must be between 0.0 and 5.0 inclusive.
+ * @param anonymous   If true, the review is submitted anonymously.
+ *                    Defaults to false when not provided.
+ */
 public record CreateReviewRequest(
         @Length(min = 3, max = 255, message = "Title must be between 3 and 255 characters")
         String title,
