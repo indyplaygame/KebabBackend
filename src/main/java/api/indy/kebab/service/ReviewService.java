@@ -44,7 +44,7 @@ public class ReviewService {
      * @param rating      Numeric rating between 0 and 5
      * @param anonymous   Whether the review is anonymous
      * @return The created {@link Review} entity.
-     * @throws IOException If an I/O error occurs during icon upload.
+     * @throws IOException If an I/O error occurs during image upload.
      */
     public Review createReview(HttpSession session, String title, String description, MultipartFile image, float rating, Boolean anonymous) throws IOException {
         String imageUrl = image != null && !image.isEmpty() ? Util.uploadFile(image, IMAGES_PATH) : null;
@@ -80,7 +80,7 @@ public class ReviewService {
      * @param id The unique identifier of the review.
      * @return The {@link File} representing the review's image, or null if not found.
      */
-    public File getReviewIcon(long id) {
+    public File getReviewImage(long id) {
         Review review = this._reviewRepository.findByReviewId(id);
         if(review == null) throw new EntityNotFoundException(Review.class, id);
 
@@ -98,7 +98,7 @@ public class ReviewService {
      * @param rating      The new rating (optional).
      * @param anonymous   whether review is anonymous (optional)
      * @return The updated {@link Review} entity.
-     * @throws IOException If an I/O error occurs during icon upload.
+     * @throws IOException If an I/O error occurs during image upload.
      */
     public Review updateReview(long id, String title, String description, MultipartFile image, Float rating, Boolean anonymous) throws IOException {
         Review review = this._reviewRepository.findByReviewId(id);
