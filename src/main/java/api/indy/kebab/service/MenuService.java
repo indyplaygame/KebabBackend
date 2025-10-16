@@ -28,10 +28,10 @@ public class MenuService {
     }
 
     public MenuItem createMenuItem(
-        String name, String description, MultipartFile image, Long categoryId, boolean available, double price, double deliveryFee
+        String name, String description, MultipartFile image, Long categoryId, Boolean available, Double price, Double deliveryFee
     ) throws IOException {
-        if(name == null || image == null || image.isEmpty())
-            throw new IllegalArgumentException("Name and image cannot be null");
+        if(name == null || image == null || image.isEmpty() || price == null || deliveryFee == null)
+            throw new IllegalArgumentException("Name, price, delivery fee and image cannot be null");
 
         if(price < 0 || deliveryFee < 0)
             throw new IllegalArgumentException("Price and delivery fee cannot be negative");
@@ -60,15 +60,16 @@ public class MenuService {
     }
 
     public MenuItem updateMenuItem(
-        long id, String name, String description, MultipartFile image, Long categoryId, boolean available, double price, double deliveryFee
+        long id, String name, String description, MultipartFile image, Long categoryId, Boolean available, Double price, Double deliveryFee
     ) throws IOException {
         MenuItem menuItem = this._menuRepository.findByMenuItemId(id);
         if(menuItem == null) throw new EntityNotFoundException(MenuItem.class, id);
 
         if(name != null) menuItem.setName(name);
         if(description != null) menuItem.setDescription(description);
-        if(price >= 0) menuItem.setPrice(price);
-        if(deliveryFee >= 0) menuItem.setDeliveryFee(deliveryFee);
+        if(available != null) menuItem.setAvailable(available);
+        if(price != null && price >= 0) menuItem.setPrice(price);
+        if(deliveryFee != null && deliveryFee >= 0) menuItem.setDeliveryFee(deliveryFee);
         if(image != null && !image.isEmpty()) {
             Util.deleteFile(menuItem.getImageUrl());
             menuItem.setImageUrl(Util.uploadFile(image, IMAGES_PATH));
@@ -80,7 +81,6 @@ public class MenuService {
             menuItem.setCategory(category);
         }
 
-        menuItem.setAvailable(available);
         return this._menuRepository.save(menuItem);
     }
 
