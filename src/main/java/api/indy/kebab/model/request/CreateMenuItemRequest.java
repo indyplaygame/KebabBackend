@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public record CreateMenuItemRequest (
     @NotBlank(groups = {ValidationGroups.OnCreate.class}, message = "Name cannot be empty")
-    @Pattern(regexp = "^[a-zA-Z0-9 ']+$", message = "Name can only contain alphanumeric characters and spaces")
+    @Pattern(regexp = "^[a-zA-Z0-9 ']+$", message = "Name can only contain alphanumeric characters, apostrophes and spaces")
     @Length(min = 3, max = 50, message = "Name must be between 3 and 50 characters")
     String name,
 
