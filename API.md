@@ -331,7 +331,7 @@ None
 <br>
 
 ## Update
-**URL:** `/categories/list`<br>
+**URL:** `/categories/update`<br>
 **Method:** <code style="color: rgb(103, 174, 246)">PUT</code><br>
 **Authentication:** Required<br>
 **Content-Type:** `multipart/form-data`<br>
@@ -355,12 +355,10 @@ None
 {
   "errors": {
     "name": [
-      "Name cannot be empty",
       "Name can only contain alphanumeric characters and spaces",
       "Name must be between 3 and 50 characters"
     ],
     "icon": [
-      "Icon file cannot be empty",
       "Icon must be a PNG, JPEG, GIF, SVG or WEBP image",
       "Icon file size cannot exceed 5MB"
     ],

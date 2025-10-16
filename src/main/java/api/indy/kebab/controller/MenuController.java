@@ -5,6 +5,7 @@ import api.indy.kebab.model.MenuItem;
 import api.indy.kebab.model.request.CreateMenuItemRequest;
 import api.indy.kebab.model.response.ErrorResponse;
 import api.indy.kebab.service.MenuService;
+import api.indy.kebab.validation.ValidationGroups;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -30,7 +32,7 @@ public class MenuController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Object> createMenuItem(@Valid @ModelAttribute CreateMenuItemRequest body) {
+    public ResponseEntity<Object> createMenuItem(@Validated(ValidationGroups.OnCreate.class) @ModelAttribute CreateMenuItemRequest body) {
         try {
             MenuItem menuItem = this._menuService.createMenuItem(
                 body.name(),
