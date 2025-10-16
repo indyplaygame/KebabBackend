@@ -12,6 +12,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @SuppressWarnings("NewClassNamingConvention")
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    public User findByUserId(long id);
+
     /**
      * Finds a user by their username or email address.
      *

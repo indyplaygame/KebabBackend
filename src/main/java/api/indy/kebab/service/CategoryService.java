@@ -87,8 +87,8 @@ public class CategoryService {
         Category category = this._categoryRepository.findByCategoryId(id);
         if(category == null) throw new EntityNotFoundException(Category.class, id);
 
-        if(name != null) category.setName(name);
-        if(description != null) category.setDescription(description);
+        if(name != null && !name.isEmpty()) category.setName(name);
+        if(description != null && !description.isEmpty()) category.setDescription(description);
         if(icon != null && !icon.isEmpty()) {
             Util.deleteFile(category.getIconUrl());
             category.setIconUrl(Util.uploadFile(icon, ICONS_PATH));

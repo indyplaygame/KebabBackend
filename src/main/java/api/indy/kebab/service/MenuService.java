@@ -19,12 +19,12 @@ public class MenuService {
     private static final String IMAGES_PATH = "uploads/menu/%s";
 
     private final MenuRepository _menuRepository;
-    private final CategoryRepository _categoryRepository;
+    private final CategoryService _categoryService;
 
     @Autowired
-    public MenuService(MenuRepository menuRepository, CategoryRepository categoryRepository) {
+    public MenuService(MenuRepository menuRepository, CategoryService categoryService) {
         this._menuRepository = menuRepository;
-        this._categoryRepository = categoryRepository;
+        this._categoryService = categoryService;
     }
 
     public MenuItem createMenuItem(
@@ -39,7 +39,7 @@ public class MenuService {
         String imageUrl = Util.uploadFile(image, IMAGES_PATH);
 
         Category category = null;
-        if(categoryId != null) category = this._categoryRepository.findByCategoryId(categoryId);
+        if(categoryId != null) category = this._categoryService.getCategory(categoryId);
 
         if(categoryId != null && category == null)
             throw new EntityNotFoundException(Category.class, categoryId);
@@ -74,7 +74,7 @@ public class MenuService {
             menuItem.setImageUrl(Util.uploadFile(image, IMAGES_PATH));
         }
         if(categoryId != null) {
-            Category category = this._categoryRepository.findByCategoryId(categoryId);
+            Category category = this._categoryService.getCategory(categoryId);
             if(category == null) throw new EntityNotFoundException(Category.class, categoryId);
 
             menuItem.setCategory(category);
