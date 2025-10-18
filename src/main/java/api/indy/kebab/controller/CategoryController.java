@@ -5,6 +5,7 @@ import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.Category;
 import api.indy.kebab.model.request.CreateCategoryRequest;
 import api.indy.kebab.model.response.ErrorResponse;
+import api.indy.kebab.model.response.NotFoundResponse;
 import api.indy.kebab.service.CategoryService;
 import api.indy.kebab.validation.ValidationGroups;
 import jakarta.validation.Valid;
@@ -74,7 +75,7 @@ public class CategoryController {
         Category category = this._categoryService.getCategory(id);
 
         if(category == null)
-            return new ResponseEntity<>(new ErrorResponse("No category found with the provided ID"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new NotFoundResponse(Category.class, id), HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(category, HttpStatus.OK);
     }

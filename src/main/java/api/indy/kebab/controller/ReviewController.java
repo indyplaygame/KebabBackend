@@ -4,6 +4,7 @@ import api.indy.kebab.auth.AuthRequired;
 import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.request.CreateReviewRequest;
 import api.indy.kebab.model.response.ErrorResponse;
+import api.indy.kebab.model.response.NotFoundResponse;
 import api.indy.kebab.validation.ValidationGroups;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -60,7 +61,7 @@ public class ReviewController {
 
             return new ResponseEntity<>(review, HttpStatus.CREATED);
         } catch(IOException e) {
-            return new ResponseEntity<>(new api.indy.kebab.model.response.ErrorResponse("Failed to upload image: %s".formatted(e.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ErrorResponse("Failed to upload image: %s".formatted(e.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch(IllegalArgumentException e) {
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
@@ -77,7 +78,7 @@ public class ReviewController {
         Review review = this._reviewService.getReview(id);
 
         if(review == null)
-            return new ResponseEntity<>(new ErrorResponse("No review found with the provided ID"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new NotFoundResponse(Review.class, id), HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(review, HttpStatus.OK);
     }
