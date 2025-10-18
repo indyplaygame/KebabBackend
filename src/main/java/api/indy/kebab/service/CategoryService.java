@@ -33,12 +33,13 @@ public class CategoryService {
     /**
      * Creates a new {@link Category} entity and saves it to the repository.
      *
-     * @param name The name of the category.
-     * @param icon The {@link MultipartFile} representing the category's icon.
-     * @param description A brief description of the category.
-     * @return The created {@link Category} entity.
-     * @throws IOException If an I/O error occurs during icon upload.
-     * @throws IllegalArgumentException If the name or icon is null.
+     * @param name the name of the category.
+     * @param icon the {@link MultipartFile} representing the category's icon.
+     * @param description a brief description of the category.
+     * @return the created {@link Category} entity.
+     *
+     * @throws IOException if an I/O error occurs during icon upload.
+     * @throws IllegalArgumentException if the name or icon is null.
      */
     public Category createCategory(String name, MultipartFile icon, String description) throws IOException {
         if(name == null || icon == null || icon.isEmpty())
@@ -53,8 +54,8 @@ public class CategoryService {
     /**
      * Retrieves a {@link Category} entity by its unique identifier.
      *
-     * @param id The unique identifier of the category.
-     * @return The {@link Category} entity with the specified ID, or null if not found.
+     * @param id the unique identifier of the category.
+     * @return the {@link Category} entity with the specified ID, or null if not found.
      */
     public Category getCategory(long id) {
         return this._categoryRepository.findByCategoryId(id);
@@ -63,8 +64,8 @@ public class CategoryService {
     /**
      * Retrieves a category's icon file by the category's unique identifier.
      *
-     * @param id The unique identifier of the category.
-     * @return The {@link File} representing the category's icon, or null if not found.
+     * @param id the unique identifier of the category.
+     * @return the {@link File} representing the category's icon, or null if not found.
      */
     public File getCategoryIcon(long id) {
         Category category = this._categoryRepository.findByCategoryId(id);
@@ -76,12 +77,14 @@ public class CategoryService {
     /**
      * Updates an existing {@link Category} entity with new values.
      *
-     * @param id The unique identifier of the category to update.
-     * @param name The new name of the category (optional).
-     * @param icon The new {@link MultipartFile} representing the category's icon (optional).
-     * @param description The new description of the category (optional).
-     * @return The updated {@link Category} entity.
-     * @throws IOException If an I/O error occurs during icon upload.
+     * @param id the unique identifier of the category to update.
+     * @param name the new name of the category (optional).
+     * @param icon the new {@link MultipartFile} representing the category's icon (optional).
+     * @param description the new description of the category (optional).
+     * @return the updated {@link Category} entity.
+     *
+     * @throws IOException if an I/O error occurs during icon upload.
+     * @throws EntityNotFoundException if no category with the specified ID exists.
      */
     public Category updateCategory(long id, String name, MultipartFile icon, String description) throws IOException {
         Category category = this._categoryRepository.findByCategoryId(id);
@@ -100,7 +103,7 @@ public class CategoryService {
     /**
      * Deletes a {@link Category} entity by its unique identifier.
      *
-     * @param id The unique identifier of the category to delete.
+     * @param id the unique identifier of the category to delete.
      */
     public void deleteCategory(long id) {
         Category category = this._categoryRepository.findByCategoryId(id);
@@ -114,7 +117,7 @@ public class CategoryService {
     /**
      * Retrieves a list of all {@link Category} entities.
      *
-     * @return A list of all categories.
+     * @return a list of all categories.
      */
     public List<Category> listCategories() {
         return this._categoryRepository.findAll();

@@ -2,9 +2,12 @@ package api.indy.kebab.controller;
 
 import api.indy.kebab.auth.AuthRequired;
 import api.indy.kebab.exceptions.EntityNotFoundException;
+import api.indy.kebab.model.Category;
 import api.indy.kebab.model.MenuItem;
+import api.indy.kebab.model.request.CreateCategoryRequest;
 import api.indy.kebab.model.request.CreateMenuItemRequest;
 import api.indy.kebab.model.response.ErrorResponse;
+import api.indy.kebab.service.CategoryService;
 import api.indy.kebab.service.MenuService;
 import api.indy.kebab.validation.ValidationGroups;
 import jakarta.validation.Valid;
@@ -22,6 +25,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+/**
+ * Controller for managing menu.
+ * Provides endpoints for creating, retrieving, updating, deleting, and listing menu entries.
+ *
+ * @see MenuService
+ * @see MenuItem
+ */
 @RestController
 @RequestMapping("/menu")
 public class MenuController {
@@ -32,6 +42,12 @@ public class MenuController {
         this._menuService = menuService;
     }
 
+    /**
+     * Handles requests to create a new menu entry.
+     *
+     * @param body the {@link CreateMenuItemRequest} object containing new menu entry data.
+     * @return a {@link ResponseEntity} containing the created menu entry or an error.
+     */
     @AuthRequired
     @PostMapping("/create")
     public ResponseEntity<Object> createMenuItem(@Validated(ValidationGroups.OnCreate.class) @ModelAttribute CreateMenuItemRequest body) {
@@ -48,7 +64,7 @@ public class MenuController {
 
             return new ResponseEntity<>(menuItem, HttpStatus.CREATED);
         } catch(IOException e) {
-            return new ResponseEntity<>(new ErrorResponse("Failed to upload icon: %s".formatted(e.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ErrorResponse("Failed to upload image: %s".formatted(e.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch(EntityNotFoundException e) {
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
         } catch(IllegalArgumentException e) {
@@ -56,6 +72,12 @@ public class MenuController {
         }
     }
 
+    /**
+     * Handles requests to retrieve a menu entry by its ID.
+     *
+     * @param id the menu entry identifier.
+     * @return a {@link ResponseEntity} containing the menu entry or an error.
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Object> getMenuItem(@PathVariable long id) {
         MenuItem menuItem = this._menuService.getMenuItem(id);
@@ -66,6 +88,12 @@ public class MenuController {
         return new ResponseEntity<>(menuItem, HttpStatus.OK);
     }
 
+    /**
+     * Handles requests to retrieve a menu entry's image by its ID.
+     *
+     * @param id the menu entry identifier.
+     * @return a {@link ResponseEntity} containing the image as a {@link ByteArrayResource} or an error.
+     */
     @GetMapping("/{id}/image")
     public ResponseEntity<Object> getMenuItemImage(@PathVariable long id) {
         try {
@@ -89,6 +117,13 @@ public class MenuController {
         }
     }
 
+    /**
+     * Handles requests to update an existing menu entry.
+     *
+     * @param id the identifier of the menu entry to update.
+     * @param body the {@link CreateMenuItemRequest} object containing new menu entry data.
+     * @return a {@link ResponseEntity} containing the updated menu entry or an error.
+     */
     @AuthRequired
     @PutMapping("/{id}/update")
     public ResponseEntity<Object> updateMenuItem(@PathVariable long id, @Valid @ModelAttribute CreateMenuItemRequest body){
@@ -113,6 +148,12 @@ public class MenuController {
         }
     }
 
+    /**
+     * Handles requests to delete a menu entry by its ID.
+     *
+     * @param id the identifier of the menu entry to delete.
+     * @return a {@link ResponseEntity} with status code.
+     */
     @AuthRequired
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Object> deleteMenuItem(@PathVariable long id) {
@@ -124,6 +165,11 @@ public class MenuController {
         }
     }
 
+    /**
+     * Handles requests to list all menu entries.
+     *
+     * @return a {@link ResponseEntity} containing the list of menu entries.
+     */
     @GetMapping("/list")
     public ResponseEntity<Object> listMenuItems() {
         return new ResponseEntity<>(this._menuService.listMenuItems(), HttpStatus.OK);

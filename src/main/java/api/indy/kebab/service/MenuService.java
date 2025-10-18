@@ -14,6 +14,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Service class for managing {@link MenuItem} entities.
+ * Provides methods for creating, retrieving, updating, and deleting categories.
+ *
+ * @see MenuRepository
+ * @see MenuItem
+ */
 @Service
 public class MenuService {
     private static final String IMAGES_PATH = "uploads/menu/%s";
@@ -27,6 +34,22 @@ public class MenuService {
         this._categoryService = categoryService;
     }
 
+    /**
+     * Creates a new menu item.
+     *
+     * @param name the name of the menu item.
+     * @param description the description of the menu item.
+     * @param image the image file representing the menu item.
+     * @param categoryId the ID of the category to which the menu item belongs.
+     * @param available whether the menu item is available.
+     * @param price the price of the menu item.
+     * @param deliveryFee the delivery fee for the menu item.
+     * @return the created {@link MenuItem} entity.
+     *
+     * @throws IOException if an error occurs while uploading the image.
+     * @throws IllegalArgumentException if required fields are null or invalid.
+     * @throws EntityNotFoundException if the specified category does not exist.
+     */
     public MenuItem createMenuItem(
         String name, String description, MultipartFile image, Long categoryId, Boolean available, Double price, Double deliveryFee
     ) throws IOException {
@@ -48,10 +71,22 @@ public class MenuService {
         return this._menuRepository.save(menuItem);
     }
 
+    /**
+     * Retrieves a menu item by its unique identifier.
+     *
+     * @param id the unique identifier of the menu item.
+     * @return the {@link MenuItem} with the specified ID, or {@code null} if not found.
+     */
     public MenuItem getMenuItem(long id) {
         return this._menuRepository.findByMenuItemId(id);
     }
 
+    /**
+     * Retrieves the image file of a menu item by its unique identifier.
+     *
+     * @param id the unique identifier of the menu item.
+     * @return the image file, or {@code null} if the menu item does not exist.
+     */
     public File getMenuItemImage(long id) {
         MenuItem menuItem = this._menuRepository.findByMenuItemId(id);
         if(menuItem == null) return null;
@@ -59,6 +94,22 @@ public class MenuService {
         return Util.retrieveFile(menuItem.getImageUrl());
     }
 
+    /**
+     * Updates an existing menu item.
+     *
+     * @param id the ID of the menu item to update.
+     * @param name the new name of the menu item.
+     * @param description the new description of the menu item.
+     * @param image the new image file for the menu item.
+     * @param categoryId the new category ID for the menu item.
+     * @param available the new availability status of the menu item.
+     * @param price the new price of the menu item.
+     * @param deliveryFee the new delivery fee for the menu item.
+     * @return the updated {@link MenuItem} entity.
+     *
+     * @throws IOException if an error occurs while uploading the new image.
+     * @throws EntityNotFoundException if the menu item or specified category does not exist.
+     */
     public MenuItem updateMenuItem(
         long id, String name, String description, MultipartFile image, Long categoryId, Boolean available, Double price, Double deliveryFee
     ) throws IOException {
@@ -84,6 +135,12 @@ public class MenuService {
         return this._menuRepository.save(menuItem);
     }
 
+    /**
+     * Deletes a menu item by its unique identifier.
+     *
+     * @param id the unique identifier of the menu item to delete.
+     * @throws EntityNotFoundException if the menu item does not exist.
+     */
     public void deleteMenuItem(long id) {
         MenuItem menuItem = this._menuRepository.findByMenuItemId(id);
 
@@ -93,6 +150,11 @@ public class MenuService {
         this._menuRepository.delete(menuItem);
     }
 
+    /**
+     * Retrieves a list of all {@link MenuItem} entities.
+     *
+     * @return a list of all menu items.
+     */
     public List<MenuItem> listMenuItems() {
         return this._menuRepository.findAll();
     }

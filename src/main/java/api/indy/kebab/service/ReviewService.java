@@ -37,14 +37,15 @@ public class ReviewService {
     /**
      * Create a new {@link Review} entity and saves it to the repository.
      *
-     * @param session     The current HTTP session to identify the user creating the review.
-     * @param title       The title of review.
-     * @param description A brief description of the review.
-     * @param image       The {@link MultipartFile} representing the review's image.
-     * @param rating      Numeric rating between 0 and 5
-     * @param anonymous   Whether the review is anonymous
-     * @return The created {@link Review} entity.
-     * @throws IOException If an I/O error occurs during image upload.
+     * @param session     the current HTTP session to identify the user creating the review.
+     * @param title       the title of review.
+     * @param description a brief description of the review.
+     * @param image       the {@link MultipartFile} representing the review's image.
+     * @param rating      numeric rating between 0 and 5
+     * @param anonymous   whether the review is anonymous
+     * @return the created {@link Review} entity.
+     *
+     * @throws IOException if an I/O error occurs during icon upload.
      */
     public Review createReview(HttpSession session, String title, String description, MultipartFile image, float rating, Boolean anonymous) throws IOException {
         String imageUrl = image != null && !image.isEmpty() ? Util.uploadFile(image, IMAGES_PATH) : null;
@@ -67,8 +68,8 @@ public class ReviewService {
     /**
      * Retrieves a {@link Review} entity by its unique identifier.
      *
-     * @param id The unique identifier of the review.
-     * @return The {@link Review} entity with the specified ID, or null if not found.
+     * @param id the unique identifier of the review.
+     * @return the {@link Review} entity with the specified ID, or null if not found.
      */
     public Review getReview(long id) {
         return this._reviewRepository.findByReviewId(id);
@@ -77,8 +78,10 @@ public class ReviewService {
     /**
      * Retrieves a review's image file by the review's unique identifier.
      *
-     * @param id The unique identifier of the review.
-     * @return The {@link File} representing the review's image, or null if not found.
+     * @param id the unique identifier of the review.
+     * @return the {@link File} representing the review's image, or null if not found.
+     *
+     * @throws EntityNotFoundException if the review with the specified ID does not exist.
      */
     public File getReviewImage(long id) {
         Review review = this._reviewRepository.findByReviewId(id);
@@ -87,18 +90,19 @@ public class ReviewService {
         return Util.retrieveFile(review.getImageUrl());
     }
 
-
     /**
      * Updates an existing {@link Review} entity with new values.
      *
-     * @param id          The unique identifier of the review to update.
-     * @param title       The new name of the review (optional).
-     * @param description The new description of the review (optional).
-     * @param image       The new {@link MultipartFile} representing the review's image (optional).
-     * @param rating      The new rating (optional).
+     * @param id          the unique identifier of the review to update.
+     * @param title       the new name of the review (optional).
+     * @param description the new description of the review (optional).
+     * @param image       the new {@link MultipartFile} representing the review's image (optional).
+     * @param rating      the new rating (optional).
      * @param anonymous   whether review is anonymous (optional)
-     * @return The updated {@link Review} entity.
-     * @throws IOException If an I/O error occurs during image upload.
+     * @return the updated {@link Review} entity.
+     *
+     * @throws IOException if an I/O error occurs during icon upload.
+     * @throws EntityNotFoundException if the review with the specified ID does not exist.
      */
     public Review updateReview(long id, String title, String description, MultipartFile image, Float rating, Boolean anonymous) throws IOException {
         Review review = this._reviewRepository.findByReviewId(id);
@@ -124,7 +128,7 @@ public class ReviewService {
     /**
      * Deletes a {@link Review} entity by its unique identifier.
      *
-     * @param id The unique identifier of the review to delete.
+     * @param id the unique identifier of the review to delete.
      */
     public void deleteReview(long id) {
         Review review = this._reviewRepository.findByReviewId(id);
@@ -138,7 +142,7 @@ public class ReviewService {
     /**
      * Retrieves a list of all {@link Review} entities.
      *
-     * @return A list of all reviews.
+     * @return a list of all reviews.
      */
     public List<Review> listReviews() {
         return this._reviewRepository.findAll();

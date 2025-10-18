@@ -15,8 +15,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     /**
      * Finds a review by its unique identifier.
      *
-     * @param reviewId The unique identifier of the review.
-     * @return The {@link Review} entity with the specified ID, or null if not found.
+     * @param reviewId the unique identifier of the review.
+     * @return the {@link Review} entity with the specified ID, or null if not found.
      */
     public Review findByReviewId(long reviewId);
 }

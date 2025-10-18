@@ -12,14 +12,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @SuppressWarnings("NewClassNamingConvention")
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    public User findByUserId(long id);
-
     /**
      * Finds a user by their username or email address.
      *
-     * @param username The username of the user.
-     * @param email The email of the user.
-     * @return The {@link User} entity matching the given username or email, or null if not found.
+     * @param username the username of the user.
+     * @param email the email of the user.
+     * @return the {@link User} entity matching the given username or email, or null if not found.
      */
     public User findByUsernameOrEmail(String username, String email);
 }
