@@ -48,6 +48,9 @@ public class ReviewService {
      * @throws IOException if an I/O error occurs during icon upload.
      */
     public Review createReview(HttpSession session, String title, String description, MultipartFile image, float rating, Boolean anonymous) throws IOException {
+        if(rating % 0.5F != 0F) throw new IllegalArgumentException("Rating must be in increments of 0.5");
+        if(rating < 0F || rating > 5F) throw new IllegalArgumentException("Rating must be a number between 0 and 5");
+
         String imageUrl = image != null && !image.isEmpty() ? Util.uploadFile(image, IMAGES_PATH) : null;
         String createdAt = Util.getTimestamp();
         User user = this._authService.getActiveUser(session);
