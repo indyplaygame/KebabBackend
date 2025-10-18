@@ -7,6 +7,7 @@ import api.indy.kebab.model.MenuItem;
 import api.indy.kebab.model.request.CreateCategoryRequest;
 import api.indy.kebab.model.request.CreateMenuItemRequest;
 import api.indy.kebab.model.response.ErrorResponse;
+import api.indy.kebab.model.response.NotFoundResponse;
 import api.indy.kebab.service.CategoryService;
 import api.indy.kebab.service.MenuService;
 import api.indy.kebab.validation.ValidationGroups;
@@ -83,7 +84,7 @@ public class MenuController {
         MenuItem menuItem = this._menuService.getMenuItem(id);
 
         if(menuItem == null)
-            return new ResponseEntity<>(new ErrorResponse("No menu entry found with the provided ID"), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new NotFoundResponse(MenuItem.class, id), HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(menuItem, HttpStatus.OK);
     }

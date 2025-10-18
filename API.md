@@ -2,6 +2,7 @@
 - **[Model](#model)**
   - **[Category](#category)**
   - **[MenuItem](#menuitem)**
+  - **[Review](#review)**
 - **[Authentication](#authentication)**
     - [<code style="color: rgb(250, 224, 124)">POST</code> Register](#register)
     - [<code style="color: rgb(250, 224, 124)">POST</code> Login](#login)
@@ -20,6 +21,13 @@
     - [<code style="color: rgb(95, 221, 154)">GET</code> List](#list-1)
     - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-1)
     - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-1)
+- **[Reviews](#reviews)**
+    - [<code style="color: rgb(250, 224, 124)">POST</code> Create](#create-2)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> Get](#get-2)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> Get Image](#get-image-1)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> List](#list-2)
+    - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-2)
+    - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-2)
 
 # Model
 Application data models.
@@ -48,6 +56,23 @@ Defines the structure of a menu item object.
   "rating": "Double",
   "price": "Double",
   "deliveryFee": "Double"
+}
+```
+
+## Review
+Defines the structure of a review object.
+```json
+{
+  "reviewId": "Long",
+  "title": "String (Optional",
+  "description": "String (Optional)",
+  "imageUrl": "String (Optional)",
+  "createdAt": "String (ISO 8601 DateTime)",
+  "updatedAt": "String (ISO 8601 DateTime)",
+  "userId": "Long",
+  "anonymous": "Boolean",
+  "rating": "Double",
+  "likes": "Integer"
 }
 ```
 
@@ -691,6 +716,234 @@ None
 ```json
 {
   "error": "Could not find MenuItem with ID {id}"
+}
+```
+<br>
+
+# Reviews
+Endpoints for managing reviews.
+
+## Create
+**URL:** `/reviews/create`<br>
+**Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
+**Authentication:** Required<br>
+**Content-Type:** `multipart/form-data`<br>
+**Description:** Create a new review.<br>
+
+### **Request Body:**
+- `title`: String (optional)
+- `description`: String (optional)
+- `image`: File (png, jpeg, jpg, gif, svg, webp) (optional)
+- `rating`: Double (multiple of 0.5 between 0.0 and 5.0)
+- `available`: Boolean (optional, default: false)
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">201 Created</code><br>
+**Description**: Review created successfully.<br>
+**Body**: `Review`
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+  "errors": {
+    "title": [
+      "Title can only contain alphanumeric characters, apostrophes and spaces",
+      "Title must be between 3 and 100 characters"
+    ],
+    "description": [
+      "Description cannot exceed 1000 characters"
+    ],
+    "image": [
+      "Image must be a PNG, JPEG, GIF, SVG or WEBP image",
+      "Image file size cannot exceed 5MB"
+    ],
+    "rating": [
+      "Rating cannot be empty",
+      "Rating must be in increments of 0.5",
+      "Rating must be between 0.0 and 5.0"
+    ]
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">500 Internal Server Error</code><br>
+**Description**: Failed to upload image.<br>
+
+```json
+{
+  "error": "Failed to upload image: {message}"
+}
+```
+
+## Get
+**URL:** `/reviews/{id}`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a review by its `id`.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Review retrieved successfully.<br>
+**Body**: `Review`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No review found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Review with ID {id}"
+}
+```
+<br>
+
+## Get Image
+**URL:** `/reviews/{id}/image`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a review's image by its `id`.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Review image retrieved successfully.<br>
+**Body**: `Image`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No review found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Review with ID {id}"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: Couldn't find image for menu item with the provided `id`.<br>
+
+```json
+{
+  "error": "Couldn't find image for review with the provided ID"
+}
+```
+<br>
+
+## List
+**URL:** `/reviews/list`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a list of all menu items.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Menu items retrieved successfully.<br>
+**Body**: `List[Review]`<br>
+<br>
+
+## Update
+**URL:** `/reviews/{id}/update`<br>
+**Method:** <code style="color: rgb(103, 174, 246)">PUT</code><br>
+**Authentication:** Required<br>
+**Content-Type:** `multipart/form-data`<br>
+**Description:** Update an existing review.<br>
+
+### **Request Body:**
+- `title`: String (optional)
+- `description`: String (optional)
+- `image`: File (png, jpeg, jpg, gif, svg, webp) (optional)
+- `rating`: Double (optional)
+- `anonymous`: Boolean (optional, default: false) (optional)
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Review updated successfully.<br>
+**Body**: `Review`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+  "errors": {
+    "title": [
+      "Title can only contain alphanumeric characters, apostrophes and spaces",
+      "Title must be between 3 and 100 characters"
+    ],
+    "description": [
+      "Description cannot exceed 1000 characters"
+    ],
+    "image": [
+      "Image must be a PNG, JPEG, GIF, SVG or WEBP image",
+      "Image file size cannot exceed 5MB"
+    ],
+    "rating": [
+      "Rating must be in increments of 0.5",
+      "Rating must be between 0.0 and 5.0"
+    ]
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No review found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Review with ID {id}"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">500 Internal Server Error</code><br>
+**Description**: Failed to upload image.<br>
+
+```json
+{
+  "error": "Failed to upload image: {message}"
+}
+```
+
+## Delete
+**URL:** `/reviews/{id}/delete`<br>
+**Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
+**Authentication:** Required<br>
+**Content-Type:** None<br>
+**Description:** Delete an existing review.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">204 No Content</code><br>
+**Description**: Review deleted successfully.<br>
+**Body**: None<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No review found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Review with ID {id}"
 }
 ```
 <br>
