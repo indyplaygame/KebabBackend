@@ -1,5 +1,6 @@
 package api.indy.kebab.controller;
 
+import api.indy.kebab.auth.AuthRequired;
 import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.Category;
 import api.indy.kebab.model.MenuItem;
@@ -47,6 +48,7 @@ public class MenuController {
      * @param body the {@link CreateMenuItemRequest} object containing new menu entry data.
      * @return a {@link ResponseEntity} containing the created menu entry or an error.
      */
+    @AuthRequired
     @PostMapping("/create")
     public ResponseEntity<Object> createMenuItem(@Validated(ValidationGroups.OnCreate.class) @ModelAttribute CreateMenuItemRequest body) {
         try {
@@ -122,6 +124,7 @@ public class MenuController {
      * @param body the {@link CreateMenuItemRequest} object containing new menu entry data.
      * @return a {@link ResponseEntity} containing the updated menu entry or an error.
      */
+    @AuthRequired
     @PutMapping("/{id}/update")
     public ResponseEntity<Object> updateMenuItem(@PathVariable long id, @Valid @ModelAttribute CreateMenuItemRequest body){
         try {
@@ -151,6 +154,7 @@ public class MenuController {
      * @param id the identifier of the menu entry to delete.
      * @return a {@link ResponseEntity} with status code.
      */
+    @AuthRequired
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Object> deleteMenuItem(@PathVariable long id) {
         try {

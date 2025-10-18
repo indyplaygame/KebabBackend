@@ -83,7 +83,7 @@ public class ReviewService {
      *
      * @throws EntityNotFoundException if the review with the specified ID does not exist.
      */
-    public File getReviewIcon(long id) {
+    public File getReviewImage(long id) {
         Review review = this._reviewRepository.findByReviewId(id);
         if(review == null) throw new EntityNotFoundException(Review.class, id);
 
