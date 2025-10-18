@@ -116,6 +116,7 @@ public class ReviewService {
             review.setImageUrl(Util.uploadFile(image, IMAGES_PATH));
         }
         if(rating != null) {
+            if(rating % 0.5F != 0F) throw new IllegalArgumentException("Rating must be in increments of 0.5");
             if(rating < 0F || rating > 5F) throw new IllegalArgumentException("Rating must be a number between 0 and 5");
             review.setRating(rating);
         }

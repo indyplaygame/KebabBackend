@@ -4,6 +4,7 @@ import api.indy.kebab.validation.ValidationGroups;
 import api.indy.kebab.validation.constraints.AllowedContentTypes;
 import api.indy.kebab.validation.constraints.FileNotEmpty;
 import api.indy.kebab.validation.constraints.MaxFileSize;
+import api.indy.kebab.validation.constraints.MultipleOf;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
@@ -24,10 +25,10 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public record CreateReviewRequest(
         @Pattern(regexp = "^[a-zA-Z0-9 ']+$", message = "Name can only contain alphanumeric characters, apostrophes and spaces")
-        @Length(min = 3, max = 255, message = "Title must be between 3 and 255 characters")
+        @Length(min = 3, max = 100, message = "Title must be between 3 and 100 characters")
         String title,
 
-        @Length(max = 2000, message = "Description cannot exceed 2000 characters")
+        @Length(max = 1000, message = "Description cannot exceed 1000 characters")
         String description,
 
         @AllowedContentTypes(value = {"image/png", "image/jpeg", "image/jpg", "image/gif", "image/svg+xml", "image/webp"}, message = "Image must be a PNG, JPEG, GIF, SVG or WEBP image")
@@ -35,6 +36,7 @@ public record CreateReviewRequest(
         MultipartFile image,
 
         @NotNull(groups = {ValidationGroups.OnCreate.class}, message = "Rating cannot be empty")
+        @MultipleOf(value = 0.5, message = "Rating must be in increments of 0.5")
         @DecimalMin(value = "0.0", inclusive = true, message = "Rating must be between 0 and 5")
         @DecimalMax(value = "5.0", inclusive = true, message = "Rating must be between 0 and 5")
         Float rating,
