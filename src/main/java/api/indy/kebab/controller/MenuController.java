@@ -1,5 +1,6 @@
 package api.indy.kebab.controller;
 
+import api.indy.kebab.auth.AuthRequired;
 import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.MenuItem;
 import api.indy.kebab.model.request.CreateMenuItemRequest;
@@ -31,6 +32,7 @@ public class MenuController {
         this._menuService = menuService;
     }
 
+    @AuthRequired
     @PostMapping("/create")
     public ResponseEntity<Object> createMenuItem(@Validated(ValidationGroups.OnCreate.class) @ModelAttribute CreateMenuItemRequest body) {
         try {
@@ -87,6 +89,7 @@ public class MenuController {
         }
     }
 
+    @AuthRequired
     @PutMapping("/{id}/update")
     public ResponseEntity<Object> updateMenuItem(@PathVariable long id, @Valid @ModelAttribute CreateMenuItemRequest body){
         try {
@@ -110,6 +113,7 @@ public class MenuController {
         }
     }
 
+    @AuthRequired
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Object> deleteMenuItem(@PathVariable long id) {
         try {

@@ -66,11 +66,11 @@ public class Review {
     public String getImageUrl() { return this._imageUrl; }
     public void setImageUrl(String imageUrl) { this._imageUrl = imageUrl; }
 
-    @Column(name = "createdAt", nullable = false)
+    @Column(name = "createdAt", nullable = false, length = 19)
     public String getCreatedAt() { return this._createdAt; }
     public void setCreatedAt(String createdAt) { this._createdAt = createdAt; }
 
-    @Column(name = "updatedAt", nullable = true)
+    @Column(name = "updatedAt", nullable = true, length = 19)
     public String getUpdatedAt() { return this._updatedAt; }
     public void setUpdatedAt(String updatedAt) { this._updatedAt = updatedAt; }
 

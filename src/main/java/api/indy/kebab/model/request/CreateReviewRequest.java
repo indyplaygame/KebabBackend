@@ -23,16 +23,14 @@ import org.springframework.web.multipart.MultipartFile;
  *                    Defaults to false when not provided.
  */
 public record CreateReviewRequest(
+        @Pattern(regexp = "^[a-zA-Z0-9 ']+$", message = "Name can only contain alphanumeric characters, apostrophes and spaces")
         @Length(min = 3, max = 255, message = "Title must be between 3 and 255 characters")
         String title,
 
         @Length(max = 2000, message = "Description cannot exceed 2000 characters")
         String description,
 
-        @AllowedContentTypes(
-                value = {"image/png", "image/jpeg", "image/jpg", "image/gif", "image/svg+xml", "image/webp"},
-                message = "Image must be a PNG, JPEG, GIF, SVG or WEBP image"
-        )
+        @AllowedContentTypes(value = {"image/png", "image/jpeg", "image/jpg", "image/gif", "image/svg+xml", "image/webp"}, message = "Image must be a PNG, JPEG, GIF, SVG or WEBP image")
         @MaxFileSize(value = 5 * 1024 * 1024, message = "Image file size cannot exceed 5MB")
         MultipartFile image,
 
@@ -43,5 +41,8 @@ public record CreateReviewRequest(
 
         @JsonProperty(defaultValue = "false")
         Boolean anonymous
-
-) {}
+) {
+    public CreateReviewRequest {
+        if(anonymous == null) anonymous = false;
+    }
+}

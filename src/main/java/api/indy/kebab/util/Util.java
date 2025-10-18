@@ -91,6 +91,6 @@ public class Util {
     }
 
     public static String getTimestamp() {
-        return Instant.now().toString();
+        return Instant.now().toString().substring(0, 19);
     }
 }

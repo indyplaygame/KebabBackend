@@ -1,5 +1,6 @@
 package api.indy.kebab.controller;
 
+import api.indy.kebab.auth.AuthRequired;
 import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.request.CreateReviewRequest;
 import api.indy.kebab.model.response.ErrorResponse;
@@ -22,7 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Controller for managing reviews
+ * Controller for managing reviews.
  * Provides endpoints for creating, retrieving, updating, deleting, and listing reviews
  *
  * @see ReviewController
@@ -34,24 +35,27 @@ public class ReviewController {
     private final ReviewService _reviewService;
 
     @Autowired
-    public ReviewController(ReviewService reviewService) {this._reviewService = reviewService;}
+    public ReviewController(ReviewService reviewService) {
+        this._reviewService = reviewService;
+    }
 
     /**
      * Handles request to create a new review
      *
-     * @param body {@link CreateReviewRequest} object containing new review data.
-     * @return {@link ResponseEntity} containing the created review or an error
+     * @param body the {@link CreateReviewRequest} object containing new review data.
+     * @return a {@link ResponseEntity} containing the created review or an error
      */
+    @AuthRequired
     @PostMapping("/create")
     public ResponseEntity<Object> createReview(@Validated(ValidationGroups.OnCreate.class) @ModelAttribute CreateReviewRequest body, HttpSession httpSession) {
         try {
             Review review = this._reviewService.createReview(
-                    httpSession,
-                    body.title(),
-                    body.description(),
-                    body.image(),
-                    body.rating(),
-                    body.anonymous()
+                httpSession,
+                body.title(),
+                body.description(),
+                body.image(),
+                body.rating(),
+                body.anonymous()
             );
 
             return new ResponseEntity<>(review, HttpStatus.CREATED);
@@ -66,7 +70,7 @@ public class ReviewController {
      * Handles requests to retrieve a review by its ID.
      *
      * @param id the review identifier.
-     * @return {@link ResponseEntity} containing the review or an error.
+     * @return a {@link ResponseEntity} containing the review or an error.
      */
     @GetMapping("/{id}")
     public ResponseEntity<Object> getReview(@PathVariable long id) {
@@ -82,7 +86,7 @@ public class ReviewController {
      * Handles requests to retrieve a review's image by its ID.
      *
      * @param id the review identifier.
-     * @return {@link ResponseEntity} containing the image as a byte array resource or an error.
+     * @return a {@link ResponseEntity} containing the image as a byte array resource or an error.
      */
     @GetMapping("/{id}/image")
     public ResponseEntity<Object> getReviewImage(@PathVariable long id) {
@@ -111,19 +115,20 @@ public class ReviewController {
      * Handles requests to update an existing review.
      *
      * @param id the identifier of the review to update.
-     * @param body {@link CreateReviewRequest} object containing new review data.
-     * @return {@link ResponseEntity} containing the updated review or an error.
+     * @param body the {@link CreateReviewRequest} object containing new review data.
+     * @return a {@link ResponseEntity} containing the updated review or an error.
      */
+    @AuthRequired
     @PutMapping("/{id}/update")
     public ResponseEntity<Object> updateReview(@PathVariable long id, @Valid @ModelAttribute CreateReviewRequest body) {
         try {
             Review updatedReview = this._reviewService.updateReview(
-                    id,
-                    body.title(),
-                    body.description(),
-                    body.image(),
-                    body.rating(),
-                    body.anonymous()
+                id,
+                body.title(),
+                body.description(),
+                body.image(),
+                body.rating(),
+                body.anonymous()
             );
 
             return new ResponseEntity<>(updatedReview, HttpStatus.OK);
@@ -140,8 +145,9 @@ public class ReviewController {
      * Handles requests to delete a review by its ID.
      *
      * @param id the identifier of the review to delete.
-     * @return {@link ResponseEntity} with status code.
+     * @return a {@link ResponseEntity} with status code.
      */
+    @AuthRequired
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Object> deleteReview(@PathVariable long id) {
         try {
@@ -155,7 +161,7 @@ public class ReviewController {
     /**
      * Handles requests to list all reviews.
      *
-     * @return {@link ResponseEntity} containing the list of reviews.
+     * @return a {@link ResponseEntity} containing the list of reviews.
      */
     @GetMapping("/list")
     public ResponseEntity<Object> listReviews() {
