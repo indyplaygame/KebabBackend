@@ -1,6 +1,5 @@
 package api.indy.kebab.repository;
 
-import api.indy.kebab.model.Category;
 import api.indy.kebab.model.MenuItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -75,8 +75,8 @@ public class Review {
     public void setUpdatedAt(String updatedAt) { this._updatedAt = updatedAt; }
 
     @JsonIgnore
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "userId", nullable = true)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "userId", nullable = false)
     public User getUser() { return this._user; }
     public void setUser(User user) { this._user = user; }
 
