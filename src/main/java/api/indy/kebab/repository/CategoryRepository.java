@@ -2,9 +2,6 @@ package api.indy.kebab.repository;
 
 import api.indy.kebab.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-
-import java.util.List;
 
 /**
  * Repository interface for managing {@link Category} entities.

@@ -28,3 +28,6 @@ replay_pid*
 /.idea/inspectionProfiles/
 /build
 /uploads
+
+# Exclude Gradle Wrapper
+!gradle/wrapper/gradle-wrapper.jar
