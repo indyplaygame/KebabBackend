@@ -12,7 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * This class disables CSRF protection and allows all HTTP requests
  * without authentication, making it suitable for development purposes.
  */
-@Profile("dev")
+@Profile({"dev", "stage"})
 @Configuration
 public class DevelopmentConfig {
 
