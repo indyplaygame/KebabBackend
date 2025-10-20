@@ -28,6 +28,9 @@
     - [<code style="color: rgb(95, 221, 154)">GET</code> List](#list-2)
     - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-2)
     - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-2)
+- **[Other Endpoints](#other-endpoints)**
+    - [<code style="color: rgb(95, 221, 154)">GET</code> Ping](#ping)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> Health Check](#health-check)
 
 # Model
 Application data models.
@@ -947,3 +950,44 @@ None
 }
 ```
 <br>
+
+# Other Endpoints
+Endpoints for miscellaneous operations.
+
+## Ping
+**URL:** `/ping`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Content-Type:** None<br>
+**Description:** Simple ping endpoint to check if the API is reachable.<br>
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br
+**Description**: API is reachable.<br>
+
+```
+Pong!
+```
+
+## Health Check
+**URL:** `/health`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Content-Type:** None<br>
+**Description:** Check the health status of the API.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: API is healthy.<br>
+
+```json
+{
+  "status": "OK",
+  "timestamp": "Timestamp in ISO 8601 format"
+}
+```
