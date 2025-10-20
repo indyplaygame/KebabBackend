@@ -20,5 +20,5 @@ jobs:
           key: ${{secrets.SERVER_SSH_KEY}}
           script: |
             cd /home/indy/deploy
-            chmod +x build-latest.sh
-            ./build-latest.sh
+            chmod +x deploy-latest.sh
+            ./deploy-latest.sh
