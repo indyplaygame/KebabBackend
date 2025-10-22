@@ -1,6 +1,7 @@
 package api.indy.kebab.controller;
 
 import api.indy.kebab.auth.AuthRequired;
+import api.indy.kebab.decorators.pagination.Paginated;
 import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.Category;
 import api.indy.kebab.model.MenuItem;
@@ -8,12 +9,14 @@ import api.indy.kebab.model.request.CreateCategoryRequest;
 import api.indy.kebab.model.request.CreateMenuItemRequest;
 import api.indy.kebab.model.response.ErrorResponse;
 import api.indy.kebab.model.response.NotFoundResponse;
+import api.indy.kebab.model.response.PageResponse;
 import api.indy.kebab.service.CategoryService;
 import api.indy.kebab.service.MenuService;
 import api.indy.kebab.validation.ValidationGroups;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -169,10 +172,12 @@ public class MenuController {
     /**
      * Handles requests to list all menu entries.
      *
-     * @return a {@link ResponseEntity} containing the list of menu entries.
+     * @param pageable the {@link Pageable} object containing pagination information.
+     * @return a {@link ResponseEntity} containing a paginated list of menu entries.
      */
+    @Paginated(defaultSize = 20)
     @GetMapping("/list")
-    public ResponseEntity<Object> listMenuItems() {
-        return new ResponseEntity<>(this._menuService.listMenuItems(), HttpStatus.OK);
+    public ResponseEntity<Object> listMenuItems(Pageable pageable) {
+        return new ResponseEntity<>(PageResponse.from(this._menuService.listMenuItems(pageable)), HttpStatus.OK);
     }
 }

@@ -1,14 +1,17 @@
 package api.indy.kebab.controller;
 
 import api.indy.kebab.auth.AuthRequired;
+import api.indy.kebab.decorators.pagination.Paginated;
 import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.request.CreateReviewRequest;
 import api.indy.kebab.model.response.ErrorResponse;
 import api.indy.kebab.model.response.NotFoundResponse;
+import api.indy.kebab.model.response.PageResponse;
 import api.indy.kebab.validation.ValidationGroups;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -162,11 +165,13 @@ public class ReviewController {
     /**
      * Handles requests to list all reviews.
      *
-     * @return a {@link ResponseEntity} containing the list of reviews.
+     * @param pageable the {@link Pageable} object containing pagination information.
+     * @return a {@link ResponseEntity} containing the paginated list of reviews.
      */
+    @Paginated(defaultSize = 20)
     @GetMapping("/list")
-    public ResponseEntity<Object> listReviews() {
-        return new ResponseEntity<>(this._reviewService.listReviews(), HttpStatus.OK);
+    public ResponseEntity<Object> listReviews(Pageable pageable) {
+        return new ResponseEntity<>(PageResponse.from(this._reviewService.listReviews(pageable)), HttpStatus.OK);
     }
 
 }

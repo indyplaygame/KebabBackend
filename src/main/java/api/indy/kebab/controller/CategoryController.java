@@ -1,16 +1,19 @@
 package api.indy.kebab.controller;
 
 import api.indy.kebab.auth.AuthRequired;
+import api.indy.kebab.decorators.pagination.Paginated;
 import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.Category;
 import api.indy.kebab.model.request.CreateCategoryRequest;
 import api.indy.kebab.model.response.ErrorResponse;
 import api.indy.kebab.model.response.NotFoundResponse;
+import api.indy.kebab.model.response.PageResponse;
 import api.indy.kebab.service.CategoryService;
 import api.indy.kebab.validation.ValidationGroups;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -154,10 +157,12 @@ public class CategoryController {
     /**
      * Handles requests to list all categories.
      *
-     * @return a {@link ResponseEntity} containing the list of categories.
+     * @param pageable the {@link Pageable} object containing pagination information.
+     * @return a {@link ResponseEntity} containing the paginated list of categories.
      */
+    @Paginated(maxSize = 100)
     @GetMapping("/list")
-    public ResponseEntity<Object> listCategories() {
-        return new ResponseEntity<>(this._categoryService.listCategories(), HttpStatus.OK);
+    public ResponseEntity<Object> listCategories(Pageable pageable) {
+        return new ResponseEntity<>(PageResponse.from(this._categoryService.listCategories(pageable)), HttpStatus.OK);
     }
 }

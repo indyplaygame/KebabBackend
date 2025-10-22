@@ -5,12 +5,13 @@ import api.indy.kebab.model.Category;
 import api.indy.kebab.repository.CategoryRepository;
 import api.indy.kebab.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Service class for managing {@link Category} entities.
@@ -117,9 +118,10 @@ public class CategoryService {
     /**
      * Retrieves a list of all {@link Category} entities.
      *
-     * @return a list of all categories.
+     * @param pageable the {@link Pageable} object containing pagination information.
+     * @return a {@link Page} of {@link Category} entities.
      */
-    public List<Category> listCategories() {
-        return this._categoryRepository.findAll();
+    public Page<Category> listCategories(Pageable pageable) {
+        return this._categoryRepository.findAll(pageable);
     }
 }

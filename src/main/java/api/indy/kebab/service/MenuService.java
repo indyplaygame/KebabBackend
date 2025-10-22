@@ -7,12 +7,13 @@ import api.indy.kebab.repository.CategoryRepository;
 import api.indy.kebab.repository.MenuRepository;
 import api.indy.kebab.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Service class for managing {@link MenuItem} entities.
@@ -153,9 +154,10 @@ public class MenuService {
     /**
      * Retrieves a list of all {@link MenuItem} entities.
      *
-     * @return a list of all menu items.
+     * @param pageable the {@link Pageable} object containing pagination information.
+     * @return a {@link Page} of {@link MenuItem} entities.
      */
-    public List<MenuItem> listMenuItems() {
-        return this._menuRepository.findAll();
+    public Page<MenuItem> listMenuItems(Pageable pageable) {
+        return this._menuRepository.findAll(pageable);
     }
 }
