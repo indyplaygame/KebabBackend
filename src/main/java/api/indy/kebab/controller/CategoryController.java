@@ -119,6 +119,7 @@ public class CategoryController {
      * @param body the {@link CreateCategoryRequest} object containing new category data.
      * @return a {@link ResponseEntity} containing the updated category or an error.
      */
+    @AuthRequired
     @PutMapping("/{id}/update")
     public ResponseEntity<Object> updateCategory(@PathVariable long id, @Valid @ModelAttribute CreateCategoryRequest body) {
         try {
@@ -144,6 +145,7 @@ public class CategoryController {
      * @param id the identifier of the category to delete.
      * @return a {@link ResponseEntity} with status code.
      */
+    @AuthRequired
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Object> deleteCategory(@PathVariable long id) {
         try {

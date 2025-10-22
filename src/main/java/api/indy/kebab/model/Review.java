@@ -24,7 +24,7 @@ public class Review {
     private String _updatedAt;
     private User _user;
     private boolean _anonymous;
-    private float _rating;
+    private double _rating;
     private long _likes;
 
     protected Review() {}
@@ -35,7 +35,7 @@ public class Review {
         String imageUrl,
         String createdAt,
         User user,
-        float rating,
+        double rating,
         boolean anonymous
     ) {
         this._title = title;
@@ -87,8 +87,8 @@ public class Review {
     @Min(0)
     @Max(5)
     @Column(name = "rating", nullable = false, columnDefinition = "FLOAT DEFAULT 0")
-    public float getRating() { return this._rating; }
-    public void setRating(float rating) { this._rating = rating; }
+    public double getRating() { return this._rating; }
+    public void setRating(double rating) { this._rating = rating; }
 
     @Column(name = "likes", nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     public long getLikes() { return this._likes; }

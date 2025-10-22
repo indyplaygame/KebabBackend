@@ -39,7 +39,7 @@ public record CreateReviewRequest(
         @MultipleOf(value = 0.5, message = "Rating must be in increments of 0.5")
         @DecimalMin(value = "0.0", inclusive = true, message = "Rating must be between 0 and 5")
         @DecimalMax(value = "5.0", inclusive = true, message = "Rating must be between 0 and 5")
-        Float rating,
+        Double rating,
 
         @JsonProperty(defaultValue = "false")
         Boolean anonymous
