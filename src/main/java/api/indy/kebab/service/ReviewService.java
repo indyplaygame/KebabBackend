@@ -7,6 +7,8 @@ import api.indy.kebab.repository.ReviewRepository;
 import api.indy.kebab.util.Util;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -146,10 +148,11 @@ public class ReviewService {
     /**
      * Retrieves a list of all {@link Review} entities.
      *
-     * @return a list of all reviews.
+     * @param pageable a {@link Pageable} object containing pagination information.
+     * @return a {@link Page} of {@link Review} entities.
      */
-    public List<Review> listReviews() {
-        return this._reviewRepository.findAll();
+    public Page<Review> listReviews(Pageable pageable) {
+        return this._reviewRepository.findAll(pageable);
     }
 
 }

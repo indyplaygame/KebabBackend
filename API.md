@@ -1,8 +1,10 @@
 # Table of Contents
 - **[Model](#model)**
+  - **[Page](#paget)**
   - **[Category](#category)**
   - **[MenuItem](#menuitem)**
   - **[Review](#review)**
+- **[Pagination](#pagination)**
 - **[Authentication](#authentication)**
     - [<code style="color: rgb(250, 224, 124)">POST</code> Register](#register)
     - [<code style="color: rgb(250, 224, 124)">POST</code> Login](#login)
@@ -34,6 +36,20 @@
 
 # Model
 Application data models.
+
+## Page[T]
+Defines the structure of a paginated response of ```T``` objects.
+```json
+{
+  "items": "List[T]",
+  "page": "Integer",
+  "size": "Integer",
+  "totalPages": "Integer",
+  "totalItems": "Long",
+  "hasPrevious": "Boolean",
+  "hasNext": "Boolean"
+}
+```
 
 ## Category
 Defines the structure of a category object.
@@ -78,6 +94,11 @@ Defines the structure of a review object.
   "likes": "Integer"
 }
 ```
+
+# Pagination
+Standard pagination parameters for list endpoints.
+- `page`: Integer (optional, default: 0) - The page number to retrieve (0-indexed).
+- `size`: Integer (optional, default: 10) - The number of items per page.
 
 # Authentication
 Endpoints for user authentication and session management.
@@ -370,8 +391,9 @@ None
 **URL:** `/categories/list`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
 **Authentication:** Not Required<br>
+**Paginated:** Yes (Default size: 10, Max size: 100)<br>
 **Content-Type:** None<br>
-**Description:** Retrieve a list of all categories.<br>
+**Description:** Retrieve a paginated list of all categories.<br>
 
 ### **Request Body:**
 None
@@ -379,7 +401,7 @@ None
 ### **Response:**<br>
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
 **Description**: Categories retrieved successfully.<br>
-**Body**: `List[Category]`<br>
+**Body**: `Page[Category]`<br>
 <br>
 
 ## Update
@@ -427,7 +449,7 @@ None
 
 ```json
 {
-  "error": "NCould not find Category with ID {id}"
+  "error": "Could not find Category with ID {id}"
 }
 ```
 <br>
@@ -613,6 +635,7 @@ None
 **URL:** `/menu/list`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
 **Authentication:** Not Required<br>
+**Pagination:** Yes (Default size: 20, Max size: 50)<br>
 **Content-Type:** None<br>
 **Description:** Retrieve a list of all menu items.<br>
 
@@ -622,7 +645,7 @@ None
 ### **Response:**<br>
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
 **Description**: Menu items retrieved successfully.<br>
-**Body**: `List[MenuItem]`<br>
+**Body**: `Page[MenuItem]`<br>
 <br>
 
 ## Update
@@ -848,6 +871,7 @@ None
 **URL:** `/reviews/list`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
 **Authentication:** Not Required<br>
+**Pagination:** Yes (Default size: 20, Max size: 50)<br>
 **Content-Type:** None<br>
 **Description:** Retrieve a list of all menu items.<br>
 
@@ -857,7 +881,7 @@ None
 ### **Response:**<br>
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
 **Description**: Menu items retrieved successfully.<br>
-**Body**: `List[Review]`<br>
+**Body**: `Page[Review]`<br>
 <br>
 
 ## Update
