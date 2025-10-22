@@ -49,7 +49,7 @@ public class ReviewService {
      *
      * @throws IOException if an I/O error occurs during icon upload.
      */
-    public Review createReview(HttpSession session, String title, String description, MultipartFile image, float rating, Boolean anonymous) throws IOException {
+    public Review createReview(HttpSession session, String title, String description, MultipartFile image, Double rating, Boolean anonymous) throws IOException {
         if(rating % 0.5F != 0F) throw new IllegalArgumentException("Rating must be in increments of 0.5");
         if(rating < 0F || rating > 5F) throw new IllegalArgumentException("Rating must be a number between 0 and 5");
 
@@ -109,7 +109,7 @@ public class ReviewService {
      * @throws IOException if an I/O error occurs during icon upload.
      * @throws EntityNotFoundException if the review with the specified ID does not exist.
      */
-    public Review updateReview(long id, String title, String description, MultipartFile image, Float rating, Boolean anonymous) throws IOException {
+    public Review updateReview(long id, String title, String description, MultipartFile image, Double rating, Boolean anonymous) throws IOException {
         Review review = this._reviewRepository.findByReviewId(id);
         if(review == null) throw new EntityNotFoundException(Review.class, id);
 

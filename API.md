@@ -99,6 +99,7 @@ Defines the structure of a review object.
 Standard pagination parameters for list endpoints.
 - `page`: Integer (optional, default: 0) - The page number to retrieve (0-indexed).
 - `size`: Integer (optional, default: 10) - The number of items per page.
+- `sort`: String (optional, default: "id,asc") - The sorting criteria in the format: `property,(asc|desc)`. Multiple sort criteria can be provided.
 
 # Authentication
 Endpoints for user authentication and session management.
