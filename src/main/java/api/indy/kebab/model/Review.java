@@ -96,5 +96,5 @@ public class Review {
 
     @Transient
     @JsonProperty
-    public long getUserId() { return this._user != null ? this._user.getUserId() : 0; }
+    public Long getUserId() { return this._user != null && !this._anonymous ? this._user.getUserId() : null; }
 }
