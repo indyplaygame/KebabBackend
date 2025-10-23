@@ -7,6 +7,7 @@ import api.indy.kebab.model.request.CreateReviewRequest;
 import api.indy.kebab.model.response.ErrorResponse;
 import api.indy.kebab.model.response.NotFoundResponse;
 import api.indy.kebab.model.response.PageResponse;
+import api.indy.kebab.util.Util;
 import api.indy.kebab.validation.ValidationGroups;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -99,15 +100,7 @@ public class ReviewController {
             if(imageFile == null || !imageFile.exists())
                 return new ResponseEntity<>(new ErrorResponse("Couldn't find image for review with the provided ID"), HttpStatus.NOT_FOUND);
 
-            Path path = imageFile.toPath();
-            byte[] data = Files.readAllBytes(path);
-            ByteArrayResource resource = new ByteArrayResource(data);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.valueOf(Files.probeContentType(path)));
-            headers.setContentLength(data.length);
-
-            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+            return Util.createResourceResponse(imageFile);
         } catch(IOException e) {
             return new ResponseEntity<>(new ErrorResponse("Failed to retrieve image: %s".formatted(e.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch(EntityNotFoundException e) {
