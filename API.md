@@ -59,7 +59,8 @@ Defines the structure of a category object.
   "categoryId": "Long",
   "name": "String",
   "imageUrl": "String",
-  "description": "String (Optional)"
+  "description": "String (Optional)",
+  "color": "String (Optional)"
 }
 ```
 
@@ -287,6 +288,7 @@ Endpoints for managing categories.
 - `name`: String
 - `icon`: File (png, jpeg, jpg, gif, svg, webp)
 - `description`: String (optional)
+- `color`: String (optional, hex color code #RRGGBB or #RRGGBBAA)
 
 ### **Response:**<br>
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">201 Created</code><br>
@@ -312,6 +314,9 @@ Endpoints for managing categories.
     ],
     "description": [
       "Description cannot exceed 1000 characters"
+    ],
+    "color": [
+      "Color must be a valid hex color code: #RRGGBB(AA)"
     ]
   }
 }
@@ -417,6 +422,7 @@ None
 - `name`: String (optional)
 - `icon`: File (png, jpeg, jpg, gif, svg, webp) (optional)
 - `description`: String (optional)
+- `color`: String (optional, hex color code #RRGGBB or #RRGGBBAA)
 
 ### **Response:**<br>
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
@@ -440,6 +446,9 @@ None
     ],
     "description": [
       "Description cannot exceed 1000 characters"
+    ],
+    "color": [
+      "Color must be a valid hex color code: #RRGGBB(AA)"
     ]
   }
 }

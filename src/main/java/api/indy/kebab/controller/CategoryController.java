@@ -57,7 +57,8 @@ public class CategoryController {
             Category category = this._categoryService.createCategory(
                 body.name(),
                 body.icon(),
-                body.description()
+                body.description(),
+                body.color()
             );
 
             return new ResponseEntity<>(category, HttpStatus.CREATED);
@@ -119,7 +120,8 @@ public class CategoryController {
             Category updatedCategory = this._categoryService.updateCategory(id,
                 body.name(),
                 body.icon(),
-                body.description()
+                body.description(),
+                body.color()
             );
 
             return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
