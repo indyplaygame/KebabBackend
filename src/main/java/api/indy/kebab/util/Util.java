@@ -1,5 +1,10 @@
 package api.indy.kebab.util;
 
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -88,6 +93,18 @@ public class Util {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public static ResponseEntity<Object> createResourceResponse(File file) throws IOException {
+        Path path = file.toPath();
+        byte[] data = Files.readAllBytes(path);
+        ByteArrayResource resource = new ByteArrayResource(data);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.valueOf(Files.probeContentType(path)));
+        headers.setContentLength(data.length);
+
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
     /**

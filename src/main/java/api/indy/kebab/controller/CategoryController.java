@@ -9,6 +9,7 @@ import api.indy.kebab.model.response.ErrorResponse;
 import api.indy.kebab.model.response.NotFoundResponse;
 import api.indy.kebab.model.response.PageResponse;
 import api.indy.kebab.service.CategoryService;
+import api.indy.kebab.util.Util;
 import api.indy.kebab.validation.ValidationGroups;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,15 +97,7 @@ public class CategoryController {
             if(iconFile == null || !iconFile.exists())
                 return new ResponseEntity<>(new ErrorResponse("Couldn't find icon for category with the provided ID"), HttpStatus.NOT_FOUND);
 
-            Path path = iconFile.toPath();
-            byte[] data = Files.readAllBytes(path);
-            ByteArrayResource resource = new ByteArrayResource(data);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.valueOf(Files.probeContentType(path)));
-            headers.setContentLength(data.length);
-
-            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+            return Util.createResourceResponse(iconFile);
         } catch(IOException e) {
             return new ResponseEntity<>(new ErrorResponse("Failed to retrieve icon: %s".formatted(e.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch(EntityNotFoundException e) {
