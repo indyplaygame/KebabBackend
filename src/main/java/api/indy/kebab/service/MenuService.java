@@ -144,7 +144,6 @@ public class MenuService {
      */
     public void deleteMenuItem(long id) {
         MenuItem menuItem = this._menuRepository.findByMenuItemId(id);
-
         if(menuItem == null) throw new EntityNotFoundException(MenuItem.class, id);
 
         Util.deleteFile(menuItem.getImageUrl());

@@ -109,6 +109,23 @@ public class ReviewController {
     }
 
     /**
+     * Handles requests to delete a review's image by its ID.
+     *
+     * @param id the identifier of the review whose image is to be deleted.
+     * @return a {@link ResponseEntity} with status code.
+     */
+    @AuthRequired
+    @DeleteMapping("/{id}/image/delete")
+    public ResponseEntity<Object> deleteReviewImage(@PathVariable long id) {
+        try {
+            this._reviewService.deleteReviewImage(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch(EntityNotFoundException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
      * Handles requests to update an existing review.
      *
      * @param id the identifier of the review to update.

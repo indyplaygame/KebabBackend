@@ -30,6 +30,7 @@
     - [<code style="color: rgb(95, 221, 154)">GET</code> List](#list-2)
     - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-2)
     - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-2)
+    - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete Image](#delete-image-2)
 - **[Other Endpoints](#other-endpoints)**
     - [<code style="color: rgb(95, 221, 154)">GET</code> Ping](#ping)
     - [<code style="color: rgb(95, 221, 154)">GET</code> Health Check](#health-check)
@@ -58,7 +59,8 @@ Defines the structure of a category object.
   "categoryId": "Long",
   "name": "String",
   "imageUrl": "String",
-  "description": "String (Optional)"
+  "description": "String (Optional)",
+  "color": "String (Optional)"
 }
 ```
 
@@ -286,6 +288,7 @@ Endpoints for managing categories.
 - `name`: String
 - `icon`: File (png, jpeg, jpg, gif, svg, webp)
 - `description`: String (optional)
+- `color`: String (optional, hex color code #RRGGBB or #RRGGBBAA)
 
 ### **Response:**<br>
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">201 Created</code><br>
@@ -311,6 +314,9 @@ Endpoints for managing categories.
     ],
     "description": [
       "Description cannot exceed 1000 characters"
+    ],
+    "color": [
+      "Color must be a valid hex color code: #RRGGBB(AA)"
     ]
   }
 }
@@ -416,6 +422,7 @@ None
 - `name`: String (optional)
 - `icon`: File (png, jpeg, jpg, gif, svg, webp) (optional)
 - `description`: String (optional)
+- `color`: String (optional, hex color code #RRGGBB or #RRGGBBAA)
 
 ### **Response:**<br>
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
@@ -439,6 +446,9 @@ None
     ],
     "description": [
       "Description cannot exceed 1000 characters"
+    ],
+    "color": [
+      "Color must be a valid hex color code: #RRGGBB(AA)"
     ]
   }
 }
@@ -963,6 +973,32 @@ None
 ### **Response:**<br>
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">204 No Content</code><br>
 **Description**: Review deleted successfully.<br>
+**Body**: None<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No review found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Review with ID {id}"
+}
+```
+<br>
+
+## Delete Image
+**URL:** `/reviews/{id}/image/delete`<br>
+**Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
+**Authentication:** Required<br>
+**Content-Type:** None<br>
+**Description:** Delete an image associated with an existing review.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">204 No Content</code><br>
+**Description**: Review image deleted successfully.<br>
 **Body**: None<br>
 <br>
 

@@ -138,11 +138,25 @@ public class ReviewService {
      */
     public void deleteReview(long id) {
         Review review = this._reviewRepository.findByReviewId(id);
-
         if(review == null) throw new EntityNotFoundException(Review.class, id);
 
         Util.deleteFile(review.getImageUrl());
         this._reviewRepository.delete(review);
+    }
+
+    /**
+     * Deletes the image associated with a {@link Review} entity by its unique identifier.
+     *
+     * @param id the unique identifier of the review whose image is to be deleted.
+     */
+    public void deleteReviewImage(long id) {
+        Review review = this._reviewRepository.findByReviewId(id);
+        if(review == null) throw new EntityNotFoundException(Review.class, id);
+
+        Util.deleteFile(review.getImageUrl());
+        review.setImageUrl(null);
+
+        this._reviewRepository.save(review);
     }
 
     /**
