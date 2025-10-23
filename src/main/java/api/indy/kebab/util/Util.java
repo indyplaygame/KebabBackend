@@ -95,6 +95,14 @@ public class Util {
         }
     }
 
+    /**
+     * Creates a {@link ResponseEntity} containing the file as a byte array resource.
+     *
+     * @param file The {@link File} to be included in the response.
+     * @return A {@link ResponseEntity} containing the file data and appropriate headers.
+     *
+     * @throws IOException If an I/O error occurs while reading the file.
+     */
     public static ResponseEntity<Object> createResourceResponse(File file) throws IOException {
         Path path = file.toPath();
         byte[] data = Files.readAllBytes(path);
