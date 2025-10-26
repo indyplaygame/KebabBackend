@@ -1,6 +1,7 @@
 package api.indy.kebab.controller;
 
 import api.indy.kebab.auth.AuthRequired;
+import api.indy.kebab.auth.Permission;
 import api.indy.kebab.decorators.pagination.Paginated;
 import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.Category;
@@ -53,7 +54,7 @@ public class MenuController {
      * @param body the {@link CreateMenuItemRequest} object containing new menu entry data.
      * @return a {@link ResponseEntity} containing the created menu entry or an error.
      */
-    @AuthRequired
+    @AuthRequired(requiredPermission = Permission.MENU_CREATE)
     @PostMapping("/create")
     public ResponseEntity<Object> createMenuItem(@Validated(ValidationGroups.OnCreate.class) @ModelAttribute CreateMenuItemRequest body) {
         try {
@@ -121,7 +122,7 @@ public class MenuController {
      * @param body the {@link CreateMenuItemRequest} object containing new menu entry data.
      * @return a {@link ResponseEntity} containing the updated menu entry or an error.
      */
-    @AuthRequired
+    @AuthRequired(requiredPermission = Permission.MENU_UPDATE)
     @PutMapping("/{id}/update")
     public ResponseEntity<Object> updateMenuItem(@PathVariable long id, @Valid @ModelAttribute CreateMenuItemRequest body){
         try {
@@ -151,7 +152,7 @@ public class MenuController {
      * @param id the identifier of the menu entry to delete.
      * @return a {@link ResponseEntity} with status code.
      */
-    @AuthRequired
+    @AuthRequired(requiredPermission = Permission.MENU_DELETE)
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Object> deleteMenuItem(@PathVariable long id) {
         try {

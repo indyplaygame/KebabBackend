@@ -1,0 +1,24 @@
+package api.indy.kebab.auth;
+
+public enum Permission {
+    NONE,
+
+    USERS_LIST,
+    USERS_VIEW,
+    USERS_UPDATE,
+    USERS_DELETE,
+
+    PERMISSIONS_GRANT,
+    PERMISSIONS_REVOKE,
+
+    CATEGORIES_CREATE,
+    CATEGORIES_UPDATE,
+    CATEGORIES_DELETE,
+
+    MENU_CREATE,
+    MENU_UPDATE,
+    MENU_DELETE,
+
+    REVIEWS_UPDATE,
+    REVIEWS_DELETE,
+}

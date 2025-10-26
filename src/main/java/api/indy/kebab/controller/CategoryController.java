@@ -1,6 +1,7 @@
 package api.indy.kebab.controller;
 
 import api.indy.kebab.auth.AuthRequired;
+import api.indy.kebab.auth.Permission;
 import api.indy.kebab.decorators.pagination.Paginated;
 import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.Category;
@@ -50,7 +51,7 @@ public class CategoryController {
      * @param body the {@link CreateCategoryRequest} object containing new category data.
      * @return a {@link ResponseEntity} containing the created category or an error.
      */
-    @AuthRequired
+    @AuthRequired(requiredPermission = Permission.CATEGORIES_CREATE)
     @PostMapping("/create")
     public ResponseEntity<Object> createCategory(@Validated(ValidationGroups.OnCreate.class) @ModelAttribute CreateCategoryRequest body) {
         try {
@@ -113,7 +114,7 @@ public class CategoryController {
      * @param body the {@link CreateCategoryRequest} object containing new category data.
      * @return a {@link ResponseEntity} containing the updated category or an error.
      */
-    @AuthRequired
+    @AuthRequired(requiredPermission = Permission.CATEGORIES_UPDATE)
     @PutMapping("/{id}/update")
     public ResponseEntity<Object> updateCategory(@PathVariable long id, @Valid @ModelAttribute CreateCategoryRequest body) {
         try {
@@ -140,7 +141,7 @@ public class CategoryController {
      * @param id the identifier of the category to delete.
      * @return a {@link ResponseEntity} with status code.
      */
-    @AuthRequired
+    @AuthRequired(requiredPermission = Permission.CATEGORIES_DELETE)
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Object> deleteCategory(@PathVariable long id) {
         try {
