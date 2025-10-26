@@ -1,10 +1,15 @@
 package api.indy.kebab.controller;
 
+import api.indy.kebab.auth.AuthRequired;
+import api.indy.kebab.auth.Permission;
+import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.exceptions.InvalidLoginCredentialsException;
+import api.indy.kebab.exceptions.NoSuchPermissionsException;
 import api.indy.kebab.exceptions.UserExistsException;
 import api.indy.kebab.model.User;
 import api.indy.kebab.model.request.LoginRequest;
 import api.indy.kebab.model.request.RegisterRequest;
+import api.indy.kebab.model.request.UpdateUserPermissionsRequest;
 import api.indy.kebab.model.response.ErrorResponse;
 import api.indy.kebab.model.response.MessageResponse;
 import api.indy.kebab.service.AuthService;
@@ -13,10 +18,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Controller class for handling authentication-related endpoints.
@@ -101,5 +103,33 @@ public class AuthController {
     public ResponseEntity<Object> logout(HttpSession session) {
         this._authService.logout(session);
         return new ResponseEntity<>(new MessageResponse("Logged out successfully"), HttpStatus.OK);
+    }
+
+    @AuthRequired(requiredPermission = Permission.PERMISSIONS_GRANT)
+    @PatchMapping("/permissions/{id}/grant")
+    public ResponseEntity<Object> grantPermissions(@PathVariable long id, @Valid @RequestBody UpdateUserPermissionsRequest body) {
+        try {
+            this._authService.grantPermissions(id, body.permissions());
+
+            return new ResponseEntity<>(new MessageResponse("Permissions granted successfully"), HttpStatus.OK);
+        } catch(EntityNotFoundException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch(NoSuchPermissionsException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @AuthRequired(requiredPermission = Permission.PERMISSIONS_REVOKE)
+    @PatchMapping("/permissions/{id}/revoke")
+    public ResponseEntity<Object> revokePermissions(@PathVariable long id, @Valid @RequestBody UpdateUserPermissionsRequest body) {
+        try {
+            this._authService.revokePermissions(id, body.permissions());
+
+            return new ResponseEntity<>(new MessageResponse("Permissions revoked successfully"), HttpStatus.OK);
+        } catch(EntityNotFoundException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch(NoSuchPermissionsException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
     }
 }
