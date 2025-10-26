@@ -220,7 +220,7 @@ fetch("base.url:port/auth/register", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data)
+    data => console.log(data["message"]) // Output: User created successfully
 )
 ```
 <br>
@@ -293,7 +293,7 @@ fetch("base.url:port/auth/login", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data)
+    data => console.log(data["message"]) // Output: Logged in successfully
 )
 ```
 <br>
@@ -326,7 +326,7 @@ fetch("base.url:port/auth/logout", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data)
+    data => console.log(data["message"]) // Output: Logged out successfully
 )
 ```
 
@@ -404,7 +404,7 @@ fetch("base.url:port/categories/create", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data)
+    data => console.log(data) // Output: Created Category
 )
 ```
 
@@ -438,11 +438,11 @@ None
 JavaScript
 ```javascript
 fetch("base.url:port/categories/1")
-.then(
-    response => response.json()
-).then(
-    data => console.log(data)
-)
+    .then(
+        response => response.json()
+    ).then(
+        data => console.log(data) // Output: Category
+    )
 ```
 <br>
 
@@ -486,16 +486,17 @@ None
 JavaScript
 ```javascript
 fetch("base.url:port/categories/1/icon")
-.then(
-    response => response.blob()
-).then(
-    blob => {
-        const imageUrl = URL.createObjectURL(blob);
-        const img = document.createElement('img');
-        img.src = imageUrl;
-        document.body.appendChild(img);
-    }
-)
+    .then(
+        response => response.blob()
+    ).then(
+        blob => {
+            const imageUrl = URL.createObjectURL(blob);
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            document.body.appendChild(img);
+            console.log("Category icon displayed"); // Output: Category icon displayed
+        }
+    )
 ```
 <br>
 
@@ -515,6 +516,17 @@ None
 **Description**: Categories retrieved successfully.<br>
 **Body**: `Page[Category]`<br>
 <br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/categories/list?page=0&size=10&sort=name,asc")
+.then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Page[Category]
+)
+```
 
 ## Update
 **URL:** `/categories/{id}/update`<br>
@@ -595,7 +607,7 @@ fetch("base.url:port/categories/1/update", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data)
+    data => console.log(data) // Output: Updated Category
 )
 ```
 
@@ -633,7 +645,7 @@ fetch("base.url:port/categories/1/delete", {
 }).then(
     response => {
         if (response.status === 204) {
-            console.log("Category deleted successfully");
+            console.log("Category deleted successfully"); // Output: Category deleted successfully
         } else {
             return response.json();
         }
@@ -742,7 +754,7 @@ fetch("base.url:port/menu/create", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data)
+    data => console.log(data) // Output: Created MenuItem
 )
 ```
 
@@ -776,11 +788,11 @@ None
 JavaScript
 ```javascript
 fetch("base.url:port/menu/1")
-.then(
-    response => response.json()
-).then(
-    data => console.log(data)
-)
+    .then(
+        response => response.json()
+    ).then(
+        data => console.log(data) // Output: MenuItem
+    )
 ```
 <br>
 
@@ -824,16 +836,17 @@ None
 JavaScript
 ```javascript
 fetch("base.url:port/menu/1/image")
-.then(
-    response => response.blob()
-).then(
-    blob => {
-        const imageUrl = URL.createObjectURL(blob);
-        const img = document.createElement('img');
-        img.src = imageUrl;
-        document.body.appendChild(img);
-    }
-)
+    .then(
+        response => response.blob()
+    ).then(
+        blob => {
+            const imageUrl = URL.createObjectURL(blob);
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            document.body.appendChild(img);
+            console.log("Menu item image displayed"); // Output: Menu item image displayed
+        }
+    )
 ```
 <br>
 
@@ -858,11 +871,11 @@ None
 JavaScript
 ```javascript
 fetch("base.url:port/menu/list?page=0&size=20&sort=name,asc")
-.then(
-    response => response.json()
-).then(
-    data => console.log(data)
-)
+    .then(
+        response => response.json()
+    ).then(
+        data => console.log(data) // Output: Page[MenuItem]
+    )
 ```
 <br>
 
@@ -957,7 +970,7 @@ fetch("base.url:port/menu/1/update", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data)
+    data => console.log(data) // Output: Updated MenuItem
 )
 ```
 
@@ -995,7 +1008,7 @@ fetch("base.url:port/menu/1/delete", {
 }).then(
     response => {
         if (response.status === 204) {
-            console.log("Menu item deleted successfully");
+            console.log("Menu item deleted successfully"); // Output: Menu item deleted successfully
         } else {
             return response.json();
         }
@@ -1082,7 +1095,7 @@ fetch("base.url:port/reviews/create", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data)
+    data => console.log(data) // Output: Created Review
 )
 ```
 
@@ -1116,11 +1129,11 @@ None
 JavaScript
 ```javascript
 fetch("base.url:port/reviews/1")
-.then(
-    response => response.json()
-).then(
-    data => console.log(data)
-)
+    .then(
+        response => response.json()
+    ).then(
+        data => console.log(data) // Output: Review
+    )
 ```
 <br>
 
@@ -1164,16 +1177,17 @@ None
 JavaScript
 ```javascript
 fetch("base.url:port/reviews/1/image")
-.then(
-    response => response.blob()
-).then(
-    blob => {
-        const imageUrl = URL.createObjectURL(blob);
-        const img = document.createElement('img');
-        img.src = imageUrl;
-        document.body.appendChild(img);
-    }
-)
+    .then(
+        response => response.blob()
+    ).then(
+        blob => {
+            const imageUrl = URL.createObjectURL(blob);
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            document.body.appendChild(img);
+            console.log("Review image displayed"); // Output: Review image displayed
+        }
+    )
 ```
 <br>
 
@@ -1198,11 +1212,11 @@ None
 JavaScript
 ```javascript
 fetch("base.url:port/reviews/list?page=0&size=20&sort=createdAt,desc")
-.then(
-    response => response.json()
-).then(
-    data => console.log(data)
-)
+    .then(
+        response => response.json()
+    ).then(
+        data => console.log(data) // Output: Page[Review]
+    )
 ```
 <br>
 
@@ -1288,7 +1302,7 @@ fetch("base.url:port/reviews/1/update", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data)
+    data => console.log(data) // Output: Updated Review
 )
 ```
 
@@ -1326,7 +1340,7 @@ fetch("base.url:port/reviews/1/delete", {
 }).then(
     response => {
         if (response.status === 204) {
-            console.log("Review deleted successfully");
+            console.log("Review deleted successfully"); // Output: Review deleted successfully
         } else {
             return response.json();
         }
@@ -1371,7 +1385,7 @@ fetch("base.url:port/reviews/1/image/delete", {
 }).then(
     response => {
         if (response.status === 204) {
-            console.log("Review image deleted successfully");
+            console.log("Review image deleted successfully"); // Output: Review image deleted successfully
         } else {
             return response.json();
         }
@@ -1406,11 +1420,11 @@ Pong!
 JavaScript
 ```javascript
 fetch("base.url:port/ping")
-.then(
-    response => response.text()
-).then(
-    data => console.log(data)
-)
+    .then(
+        response => response.text()
+    ).then(
+        data => console.log(data) // Output: Pong!
+    )
 ```
 
 ## Health Check
@@ -1438,9 +1452,9 @@ None
 JavaScript
 ```javascript
 fetch("base.url:port/health")
-.then(
-    response => response.json()
-).then(
-    data => console.log(data)
-)
+    .then(
+        response => response.json()
+    ).then(
+        data => console.log(data["status"]) // Output: OK
+    )
 ```
