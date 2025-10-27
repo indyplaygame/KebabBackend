@@ -1,6 +1,7 @@
 package api.indy.kebab.controller;
 
 import api.indy.kebab.auth.AuthRequired;
+import api.indy.kebab.auth.Permission;
 import api.indy.kebab.decorators.pagination.Paginated;
 import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.Category;
@@ -46,11 +47,12 @@ public class CategoryController {
 
     /**
      * Handles requests to create a new category.
+     * Requires the {@link Permission#CATEGORIES_CREATE} permission to access.
      *
      * @param body the {@link CreateCategoryRequest} object containing new category data.
      * @return a {@link ResponseEntity} containing the created category or an error.
      */
-    @AuthRequired
+    @AuthRequired(requiredPermission = Permission.CATEGORIES_CREATE)
     @PostMapping("/create")
     public ResponseEntity<Object> createCategory(@Validated(ValidationGroups.OnCreate.class) @ModelAttribute CreateCategoryRequest body) {
         try {
@@ -108,12 +110,13 @@ public class CategoryController {
 
     /**
      * Handles requests to update an existing category.
+     * Requires the {@link Permission#CATEGORIES_UPDATE} permission to access.
      *
      * @param id the identifier of the category to update.
      * @param body the {@link CreateCategoryRequest} object containing new category data.
      * @return a {@link ResponseEntity} containing the updated category or an error.
      */
-    @AuthRequired
+    @AuthRequired(requiredPermission = Permission.CATEGORIES_UPDATE)
     @PutMapping("/{id}/update")
     public ResponseEntity<Object> updateCategory(@PathVariable long id, @Valid @ModelAttribute CreateCategoryRequest body) {
         try {
@@ -136,11 +139,12 @@ public class CategoryController {
 
     /**
      * Handles requests to delete a category by its ID.
+     * Requires the {@link Permission#CATEGORIES_DELETE} permission to access.
      *
      * @param id the identifier of the category to delete.
      * @return a {@link ResponseEntity} with status code.
      */
-    @AuthRequired
+    @AuthRequired(requiredPermission = Permission.CATEGORIES_DELETE)
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Object> deleteCategory(@PathVariable long id) {
         try {

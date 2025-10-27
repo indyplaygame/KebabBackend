@@ -1,13 +1,20 @@
 package api.indy.kebab.service;
 
+import api.indy.kebab.auth.Permission;
+import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.exceptions.InvalidLoginCredentialsException;
+import api.indy.kebab.exceptions.NoSuchPermissionsException;
 import api.indy.kebab.exceptions.UserExistsException;
 import api.indy.kebab.model.User;
 import api.indy.kebab.repository.UserRepository;
+import api.indy.kebab.util.Util;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Service class for handling authentication-related operations in the application.
@@ -120,6 +127,50 @@ public class AuthService {
      */
     public void logout(HttpSession session) {
         if(session != null) session.invalidate();
+    }
+
+    /**
+     * Grants a set of permissions to a user.
+     *
+     * <p>This method retrieves the user by their ID, parses the provided list of permission strings
+     * into a set of {@link Permission} enums, and assigns these permissions to the user.</p>
+     *
+     * @param userId      the ID of the user to whom permissions will be granted
+     * @param permissions the list of permission identifiers to grant
+     *
+     * @throws NoSuchPermissionsException if any of the provided permissions are invalid
+     * @throws EntityNotFoundException    if the user with the given ID does not exist
+     */
+    public void grantPermissions(long userId, List<String> permissions) throws NoSuchPermissionsException {
+        User user = this._userRepository.findByUserId(userId);
+        if(user == null) throw new EntityNotFoundException(User.class, userId);
+
+        Set<Permission> permissionsList = Util.parsePermissions(permissions);
+        user.grantPermissions(permissionsList);
+
+        this._userRepository.save(user);
+    }
+
+    /**
+     * Revokes a set of permissions from a user.
+     *
+     * <p>This method retrieves the user by their ID, parses the provided list of permission strings
+     * into a set of {@link Permission} enums, and removes these permissions from the user.</p>
+     *
+     * @param userId      the ID of the user from whom permissions will be revoked
+     * @param permissions the list of permission identifiers to revoke
+     *
+     * @throws NoSuchPermissionsException if any of the provided permissions are invalid
+     * @throws EntityNotFoundException    if the user with the given ID does not exist
+     */
+    public void revokePermissions(long userId, List<String> permissions) throws NoSuchPermissionsException {
+        User user = this._userRepository.findByUserId(userId);
+        if(user == null) throw new EntityNotFoundException(User.class, userId);
+
+        Set<Permission> permissionsList = Util.parsePermissions(permissions);
+        user.revokePermissions(permissionsList);
+
+        this._userRepository.save(user);
     }
 
     /**

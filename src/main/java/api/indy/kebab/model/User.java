@@ -1,6 +1,10 @@
 package api.indy.kebab.model;
 
+import api.indy.kebab.auth.Permission;
+import api.indy.kebab.persistence.converter.PermissionsConverter;
 import jakarta.persistence.*;
+
+import java.util.Set;
 
 /**
  * Entity representing a user in the application.
@@ -18,6 +22,7 @@ public class User {
     private String _lastName;
     private String _passwordHash;
     private String _dateOfBirth;
+    private Set<Permission> _permissions;
 
     protected User() {}
 
@@ -29,6 +34,7 @@ public class User {
         this._lastName = lastName;
         this._passwordHash = passwordHash;
         this._dateOfBirth = dateOfBirth;
+        this._permissions = Set.of();
     }
 
     @Id
@@ -64,4 +70,24 @@ public class User {
     @Column(name = "dateOfBirth", nullable = false, length = 10)
     public String getDateOfBirth() { return this._dateOfBirth; }
     public void setDateOfBirth(String dateOfBirth) { this._dateOfBirth = dateOfBirth; }
+
+    @Convert(converter = PermissionsConverter.class)
+    @Column(name = "permissions", nullable = false, length = 1000)
+    public Set<Permission> getPermissions() { return this._permissions; }
+    public void setPermissions(Set<Permission> permissions) { this._permissions = permissions; }
+
+    @Transient
+    public boolean hasPermission(Permission permission) {
+        return this._permissions != null && this._permissions.contains(permission);
+    }
+
+    @Transient
+    public void grantPermissions(Set<Permission> permissions) {
+        this._permissions.addAll(permissions);
+    }
+
+    @Transient
+    public void revokePermissions(Set<Permission> permissions) {
+        this._permissions.removeAll(permissions);
+    }
 }

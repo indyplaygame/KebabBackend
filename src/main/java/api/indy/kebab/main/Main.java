@@ -11,7 +11,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableAspectJAutoProxy
 @EnableJpaRepositories(basePackages = "api.indy.kebab.repository")
 @EntityScan(basePackages = "api.indy.kebab.model")
-@ComponentScan(basePackages = {"api.indy.kebab.auth", "api.indy.kebab.config", "api.indy.kebab.controller", "api.indy.kebab.service", "api.indy.kebab.decorators"})
+@ComponentScan(basePackages = {
+    "api.indy.kebab.auth", "api.indy.kebab.config", "api.indy.kebab.controller", "api.indy.kebab.service", "api.indy.kebab.decorators", "api.indy.kebab.persistence"
+})
 public class Main {
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);

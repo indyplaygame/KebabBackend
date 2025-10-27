@@ -5,10 +5,13 @@
   - **[MenuItem](#menuitem)**
   - **[Review](#review)**
 - **[Pagination](#pagination)**
+- **[Permissions](#permissions)**
 - **[Authentication](#authentication)**
     - [<code style="color: rgb(250, 224, 124)">POST</code> Register](#register)
     - [<code style="color: rgb(250, 224, 124)">POST</code> Login](#login)
     - [<code style="color: rgb(250, 224, 124)">POST</code> Logout](#logout)
+    - [<code style="color: rgb(182, 168, 225)">PATCH</code> Grant Permissions](#grant-permissions)
+    - [<code style="color: rgb(182, 168, 225)">PATCH</code> Revoke Permissions](#revoke-permissions)
 - **[Categories](#categories)**
     - [<code style="color: rgb(250, 224, 124)">POST</code> Create](#create)
     - [<code style="color: rgb(95, 221, 154)">GET</code> Get](#get)
@@ -102,6 +105,20 @@ Standard pagination parameters for list endpoints.
 - `page`: Integer (optional, default: 0) - The page number to retrieve (0-indexed).
 - `size`: Integer (optional, default: 10) - The number of items per page.
 - `sort`: String (optional, default: "id,asc") - The sorting criteria in the format: `property,(asc|desc)`. Multiple sort criteria can be provided.
+
+# Permissions
+List of available permissions.
+
+| Permission           | Description                   |
+|----------------------|-------------------------------|
+| `permissions.grant`  | Grant permissions to users    |
+| `permissions.revoke` | Revoke permissions from users |
+| `categories.create`  | Create new categories         |
+| `categories.update`  | Update existing categories    |  
+| `categories.delete`  | Delete existing categories    |
+| `menu.create`        | Create new menu items         |
+| `menu.update`        | Update existing menu items    |
+| `menu.delete`        | Delete existing menu items    |
 
 # Authentication
 Endpoints for user authentication and session management.
@@ -317,6 +334,125 @@ None
   "message": "Logged out successfully"
 }
 ```
+<br>
+
+## Grant Permissions
+**URL:** `/auth/permissions/{id}/grant`<br>
+**Method:** <code style="color: rgb(182, 168, 225)">PATCH</code><br>
+**Authentication:** Required<br>
+**Permissions:** `permissions.grant`<br>
+**Content-Type:** `application/json`<br>
+**Description:** Grant permissions to a user with provided `id`. List of all available permissions can be found [here](#permissions).<br>
+
+### **Request Body:**
+```json
+{
+  "permissions": "List[String]"
+}
+```
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Permissions granted successfully.<br>
+
+```json
+{
+  "message": "Permissions granted successfully"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+  "errors": {
+    "permissions": [
+      "Permissions cannot be empty"
+    ]
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: No such permissions exist.<br>
+
+```json
+{
+  "error": "No such permissions exist with identifiers: identifiers..."
+}
+```
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No user found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find User with ID {id}"
+}
+```
+<br>
+
+## Revoke Permissions
+**URL:** `/auth/permissions/{id}/revoke`<br>
+**Method:** <code style="color: rgb(182, 168, 225)">PATCH</code><br>
+**Authentication:** Required<br>
+**Permissions:** `permissions.revoke`<br>
+**Content-Type:** `application/json`<br>
+**Description:** Grant permissions to a user with provided `id`. List of all available permissions can be found [here](#permissions).<br>
+
+### **Request Body:**
+```json
+{
+  "permissions": "List[String]"
+}
+```
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Permissions revoked successfully.<br>
+
+```json
+{
+  "message": "Permissions revoked successfully"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+  "errors": {
+    "permissions": [
+      "Permissions cannot be empty"
+    ]
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: No such permissions exist.<br>
+
+```json
+{
+  "error": "No such permissions exist with identifiers: identifiers..."
+}
+```
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No user found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find User with ID {id}"
+}
+```
+<br>
 
 ### **Example:**
 JavaScript
@@ -337,6 +473,7 @@ Endpoints for managing categories.
 **URL:** `/categories/create`<br>
 **Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
 **Authentication:** Required<br>
+**Permissions:** `categories.create`<br>
 **Content-Type:** `multipart/form-data`<br>
 **Description:** Create a new category.<br>
 
@@ -529,6 +666,7 @@ fetch("base.url:port/categories/list?page=0&size=10&sort=name,asc", {
 **URL:** `/categories/{id}/update`<br>
 **Method:** <code style="color: rgb(103, 174, 246)">PUT</code><br>
 **Authentication:** Required<br>
+**Permissions:** `categories.update`<br>
 **Content-Type:** `multipart/form-data`<br>
 **Description:** Update an existing category.<br>
 
@@ -612,6 +750,7 @@ fetch("base.url:port/categories/1/update", {
 **URL:** `/categories/{id}/delete`<br>
 **Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
 **Authentication:** Required<br>
+**Permissions:** `categories.delete`<br>
 **Content-Type:** None<br>
 **Description:** Delete an existing category.<br>
 
@@ -653,6 +792,7 @@ Endpoints for managing menu items.
 **URL:** `/menu/create`<br>
 **Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
 **Authentication:** Required<br>
+**Permissions:** `menu.create`<br>
 **Content-Type:** `multipart/form-data`<br>
 **Description:** Create a new menu item.<br>
 
@@ -870,6 +1010,7 @@ fetch("base.url:port/menu/list?page=0&size=20&sort=name,asc", {
 **URL:** `/menu/{id}/update`<br>
 **Method:** <code style="color: rgb(103, 174, 246)">PUT</code><br>
 **Authentication:** Required<br>
+**Permissions:** `menu.update`<br>
 **Content-Type:** `multipart/form-data`<br>
 **Description:** Update an existing menu item.<br>
 
@@ -965,6 +1106,7 @@ fetch("base.url:port/menu/1/update", {
 **URL:** `/menu/{id}/delete`<br>
 **Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
 **Authentication:** Required<br>
+**Permissions:** `menu.delete`<br>
 **Content-Type:** None<br>
 **Description:** Delete an existing menu item.<br>
 

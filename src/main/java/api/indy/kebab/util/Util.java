@@ -1,5 +1,7 @@
 package api.indy.kebab.util;
 
+import api.indy.kebab.auth.Permission;
+import api.indy.kebab.exceptions.NoSuchPermissionsException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,7 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Utility class providing helper methods for the application.
@@ -122,5 +124,38 @@ public class Util {
      */
     public static String getTimestamp() {
         return Instant.now().toString().substring(0, 19);
+    }
+
+    /**
+     * Parses a list of permission strings into a set of {@link Permission} enums.
+     *
+     * <p>This method processes each string in the provided list, converting it into a corresponding
+     * {@link Permission} enum. Strings ending with an asterisk (*) are treated as prefixes, and all
+     * permissions starting with the given prefix are added to the result. If a string does not match
+     * any valid permission, it is added to a set of invalid permissions.</p>
+     *
+     * @param permissionsString the list of permission strings to parse.
+     * @return a set of {@link Permission} enums parsed from the input strings.
+     *
+     * @throws NoSuchPermissionsException if any of the provided strings are invalid permissions.
+     */
+    public static Set<Permission> parsePermissions(List<String> permissionsString) throws NoSuchPermissionsException {
+        Set<Permission> permissions = new HashSet<>();
+        Set<String> invalidPermissions = new HashSet<>();
+
+        for(String str : permissionsString) {
+            try {
+                if(str.endsWith("*")) {
+                    String prefix = str.substring(0, str.length() - 2).replace(".", "_").toUpperCase();
+                    permissions.addAll(Arrays.stream(Permission.values()).filter(p -> p.name().startsWith(prefix)).toList());
+                } else permissions.add(Permission.valueOf(str.replace(".", "_").toUpperCase()));
+            } catch(IllegalArgumentException e) {
+                invalidPermissions.add(str);
+            }
+        }
+
+        if(!invalidPermissions.isEmpty()) throw new NoSuchPermissionsException(invalidPermissions);
+
+        return permissions;
     }
 }
