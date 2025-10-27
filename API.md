@@ -109,16 +109,18 @@ Standard pagination parameters for list endpoints.
 # Permissions
 List of available permissions.
 
-| Permission           | Description                   |
-|----------------------|-------------------------------|
-| `permissions.grant`  | Grant permissions to users    |
-| `permissions.revoke` | Revoke permissions from users |
-| `categories.create`  | Create new categories         |
-| `categories.update`  | Update existing categories    |  
-| `categories.delete`  | Delete existing categories    |
-| `menu.create`        | Create new menu items         |
-| `menu.update`        | Update existing menu items    |
-| `menu.delete`        | Delete existing menu items    |
+| Permission           | Description                                        |
+|----------------------|----------------------------------------------------|
+| `permissions.grant`  | Grant permissions to users                         |
+| `permissions.revoke` | Revoke permissions from users                      |
+| `categories.create`  | Create new categories                              |
+| `categories.update`  | Update existing categories                         |  
+| `categories.delete`  | Delete existing categories                         |
+| `menu.create`        | Create new menu items                              |
+| `menu.update`        | Update existing menu items                         |
+| `menu.delete`        | Delete existing menu items                         |
+| `reviews.update`     | Update existing reviews that the user does not own |
+| `reviews.delete`     | Delete existing reviews that the user does not own |
 
 # Authentication
 Endpoints for user authentication and session management.
