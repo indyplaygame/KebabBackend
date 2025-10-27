@@ -45,7 +45,7 @@ public class ReviewController {
     }
 
     /**
-     * Handles request to create a new review
+     * Handles request to create a new review.
      *
      * @param body the {@link CreateReviewRequest} object containing new review data.
      * @return a {@link ResponseEntity} containing the created review or an error

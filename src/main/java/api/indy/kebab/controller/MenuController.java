@@ -50,6 +50,7 @@ public class MenuController {
 
     /**
      * Handles requests to create a new menu entry.
+     * Requires the {@link Permission#MENU_CREATE} permission to access.
      *
      * @param body the {@link CreateMenuItemRequest} object containing new menu entry data.
      * @return a {@link ResponseEntity} containing the created menu entry or an error.
@@ -117,6 +118,7 @@ public class MenuController {
 
     /**
      * Handles requests to update an existing menu entry.
+     * Requires the {@link Permission#MENU_UPDATE} permission to access.
      *
      * @param id the identifier of the menu entry to update.
      * @param body the {@link CreateMenuItemRequest} object containing new menu entry data.
@@ -148,6 +150,7 @@ public class MenuController {
 
     /**
      * Handles requests to delete a menu entry by its ID.
+     * Requires the {@link Permission#MENU_DELETE} permission to access.
      *
      * @param id the identifier of the menu entry to delete.
      * @return a {@link ResponseEntity} with status code.

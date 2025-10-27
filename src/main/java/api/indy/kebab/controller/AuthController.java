@@ -105,6 +105,17 @@ public class AuthController {
         return new ResponseEntity<>(new MessageResponse("Logged out successfully"), HttpStatus.OK);
     }
 
+    /**
+     * Grants permissions to a user.
+     *
+     * <p>This endpoint allows granting specific permissions to a user identified by their ID.
+     * Requires the {@link Permission#PERMISSIONS_GRANT} permission to access.</p>
+     *
+     * @param id the ID of the user to whom permissions will be granted.
+     * @param body the {@link UpdateUserPermissionsRequest} containing the list of permissions to grant.
+     * @return a {@link ResponseEntity} containing a success message if permissions are granted,
+     *         or an error response if the user is not found or the permissions are invalid.
+     */
     @AuthRequired(requiredPermission = Permission.PERMISSIONS_GRANT)
     @PatchMapping("/permissions/{id}/grant")
     public ResponseEntity<Object> grantPermissions(@PathVariable long id, @Valid @RequestBody UpdateUserPermissionsRequest body) {
@@ -119,6 +130,17 @@ public class AuthController {
         }
     }
 
+    /**
+     * Revokes permissions from a user.
+     *
+     * <p>This endpoint allows revoking specific permissions from a user identified by their ID.
+     * Requires the {@link Permission#PERMISSIONS_REVOKE} permission to access.</p>
+     *
+     * @param id the ID of the user from whom permissions will be revoked.
+     * @param body the {@link UpdateUserPermissionsRequest} containing the list of permissions to revoke.
+     * @return a {@link ResponseEntity} containing a success message if permissions are revoked,
+     *         or an error response if the user is not found or the permissions are invalid.
+     */
     @AuthRequired(requiredPermission = Permission.PERMISSIONS_REVOKE)
     @PatchMapping("/permissions/{id}/revoke")
     public ResponseEntity<Object> revokePermissions(@PathVariable long id, @Valid @RequestBody UpdateUserPermissionsRequest body) {

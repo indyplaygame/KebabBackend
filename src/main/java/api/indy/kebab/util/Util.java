@@ -126,6 +126,19 @@ public class Util {
         return Instant.now().toString().substring(0, 19);
     }
 
+    /**
+     * Parses a list of permission strings into a set of {@link Permission} enums.
+     *
+     * <p>This method processes each string in the provided list, converting it into a corresponding
+     * {@link Permission} enum. Strings ending with an asterisk (*) are treated as prefixes, and all
+     * permissions starting with the given prefix are added to the result. If a string does not match
+     * any valid permission, it is added to a set of invalid permissions.</p>
+     *
+     * @param permissionsString the list of permission strings to parse.
+     * @return a set of {@link Permission} enums parsed from the input strings.
+     *
+     * @throws NoSuchPermissionsException if any of the provided strings are invalid permissions.
+     */
     public static Set<Permission> parsePermissions(List<String> permissionsString) throws NoSuchPermissionsException {
         Set<Permission> permissions = new HashSet<>();
         Set<String> invalidPermissions = new HashSet<>();

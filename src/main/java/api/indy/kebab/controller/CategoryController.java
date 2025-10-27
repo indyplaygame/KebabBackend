@@ -47,6 +47,7 @@ public class CategoryController {
 
     /**
      * Handles requests to create a new category.
+     * Requires the {@link Permission#CATEGORIES_CREATE} permission to access.
      *
      * @param body the {@link CreateCategoryRequest} object containing new category data.
      * @return a {@link ResponseEntity} containing the created category or an error.
@@ -109,6 +110,7 @@ public class CategoryController {
 
     /**
      * Handles requests to update an existing category.
+     * Requires the {@link Permission#CATEGORIES_UPDATE} permission to access.
      *
      * @param id the identifier of the category to update.
      * @param body the {@link CreateCategoryRequest} object containing new category data.
@@ -137,6 +139,7 @@ public class CategoryController {
 
     /**
      * Handles requests to delete a category by its ID.
+     * Requires the {@link Permission#CATEGORIES_DELETE} permission to access.
      *
      * @param id the identifier of the category to delete.
      * @return a {@link ResponseEntity} with status code.

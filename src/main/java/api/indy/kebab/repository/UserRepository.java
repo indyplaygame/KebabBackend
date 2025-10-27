@@ -12,6 +12,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @SuppressWarnings("NewClassNamingConvention")
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    /**
+     * Finds a user by their unique user ID.
+     *
+     * @param userId the unique ID of the user.
+     * @return the {@link User} entity matching the given user ID, or null if not found.
+     */
     public User findByUserId(Long userId);
 
     /**

@@ -1,5 +1,12 @@
 package api.indy.kebab.auth;
 
+/**
+ * Enum representing various permissions within the application.
+ * These permissions are used to control access to different features and actions.
+ *
+ * @see AuthInterceptor
+ * @see AuthRequired
+ */
 public enum Permission {
     NONE,
 
