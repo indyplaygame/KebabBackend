@@ -336,6 +336,18 @@ None
 ```
 <br>
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/auth/logout", {
+    method: "POST"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data["message"]) // Output: "Logged out successfully"
+)
+```
+
 ## Grant Permissions
 **URL:** `/auth/permissions/{id}/grant`<br>
 **Method:** <code style="color: rgb(182, 168, 225)">PATCH</code><br>
@@ -347,7 +359,7 @@ None
 ### **Request Body:**
 ```json
 {
-  "permissions": "List[String]"
+"permissions": "List[String]"
 }
 ```
 
@@ -357,7 +369,7 @@ None
 
 ```json
 {
-  "message": "Permissions granted successfully"
+"message": "Permissions granted successfully"
 }
 ```
 <br>
@@ -367,11 +379,11 @@ None
 
 ```json
 {
-  "errors": {
+"errors": {
     "permissions": [
       "Permissions cannot be empty"
     ]
-  }
+}
 }
 ```
 <br>
@@ -381,7 +393,7 @@ None
 
 ```json
 {
-  "error": "No such permissions exist with identifiers: identifiers..."
+"error": "No such permissions exist with identifiers: identifiers..."
 }
 ```
 
@@ -390,8 +402,26 @@ None
 
 ```json
 {
-  "error": "Could not find User with ID {id}"
+"error": "Could not find User with ID {id}"
 }
+```
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/auth/permissions/1/grant", {
+    method: "PATCH",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        permissions: ["menu.create","menu.update"]
+    })
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data["message"]) // Output: "Permissions granted successfully"
+)
 ```
 <br>
 
@@ -406,7 +436,7 @@ None
 ### **Request Body:**
 ```json
 {
-  "permissions": "List[String]"
+"permissions": "List[String]"
 }
 ```
 
@@ -416,7 +446,7 @@ None
 
 ```json
 {
-  "message": "Permissions revoked successfully"
+"message": "Permissions revoked successfully"
 }
 ```
 <br>
@@ -426,11 +456,11 @@ None
 
 ```json
 {
-  "errors": {
+"errors": {
     "permissions": [
       "Permissions cannot be empty"
     ]
-  }
+}
 }
 ```
 <br>
@@ -440,7 +470,7 @@ None
 
 ```json
 {
-  "error": "No such permissions exist with identifiers: identifiers..."
+"error": "No such permissions exist with identifiers: identifiers..."
 }
 ```
 
@@ -449,20 +479,27 @@ None
 
 ```json
 {
-  "error": "Could not find User with ID {id}"
+"error": "Could not find User with ID {id}"
 }
 ```
 <br>
 
+
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/auth/logout", {
-    method: "POST"
+fetch("base.url:port/auth/permissions/1/revoke", {
+    method: "PATCH",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        permissions: ["menu.create"]
+    })
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data["message"]) // Output: "Logged out successfully"
+    data => console.log(data["message"]) // Output: "Permissions revoked successfully"
 )
 ```
 
