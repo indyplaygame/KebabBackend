@@ -336,6 +336,18 @@ None
 ```
 <br>
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/auth/logout", {
+    method: "POST"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data["message"]) // Output: "Logged out successfully"
+)
+```
+
 ## Grant Permissions
 **URL:** `/auth/permissions/{id}/grant`<br>
 **Method:** <code style="color: rgb(182, 168, 225)">PATCH</code><br>
@@ -371,7 +383,7 @@ None
     "permissions": [
       "Permissions cannot be empty"
     ]
-  }
+}
 }
 ```
 <br>
@@ -393,6 +405,24 @@ None
   "error": "Could not find User with ID {id}"
 }
 ```
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/auth/permissions/1/grant", {
+    method: "PATCH",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        permissions: ["menu.create","menu.update"]
+    })
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data["message"]) // Output: "Permissions granted successfully"
+)
+```
 <br>
 
 ## Revoke Permissions
@@ -405,7 +435,7 @@ None
 
 ### **Request Body:**
 ```json
-{
+{ 
   "permissions": "List[String]"
 }
 ```
@@ -426,11 +456,11 @@ None
 
 ```json
 {
-  "errors": {
+"errors": {
     "permissions": [
       "Permissions cannot be empty"
     ]
-  }
+}
 }
 ```
 <br>
@@ -454,15 +484,22 @@ None
 ```
 <br>
 
+
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/auth/logout", {
-    method: "POST"
+fetch("base.url:port/auth/permissions/1/revoke", {
+    method: "PATCH",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        permissions: ["menu.create"]
+    })
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data["message"]) // Output: "Logged out successfully"
+    data => console.log(data["message"]) // Output: "Permissions revoked successfully"
 )
 ```
 
