@@ -2,6 +2,7 @@ package api.indy.kebab.util;
 
 import api.indy.kebab.auth.Permission;
 import api.indy.kebab.exceptions.NoSuchPermissionsException;
+import api.indy.kebab.model.User;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -157,5 +158,9 @@ public class Util {
         if(!invalidPermissions.isEmpty()) throw new NoSuchPermissionsException(invalidPermissions);
 
         return permissions;
+    }
+
+    public static boolean verifyOwnership(long entityOwnerId, Permission bypassPermission, User user) {
+        return user.getUserId() == entityOwnerId || (bypassPermission != Permission.NONE && user.hasPermission(bypassPermission));
     }
 }

@@ -19,5 +19,8 @@ public enum Permission {
 
     MENU_CREATE,
     MENU_UPDATE,
-    MENU_DELETE
+    MENU_DELETE,
+
+    REVIEWS_UPDATE,
+    REVIEWS_DELETE
 }

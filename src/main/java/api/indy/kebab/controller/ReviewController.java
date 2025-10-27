@@ -3,6 +3,7 @@ package api.indy.kebab.controller;
 import api.indy.kebab.auth.AuthRequired;
 import api.indy.kebab.decorators.pagination.Paginated;
 import api.indy.kebab.exceptions.EntityNotFoundException;
+import api.indy.kebab.exceptions.NotOwnerOfEntityException;
 import api.indy.kebab.model.request.CreateReviewRequest;
 import api.indy.kebab.model.response.ErrorResponse;
 import api.indy.kebab.model.response.NotFoundResponse;
@@ -116,12 +117,14 @@ public class ReviewController {
      */
     @AuthRequired
     @DeleteMapping("/{id}/image/delete")
-    public ResponseEntity<Object> deleteReviewImage(@PathVariable long id) {
+    public ResponseEntity<Object> deleteReviewImage(@PathVariable long id, HttpSession session) {
         try {
-            this._reviewService.deleteReviewImage(id);
+            this._reviewService.deleteReviewImage(session, id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch(EntityNotFoundException e) {
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch(NotOwnerOfEntityException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
         }
     }
 
@@ -134,9 +137,10 @@ public class ReviewController {
      */
     @AuthRequired
     @PutMapping("/{id}/update")
-    public ResponseEntity<Object> updateReview(@PathVariable long id, @Valid @ModelAttribute CreateReviewRequest body) {
+    public ResponseEntity<Object> updateReview(@PathVariable long id, @Valid @ModelAttribute CreateReviewRequest body, HttpSession session) {
         try {
             Review updatedReview = this._reviewService.updateReview(
+                session,
                 id,
                 body.title(),
                 body.description(),
@@ -152,6 +156,8 @@ public class ReviewController {
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
         } catch(IllegalArgumentException e) {
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch(NotOwnerOfEntityException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
         }
     }
 
@@ -163,12 +169,14 @@ public class ReviewController {
      */
     @AuthRequired
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<Object> deleteReview(@PathVariable long id) {
+    public ResponseEntity<Object> deleteReview(@PathVariable long id, HttpSession session) {
         try {
-            this._reviewService.deleteReview(id);
+            this._reviewService.deleteReview(session, id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch(EntityNotFoundException e) {
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch(NotOwnerOfEntityException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
         }
     }
 
