@@ -567,16 +567,14 @@ Endpoints for managing categories.
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/categories/create", {
+const formData = new FormData();
+formData.append("name", "Pizza");
+formData.append("description", "Delicious pizza category");
+formData.append("color", "#FF6B6B");
+
+fetch("http://base.url:port/categories/create", {
     method: "POST",
-    headers: {
-        "Content-Type": "multipart/form-data"
-    },
-    body: JSON.stringify({
-        name: "Pizza",
-        description: "Delicious pizza category",
-        color: "#FF6B6B"
-    })
+    body: formData
 }).then(
     response => response.json()
 ).then(
@@ -768,16 +766,14 @@ fetch("base.url:port/categories/list?page=0&size=10&sort=name,asc", {
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/categories/1/update", {
+const formData = new FormData();
+formData.append("name", "Kebab");
+formData.append("description", "Delicious kebab category");
+formData.append("color", "#6200EE");
+
+fetch("http://base.url:port/categories/1/update", {
     method: "PUT",
-    headers: {
-        "Content-Type": "multipart/form-data"
-    },
-    body: JSON.stringify({
-        name: "Updated Pizza",
-        description: "Updated description",
-        color: "#FF0000"
-    })
+    body: formData
 }).then(
     response => response.json()
 ).then(
@@ -907,19 +903,18 @@ Endpoints for managing menu items.
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/menu/create", {
+const formData = new FormData();
+formData.append("name", "Margherita Pizza");
+formData.append("description", "Classic pizza with tomato and mozzarella");
+formData.append("price", 15.99);
+formData.append("deliveryFee", 2.50);
+formData.append("available", true);
+formData.append("categoryId", 1);
+formData.append("image", fileInput.files[0]);
+
+fetch("http://base.url:port/menu/create", {
     method: "POST",
-    headers: {
-        "Content-Type": "multipart/form-data"
-    },
-    body: JSON.stringify({
-        name: "Margherita Pizza",
-        description: "Classic pizza with tomato and mozzarella",
-        price: 15.99,
-        deliveryFee: 2.50,
-        available: true,
-        categoryId: 1
-    })
+    body: formData
 }).then(
     response => response.json()
 ).then(
@@ -1121,19 +1116,18 @@ fetch("base.url:port/menu/list?page=0&size=20&sort=name,asc", {
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/menu/1/update", {
+const formData = new FormData();
+formData.append("name", "Supreme Pizza");
+formData.append("description", "Supreme pizza with all topings");
+formData.append("price", 125.99);
+formData.append("deliveryFee", 12.50);
+formData.append("available", true);
+formData.append("categoryId", 1);
+formData.append("image", fileInput.files[0]);
+
+fetch("http://base.url:port/menu/1/update", {
     method: "PUT",
-    headers: {
-        "Content-Type": "multipart/form-data"
-    },
-    body: JSON.stringify({
-        name: "Updated Margherita Pizza",
-        description: "Updated description",
-        price: 18.99,
-        deliveryFee: 3.00,
-        available: true,
-        categoryId: 1
-    })
+    body: formData
 }).then(
     response => response.json()
 ).then(
@@ -1242,17 +1236,16 @@ Endpoints for managing reviews.
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/reviews/create", {
+const formData = new FormData();
+formData.append("title", "Great Pizza!");
+formData.append("description", "Amazing taste and quality");
+formData.append("rating", 4.5);
+formData.append("anonymous", false);
+formData.append("image", fileInput.files[0]);
+
+fetch("http://base.url:port/reviews/create", {
     method: "POST",
-    headers: {
-        "Content-Type": "multipart/form-data"
-    },
-    body: JSON.stringify({
-        title: "Great Pizza!",
-        description: "Amazing taste and quality",
-        rating: 4.5,
-        anonymous: false
-    })
+    body: formData
 }).then(
     response => response.json()
 ).then(
@@ -1446,17 +1439,16 @@ fetch("base.url:port/reviews/list?page=0&size=20&sort=createdAt,desc", {
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/reviews/1/update", {
-    method: "PUT",
-    headers: {
-        "Content-Type": "multipart/form-data"
-    },
-    body: JSON.stringify({
-        title: "Updated Review Title",
-        description: "Updated review description",
-        rating: 5.0,
-        anonymous: true
-    })
+const formData = new FormData();
+formData.append("title", "Terrible Pizza!");
+formData.append("description", "Terrible taste and quality");
+formData.append("rating", 1.5);
+formData.append("anonymous", true);
+formData.append("image", fileInput.files[0]);
+
+fetch("http://base.url:port/reviews/1/update", {
+    method: "POST",
+    body: formData
 }).then(
     response => response.json()
 ).then(
