@@ -359,7 +359,7 @@ fetch("base.url:port/auth/logout", {
 ### **Request Body:**
 ```json
 {
-"permissions": "List[String]"
+  "permissions": "List[String]"
 }
 ```
 
@@ -369,7 +369,7 @@ fetch("base.url:port/auth/logout", {
 
 ```json
 {
-"message": "Permissions granted successfully"
+  "message": "Permissions granted successfully"
 }
 ```
 <br>
@@ -379,7 +379,7 @@ fetch("base.url:port/auth/logout", {
 
 ```json
 {
-"errors": {
+  "errors": {
     "permissions": [
       "Permissions cannot be empty"
     ]
@@ -393,7 +393,7 @@ fetch("base.url:port/auth/logout", {
 
 ```json
 {
-"error": "No such permissions exist with identifiers: identifiers..."
+  "error": "No such permissions exist with identifiers: identifiers..."
 }
 ```
 
@@ -402,7 +402,7 @@ fetch("base.url:port/auth/logout", {
 
 ```json
 {
-"error": "Could not find User with ID {id}"
+  "error": "Could not find User with ID {id}"
 }
 ```
 
@@ -435,8 +435,8 @@ fetch("base.url:port/auth/permissions/1/grant", {
 
 ### **Request Body:**
 ```json
-{
-"permissions": "List[String]"
+{ 
+  "permissions": "List[String]"
 }
 ```
 
@@ -446,7 +446,7 @@ fetch("base.url:port/auth/permissions/1/grant", {
 
 ```json
 {
-"message": "Permissions revoked successfully"
+  "message": "Permissions revoked successfully"
 }
 ```
 <br>
@@ -470,7 +470,7 @@ fetch("base.url:port/auth/permissions/1/grant", {
 
 ```json
 {
-"error": "No such permissions exist with identifiers: identifiers..."
+  "error": "No such permissions exist with identifiers: identifiers..."
 }
 ```
 
@@ -479,7 +479,7 @@ fetch("base.url:port/auth/permissions/1/grant", {
 
 ```json
 {
-"error": "Could not find User with ID {id}"
+  "error": "Could not find User with ID {id}"
 }
 ```
 <br>
