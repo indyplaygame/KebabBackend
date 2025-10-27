@@ -147,7 +147,7 @@ public class Util {
         for(String str : permissionsString) {
             try {
                 if(str.endsWith("*")) {
-                    String prefix = str.substring(0, str.length() - 2).replace(".", "_").toUpperCase();
+                    String prefix = str.substring(0, str.length() - 1).replace(".", "_").toUpperCase();
                     permissions.addAll(Arrays.stream(Permission.values()).filter(p -> p.name().startsWith(prefix)).toList());
                 } else permissions.add(Permission.valueOf(str.replace(".", "_").toUpperCase()));
             } catch(IllegalArgumentException e) {
