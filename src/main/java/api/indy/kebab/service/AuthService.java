@@ -181,7 +181,7 @@ public class AuthService {
      */
     public User getActiveUser(HttpSession session) {
         if(session == null) return null;
-        return (User) session.getAttribute(this.ACTIVE_USER_SESSION_KEY);
+        return this._userRepository.findByUserId((long) session.getAttribute(this.ACTIVE_USER_SESSION_KEY));
     }
 
     /**
@@ -191,6 +191,6 @@ public class AuthService {
      * @param user the {@link User} object to set as the active user
      */
     public void setActiveUser(HttpSession session, User user) {
-        if(session != null) session.setAttribute(this.ACTIVE_USER_SESSION_KEY, user);
+        if(session != null) session.setAttribute(this.ACTIVE_USER_SESSION_KEY, user.getUserId());
     }
 }
