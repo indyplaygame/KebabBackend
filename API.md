@@ -201,6 +201,30 @@ Endpoints for user authentication and session management.
 ```
 <br>
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/auth/register", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        username: "example",
+        email: "example@example.com",
+        firstName: "Example",
+        lastName: "Example",
+        dateOfBirth: "01/01/1970",
+        password: "Example123"
+    })
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data["message"]) // Output: "User created successfully"
+)
+```
+<br>
+
 ## Login
 **URL:** `/auth/login`<br>
 **Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
@@ -254,6 +278,26 @@ Endpoints for user authentication and session management.
 ```
 <br>
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/auth/login", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        login: "example@example.com",
+        password: "Example123"
+    })
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data["message"]) // Output: "Logged in successfully"
+)
+```
+<br>
+
 ## Logout
 **URL:** `/auth/logout`<br>
 **Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
@@ -272,6 +316,18 @@ None
 {
   "message": "Logged out successfully"
 }
+```
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/auth/logout", {
+    method: "POST"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data["message"]) // Output: "Logged out successfully"
+)
 ```
 
 # Categories
@@ -332,6 +388,26 @@ Endpoints for managing categories.
 }
 ```
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/categories/create", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        name: "Pizza",
+        description: "Delicious pizza category",
+        color: "#FF6B6B"
+    })
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Category
+)
+```
+
 ## Get
 **URL:** `/categories/{id}`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
@@ -355,6 +431,19 @@ None
 {
   "error": "Could not find Category with ID {id}"
 }
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/categories/1", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Category
+)
 ```
 <br>
 
@@ -394,6 +483,19 @@ None
 ```
 <br>
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/categories/1/icon", {
+    method: "GET"
+}).then(
+    response => response.blob() 
+).then(
+    data => console.log(data) // Output: Image
+)
+```
+<br>
+
 ## List
 **URL:** `/categories/list`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
@@ -410,6 +512,18 @@ None
 **Description**: Categories retrieved successfully.<br>
 **Body**: `Page[Category]`<br>
 <br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/categories/list?page=0&size=10&sort=name,asc", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Page[Category]
+)
+```
 
 ## Update
 **URL:** `/categories/{id}/update`<br>
@@ -474,6 +588,26 @@ None
 }
 ```
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/categories/1/update", {
+    method: "PUT",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        name: "Updated Pizza",
+        description: "Updated description",
+        color: "#FF0000"
+    })
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Category
+)
+```
+
 ## Delete
 **URL:** `/categories/{id}/delete`<br>
 **Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
@@ -499,7 +633,18 @@ None
 }
 ```
 <br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/categories/1/delete", {
+    method: "DELETE"
+}).then(response => {
+    if(response.status === 204) console.log("Category deleted successfully"); // Output: Category deleted successfully
+    else return response.json();
+})
 ```
+<br>
 
 # Menu
 Endpoints for managing menu items.
@@ -580,6 +725,29 @@ Endpoints for managing menu items.
 }
 ```
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/menu/create", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        name: "Margherita Pizza",
+        description: "Classic pizza with tomato and mozzarella",
+        price: 15.99,
+        deliveryFee: 2.50,
+        available: true,
+        categoryId: 1
+    })
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: MenuItem
+)
+```
+
 ## Get
 **URL:** `/menu/{id}`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
@@ -603,6 +771,19 @@ None
 {
   "error": "Could not find MenuItem with ID {id}"
 }
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/menu/1", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: MenuItem
+)
 ```
 <br>
 
@@ -642,6 +823,19 @@ None
 ```
 <br>
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/menu/1/image", {
+    method: "GET"
+}).then(
+    response => response.blob()
+).then(
+    data => console.log(data) // Output: Image
+)
+```
+<br>
+
 ## List
 **URL:** `/menu/list`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
@@ -657,6 +851,19 @@ None
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
 **Description**: Menu items retrieved successfully.<br>
 **Body**: `Page[MenuItem]`<br>
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/menu/list?page=0&size=20&sort=name,asc", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Page[MenuItem]
+)
+```
 <br>
 
 ## Update
@@ -731,6 +938,29 @@ None
 }
 ```
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/menu/1/update", {
+    method: "PUT",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        name: "Updated Margherita Pizza",
+        description: "Updated description",
+        price: 18.99,
+        deliveryFee: 3.00,
+        available: true,
+        categoryId: 1
+    })
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: MenuItem
+)
+```
+
 ## Delete
 **URL:** `/menu/{id}/delete`<br>
 **Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
@@ -754,6 +984,18 @@ None
 {
   "error": "Could not find MenuItem with ID {id}"
 }
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/menu/1/delete", {
+    method: "DELETE"
+}).then(response => {
+    if(response.status === 204) console.log("Menu item deleted successfully"); // Output: Menu item deleted successfully
+    else return response.json();
+})
 ```
 <br>
 
@@ -816,6 +1058,27 @@ Endpoints for managing reviews.
 }
 ```
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/reviews/create", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        title: "Great Pizza!",
+        description: "Amazing taste and quality",
+        rating: 4.5,
+        anonymous: false
+    })
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Review
+)
+```
+
 ## Get
 **URL:** `/reviews/{id}`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
@@ -839,6 +1102,19 @@ None
 {
   "error": "Could not find Review with ID {id}"
 }
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/reviews/1", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Review
+)
 ```
 <br>
 
@@ -878,6 +1154,19 @@ None
 ```
 <br>
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/reviews/1/image", {
+    method: "GET"
+}).then(
+    response => response.blob()
+).then(
+    data => console.log(data) // Output: Image
+)
+```
+<br>
+
 ## List
 **URL:** `/reviews/list`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
@@ -893,6 +1182,19 @@ None
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
 **Description**: Menu items retrieved successfully.<br>
 **Body**: `Page[Review]`<br>
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/reviews/list?page=0&size=20&sort=createdAt,desc", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Page[Review]
+)
+```
 <br>
 
 ## Update
@@ -960,6 +1262,27 @@ None
 }
 ```
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/reviews/1/update", {
+    method: "PUT",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        title: "Updated Review Title",
+        description: "Updated review description",
+        rating: 5.0,
+        anonymous: true
+    })
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Review
+)
+```
+
 ## Delete
 **URL:** `/reviews/{id}/delete`<br>
 **Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
@@ -983,6 +1306,18 @@ None
 {
   "error": "Could not find Review with ID {id}"
 }
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/reviews/1/delete", {
+    method: "DELETE"
+}).then(response => {
+    if(response.status === 204) console.log("Review deleted successfully"); // Output: Review deleted successfully
+    else console.log(response.json());
+})
 ```
 <br>
 
@@ -1012,6 +1347,18 @@ None
 ```
 <br>
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/reviews/1/image/delete", {
+    method: "DELETE"
+}).then(response => {
+    if(response.status === 204) console.log("Review image deleted successfully"); // Output: Review image deleted successfully
+    else return response.json();
+})
+```
+<br>
+
 # Other Endpoints
 Endpoints for miscellaneous operations.
 
@@ -1030,6 +1377,18 @@ None
 
 ```
 Pong!
+```
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/ping", {
+    method: "GET"
+}).then(
+    response => response.text()
+).then(
+    data => console.log(data) // Output: "Pong!"
+)
 ```
 
 ## Health Check
@@ -1051,4 +1410,16 @@ None
   "status": "OK",
   "timestamp": "Timestamp in ISO 8601 format"
 }
+```
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/health", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data["status"]) // Output: "OK"
+)
 ```
