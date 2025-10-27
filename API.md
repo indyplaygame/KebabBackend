@@ -570,7 +570,7 @@ JavaScript
 fetch("base.url:port/categories/create", {
     method: "POST",
     headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "multipart/form-data"
     },
     body: JSON.stringify({
         name: "Pizza",
@@ -771,7 +771,7 @@ JavaScript
 fetch("base.url:port/categories/1/update", {
     method: "PUT",
     headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "multipart/form-data"
     },
     body: JSON.stringify({
         name: "Updated Pizza",
@@ -910,7 +910,7 @@ JavaScript
 fetch("base.url:port/menu/create", {
     method: "POST",
     headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "multipart/form-data"
     },
     body: JSON.stringify({
         name: "Margherita Pizza",
@@ -1124,7 +1124,7 @@ JavaScript
 fetch("base.url:port/menu/1/update", {
     method: "PUT",
     headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "multipart/form-data"
     },
     body: JSON.stringify({
         name: "Updated Margherita Pizza",
@@ -1245,7 +1245,7 @@ JavaScript
 fetch("base.url:port/reviews/create", {
     method: "POST",
     headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "multipart/form-data"
     },
     body: JSON.stringify({
         title: "Great Pizza!",
@@ -1449,7 +1449,7 @@ JavaScript
 fetch("base.url:port/reviews/1/update", {
     method: "PUT",
     headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "multipart/form-data"
     },
     body: JSON.stringify({
         title: "Updated Review Title",
