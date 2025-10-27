@@ -88,7 +88,7 @@ Defines the structure of a review object.
 ```json
 {
   "reviewId": "Long",
-  "title": "String (Optional",
+  "title": "String (Optional)",
   "description": "String (Optional)",
   "imageUrl": "String (Optional)",
   "createdAt": "String (ISO 8601 DateTime)",
@@ -1195,7 +1195,7 @@ Endpoints for managing reviews.
 - `description`: String (optional)
 - `image`: File (png, jpeg, jpg, gif, svg, webp) (optional)
 - `rating`: Double (multiple of 0.5 between 0.0 and 5.0)
-- `available`: Boolean (optional, default: false)
+- `anonymous`: Boolean (optional, default: false)
 
 ### **Response:**<br>
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">201 Created</code><br>
