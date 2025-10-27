@@ -13,10 +13,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface RestaurantRepository  extends JpaRepository<Restaurant, Long> {
 
     /**
-     * Finds a review by its unique identifier.
+     * Finds a restaurant by its unique identifier.
      *
-     * @param restaurantId the unique identifier of the review.
+     * @param restaurantId the unique identifier of the restaurant.
      * @return the {@link Restaurant} entity with the specified ID, or null if not found.
      */
-    public Restaurant findRestaurantById(long restaurantId);
+    public Restaurant findByRestaurantId(long restaurantId);
 }

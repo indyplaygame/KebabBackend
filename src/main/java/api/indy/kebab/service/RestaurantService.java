@@ -18,20 +18,20 @@ import java.io.IOException;
 
 /**
  * Service class for managing {@link Restaurant} entities.
- * Provides methods for creating, retrieving, updating, and deleting categories.
+ * Provides methods for creating, retrieving, updating, and deleting restaurants.
  *
  * @see RestaurantRepository
  * @see Restaurant
  */
 @Service
 public class RestaurantService {
-    private static final String IMAGES_PATH = "uploads/images/%s";
+    private static final String IMAGES_PATH = "uploads/restaurants/%s";
 
     private final RestaurantRepository _restaurantRepository;
 
     @Autowired
     public RestaurantService(RestaurantRepository restaurantRepository) {
-        _restaurantRepository = restaurantRepository;
+        this._restaurantRepository = restaurantRepository;
     }
 
     /**
@@ -48,15 +48,14 @@ public class RestaurantService {
      * @throws IOException if an error occurs while uploading the image.
      * @throws IllegalArgumentException if required fields are null or invalid.
      */
-    public Restaurant CreateRestaurant(
+    public Restaurant createRestaurant(
             String name, String description, MultipartFile image, String phoneNumber, String website, Location location) throws IOException {
-        if (name == null) throw new IllegalArgumentException("Name is null");
+        if(name == null || name.isEmpty() || image.isEmpty()) throw new IllegalArgumentException("Name and image cannot be null");
 
         String imageUrl = Util.uploadFile(image, IMAGES_PATH);
 
         Restaurant restaurant = new Restaurant(name, description, imageUrl, phoneNumber, website, location);
-
-        return _restaurantRepository.save(restaurant);
+        return this._restaurantRepository.save(restaurant);
     }
 
 
@@ -66,7 +65,9 @@ public class RestaurantService {
      * @param id the unique identifier of the restaurant.
      * @return the {@link Restaurant} with the specified ID, or {@code null} if not found.
      */
-    public Restaurant getRestaurant(long id) { return this._restaurantRepository.findRestaurantById(id);}
+    public Restaurant getRestaurant(long id) {
+        return this._restaurantRepository.findByRestaurantId(id);
+    }
 
     /**
      * Retrieves the logo file of a restaurant by its unique identifier.
@@ -75,10 +76,10 @@ public class RestaurantService {
      * @return the logo file, or {@code null} if the restaurant does not exist.
      */
     public File getRestaurantLogo(long id) {
-        Restaurant restaurant = this._restaurantRepository.findRestaurantById(id);
+        Restaurant restaurant = this._restaurantRepository.findByRestaurantId(id);
         if(restaurant == null) return null;
 
-        return Util.retrieveFile(restaurant.getLogoUrl());
+        return Util.retrieveFile(restaurant.getImageUrl());
     }
 
     /**
@@ -99,14 +100,14 @@ public class RestaurantService {
     public Restaurant updateRestaurant(
             long id, String name,String description, MultipartFile image,String phoneNumber, String website, Location location
     ) throws IOException {
-        Restaurant restaurant = this._restaurantRepository.findRestaurantById(id);
+        Restaurant restaurant = this._restaurantRepository.findByRestaurantId(id);
         if(restaurant == null) throw new EntityNotFoundException(Restaurant.class, id);
 
         if (name != null) restaurant.setName(name);
         if (description != null) restaurant.setDescription(description);
         if(image != null && !image.isEmpty()) {
-            Util.deleteFile(restaurant.getLogoUrl());
-            restaurant.setLogoUrl(Util.uploadFile(image, IMAGES_PATH));
+            Util.deleteFile(restaurant.getImageUrl());
+            restaurant.setImageUrl(Util.uploadFile(image, IMAGES_PATH));
         }
         if(phoneNumber != null) restaurant.setPhoneNumber(phoneNumber);
         if(website != null) restaurant.setWebsite(website);
@@ -120,10 +121,10 @@ public class RestaurantService {
      * @throws EntityNotFoundException if the restaurant does not exist.
      */
     public void deleteRestaurant(long id) {
-        Restaurant restaurant = this._restaurantRepository.findRestaurantById(id);
+        Restaurant restaurant = this._restaurantRepository.findByRestaurantId(id);
         if(restaurant == null) throw new EntityNotFoundException(Restaurant.class, id);
 
-        Util.deleteFile(restaurant.getLogoUrl());
+        Util.deleteFile(restaurant.getImageUrl());
         this._restaurantRepository.delete(restaurant);
     }
 
