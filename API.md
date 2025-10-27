@@ -220,7 +220,7 @@ fetch("base.url:port/auth/register", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data["message"]) // Output: User created successfully
+    data => console.log(data["message"]) // Output: "User created successfully"
 )
 ```
 <br>
@@ -293,7 +293,7 @@ fetch("base.url:port/auth/login", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data["message"]) // Output: Logged in successfully
+    data => console.log(data["message"]) // Output: "Logged in successfully"
 )
 ```
 <br>
@@ -326,7 +326,7 @@ fetch("base.url:port/auth/logout", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data["message"]) // Output: Logged out successfully
+    data => console.log(data["message"]) // Output: "Logged out successfully"
 )
 ```
 
@@ -404,7 +404,7 @@ fetch("base.url:port/categories/create", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data) // Output: Created Category
+    data => console.log(data) // Output: Category
 )
 ```
 
@@ -607,7 +607,7 @@ fetch("base.url:port/categories/1/update", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data) // Output: Updated Category
+    data => console.log(data) // Output: Category
 )
 ```
 
@@ -754,7 +754,7 @@ fetch("base.url:port/menu/create", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data) // Output: Created MenuItem
+    data => console.log(data) // Output: MenuItem
 )
 ```
 
@@ -970,7 +970,7 @@ fetch("base.url:port/menu/1/update", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data) // Output: Updated MenuItem
+    data => console.log(data) // Output: MenuItem
 )
 ```
 
@@ -1095,7 +1095,7 @@ fetch("base.url:port/reviews/create", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data) // Output: Created Review
+    data => console.log(data) // Output: Review
 )
 ```
 
@@ -1302,7 +1302,7 @@ fetch("base.url:port/reviews/1/update", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data) // Output: Updated Review
+    data => console.log(data) // Output: Review
 )
 ```
 
@@ -1423,7 +1423,7 @@ fetch("base.url:port/ping")
     .then(
         response => response.text()
     ).then(
-        data => console.log(data) // Output: Pong!
+        data => console.log(data) // Output: "Pong!"
     )
 ```
 
@@ -1455,6 +1455,6 @@ fetch("base.url:port/health")
     .then(
         response => response.json()
     ).then(
-        data => console.log(data["status"]) // Output: OK
+        data => console.log(data["status"]) // Output: "OK"
     )
 ```
