@@ -437,12 +437,13 @@ None
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/categories/1")
-    .then(
-        response => response.json()
-    ).then(
-        data => console.log(data) // Output: Category
-    )
+fetch("base.url:port/categories/1", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Category
+)
 ```
 <br>
 
@@ -485,13 +486,13 @@ None
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/categories/1/icon")
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Could not retrieve icon");
-        }
-        return response.blob(); // Output: Image
-    })
+fetch("base.url:port/categories/1/icon", {
+    method: "GET"
+}).then(
+    response => response.blob() 
+).then(
+    data => console.log(data) // Output: Image
+)
 ```
 <br>
 
@@ -515,8 +516,9 @@ None
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/categories/list?page=0&size=10&sort=name,asc")
-.then(
+fetch("base.url:port/categories/list?page=0&size=10&sort=name,asc", {
+    method: "GET"
+}).then(
     response => response.json()
 ).then(
     data => console.log(data) // Output: Page[Category]
@@ -637,15 +639,10 @@ JavaScript
 ```javascript
 fetch("base.url:port/categories/1/delete", {
     method: "DELETE"
-}).then(
-    response => {
-        if (response.status === 204) {
-            console.log("Category deleted successfully"); // Output: Category deleted successfully
-        } else {
-            return response.json();
-        }
-    }
-)
+}).then(response => {
+    if(response.status === 204) console.log("Category deleted successfully"); // Output: Category deleted successfully
+    else return response.json();
+})
 ```
 <br>
 
@@ -780,12 +777,13 @@ None
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/menu/1")
-    .then(
-        response => response.json()
-    ).then(
-        data => console.log(data) // Output: MenuItem
-    )
+fetch("base.url:port/menu/1", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: MenuItem
+)
 ```
 <br>
 
@@ -828,13 +826,13 @@ None
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/menu/1/image")
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Could not retrieve image");
-        }
-        return response.blob(); // Output: Image
-    })
+fetch("base.url:port/menu/1/image", {
+    method: "GET"
+}).then(
+    response => response.blob()
+).then(
+    data => console.log(data) // Output: Image
+)
 ```
 <br>
 
@@ -858,12 +856,13 @@ None
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/menu/list?page=0&size=20&sort=name,asc")
-    .then(
-        response => response.json()
-    ).then(
-        data => console.log(data) // Output: Page[MenuItem]
-    )
+fetch("base.url:port/menu/list?page=0&size=20&sort=name,asc", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Page[MenuItem]
+)
 ```
 <br>
 
@@ -993,15 +992,10 @@ JavaScript
 ```javascript
 fetch("base.url:port/menu/1/delete", {
     method: "DELETE"
-}).then(
-    response => {
-        if (response.status === 204) {
-            console.log("Menu item deleted successfully"); // Output: Menu item deleted successfully
-        } else {
-            return response.json();
-        }
-    }
-)
+}).then(response => {
+    if(response.status === 204) console.log("Menu item deleted successfully"); // Output: Menu item deleted successfully
+    else return response.json();
+})
 ```
 <br>
 
@@ -1114,12 +1108,13 @@ None
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/reviews/1")
-    .then(
-        response => response.json()
-    ).then(
-        data => console.log(data) // Output: Review
-    )
+fetch("base.url:port/reviews/1", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Review
+)
 ```
 <br>
 
@@ -1162,13 +1157,13 @@ None
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/reviews/1/image")
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Could not retrieve image");
-        }
-        return response.blob(); // Output: Image
-    })x
+fetch("base.url:port/reviews/1/image", {
+    method: "GET"
+}).then(
+    response => response.blob()
+).then(
+    data => console.log(data) // Output: Image
+)
 ```
 <br>
 
@@ -1192,12 +1187,13 @@ None
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/reviews/list?page=0&size=20&sort=createdAt,desc")
-    .then(
-        response => response.json()
-    ).then(
-        data => console.log(data) // Output: Page[Review]
-    )
+fetch("base.url:port/reviews/list?page=0&size=20&sort=createdAt,desc", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Page[Review]
+)
 ```
 <br>
 
@@ -1318,15 +1314,10 @@ JavaScript
 ```javascript
 fetch("base.url:port/reviews/1/delete", {
     method: "DELETE"
-}).then(
-    response => {
-        if (response.status === 204) {
-            console.log("Review deleted successfully"); // Output: Review deleted successfully
-        } else {
-            return response.json();
-        }
-    }
-)
+}).then(response => {
+    if(response.status === 204) console.log("Review deleted successfully"); // Output: Review deleted successfully
+    else console.log(response.json());
+})
 ```
 <br>
 
@@ -1361,15 +1352,10 @@ JavaScript
 ```javascript
 fetch("base.url:port/reviews/1/image/delete", {
     method: "DELETE"
-}).then(
-    response => {
-        if (response.status === 204) {
-            console.log("Review image deleted successfully"); // Output: Review image deleted successfully
-        } else {
-            return response.json();
-        }
-    }
-)
+}).then(response => {
+    if(response.status === 204) console.log("Review image deleted successfully"); // Output: Review image deleted successfully
+    else return response.json();
+})
 ```
 <br>
 
@@ -1396,12 +1382,13 @@ Pong!
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/ping")
-    .then(
-        response => response.text()
-    ).then(
-        data => console.log(data) // Output: "Pong!"
-    )
+fetch("base.url:port/ping", {
+    method: "GET"
+}).then(
+    response => response.text()
+).then(
+    data => console.log(data) // Output: "Pong!"
+)
 ```
 
 ## Health Check
@@ -1428,10 +1415,11 @@ None
 ### **Example:**
 JavaScript
 ```javascript
-fetch("base.url:port/health")
-    .then(
-        response => response.json()
-    ).then(
-        data => console.log(data["status"]) // Output: "OK"
-    )
+fetch("base.url:port/health", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data["status"]) // Output: "OK"
+)
 ```
