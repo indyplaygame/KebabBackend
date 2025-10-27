@@ -486,17 +486,12 @@ None
 JavaScript
 ```javascript
 fetch("base.url:port/categories/1/icon")
-    .then(
-        response => response.blob()
-    ).then(
-        blob => {
-            const imageUrl = URL.createObjectURL(blob);
-            const img = document.createElement('img');
-            img.src = imageUrl;
-            document.body.appendChild(img);
-            console.log("Category icon displayed"); // Output: Category icon displayed
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Could not retrieve icon");
         }
-    )
+        return response.blob(); // Output: Image
+    })
 ```
 <br>
 
@@ -650,8 +645,6 @@ fetch("base.url:port/categories/1/delete", {
             return response.json();
         }
     }
-).then(
-    data => data && console.log(data)
 )
 ```
 <br>
@@ -836,17 +829,12 @@ None
 JavaScript
 ```javascript
 fetch("base.url:port/menu/1/image")
-    .then(
-        response => response.blob()
-    ).then(
-        blob => {
-            const imageUrl = URL.createObjectURL(blob);
-            const img = document.createElement('img');
-            img.src = imageUrl;
-            document.body.appendChild(img);
-            console.log("Menu item image displayed"); // Output: Menu item image displayed
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Could not retrieve image");
         }
-    )
+        return response.blob(); // Output: Image
+    })
 ```
 <br>
 
@@ -1013,8 +1001,6 @@ fetch("base.url:port/menu/1/delete", {
             return response.json();
         }
     }
-).then(
-    data => data && console.log(data)
 )
 ```
 <br>
@@ -1177,17 +1163,12 @@ None
 JavaScript
 ```javascript
 fetch("base.url:port/reviews/1/image")
-    .then(
-        response => response.blob()
-    ).then(
-        blob => {
-            const imageUrl = URL.createObjectURL(blob);
-            const img = document.createElement('img');
-            img.src = imageUrl;
-            document.body.appendChild(img);
-            console.log("Review image displayed"); // Output: Review image displayed
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Could not retrieve image");
         }
-    )
+        return response.blob(); // Output: Image
+    })x
 ```
 <br>
 
@@ -1345,8 +1326,6 @@ fetch("base.url:port/reviews/1/delete", {
             return response.json();
         }
     }
-).then(
-    data => data && console.log(data)
 )
 ```
 <br>
@@ -1390,8 +1369,6 @@ fetch("base.url:port/reviews/1/image/delete", {
             return response.json();
         }
     }
-).then(
-    data => data && console.log(data)
 )
 ```
 <br>
