@@ -90,7 +90,7 @@ public class MenuService {
      */
     public File getMenuItemImage(long id) {
         MenuItem menuItem = this._menuRepository.findByMenuItemId(id);
-        if(menuItem == null) return null;
+        if(menuItem == null) throw new EntityNotFoundException(MenuItem.class, id);;
 
         return Util.retrieveFile(menuItem.getImageUrl());
     }

@@ -2,6 +2,7 @@ package api.indy.kebab.model;
 
 import api.indy.kebab.auth.Permission;
 import api.indy.kebab.persistence.converter.PermissionsConverter;
+import api.indy.kebab.util.Util;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -28,10 +29,10 @@ public class User {
 
     public User(String username, String email, String firstName, String middleName, String lastName, String passwordHash, String dateOfBirth) {
         this._username = username;
-        this._email = email;
-        this._firstName = firstName;
-        this._middleName = middleName;
-        this._lastName = lastName;
+        this._email = email.toUpperCase();
+        this._firstName = Util.capitalize(firstName);
+        this._middleName = Util.capitalize(middleName);
+        this._lastName = Util.capitalize(lastName);
         this._passwordHash = passwordHash;
         this._dateOfBirth = dateOfBirth;
         this._permissions = Set.of();

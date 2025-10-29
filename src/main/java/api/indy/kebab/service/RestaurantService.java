@@ -5,6 +5,8 @@ import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.Location;
 import api.indy.kebab.model.MenuItem;
 import api.indy.kebab.model.Restaurant;
+import api.indy.kebab.model.Voivodeship;
+import api.indy.kebab.model.request.CreateLocationRequest;
 import api.indy.kebab.repository.RestaurantRepository;
 import api.indy.kebab.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,15 +77,15 @@ public class RestaurantService {
      * @param id the unique identifier of the restaurant.
      * @return the logo file, or {@code null} if the restaurant does not exist.
      */
-    public File getRestaurantLogo(long id) {
+    public File getRestaurantImage(long id) {
         Restaurant restaurant = this._restaurantRepository.findByRestaurantId(id);
-        if(restaurant == null) return null;
+        if(restaurant == null) throw new EntityNotFoundException(Restaurant.class, id);;
 
         return Util.retrieveFile(restaurant.getImageUrl());
     }
 
     /**
-     * Updates a new restaurant
+     * Updates an existing restaurant
      *
      * @param id the ID of the restaurant to update
      * @param name the new name of the restaurant
@@ -98,22 +100,37 @@ public class RestaurantService {
      * @throws IllegalArgumentException if required fields are null or invalid.
      */
     public Restaurant updateRestaurant(
-            long id, String name,String description, MultipartFile image,String phoneNumber, String website, Location location
+            long id, String name,String description, MultipartFile image,String phoneNumber, String website, CreateLocationRequest location
     ) throws IOException {
         Restaurant restaurant = this._restaurantRepository.findByRestaurantId(id);
         if(restaurant == null) throw new EntityNotFoundException(Restaurant.class, id);
 
         if (name != null) restaurant.setName(name);
         if (description != null) restaurant.setDescription(description);
+        if(phoneNumber != null) restaurant.setPhoneNumber(phoneNumber);
+        if(website != null) restaurant.setWebsite(website);
         if(image != null && !image.isEmpty()) {
             Util.deleteFile(restaurant.getImageUrl());
             restaurant.setImageUrl(Util.uploadFile(image, IMAGES_PATH));
         }
-        if(phoneNumber != null) restaurant.setPhoneNumber(phoneNumber);
-        if(website != null) restaurant.setWebsite(website);
-        if(location != null) restaurant.setLocation(location);
+        if(location != null) {
+            Location loc = restaurant.getLocation();
+
+            if(location.latitude() != null) loc.setLatitude(location.latitude());
+            if(location.longitude() != null) loc.setLongitude(location.longitude());
+            if(location.country() != null) loc.setCountry(location.country());
+            if(location.voivodeship() != null) loc.setVoivodeship(location.voivodeship());
+            if(location.postalCode() != null) loc.setPostalCode(location.postalCode());
+            if(location.city() != null) loc.setCity(location.city());
+            if(location.street() != null) loc.setStreet(location.street());
+            if(location.buildingNumber() != null) loc.setBuildingNumber(location.buildingNumber());
+
+            restaurant.setLocation(loc);
+        }
+
         return _restaurantRepository.save(restaurant);
     }
+
     /**
      * Deletes a restaurant by its unique identifier.
      *
@@ -134,8 +151,7 @@ public class RestaurantService {
      * @param pageable the {@link Pageable} object containing pagination information.
      * @return a {@link Page} of {@link Restaurant} entities.
      */
-    public Page<Restaurant> listRestaurant(Pageable pageable) {
+    public Page<Restaurant> listRestaurants(Pageable pageable) {
         return this._restaurantRepository.findAll(pageable);
     }
 }
-
