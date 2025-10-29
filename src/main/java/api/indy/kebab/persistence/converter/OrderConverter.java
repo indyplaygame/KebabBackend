@@ -1,6 +1,5 @@
 package api.indy.kebab.persistence.converter;
 
-import api.indy.kebab.auth.Permission;
 import api.indy.kebab.model.Order;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
