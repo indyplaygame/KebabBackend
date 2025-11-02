@@ -1,7 +1,8 @@
 package api.indy.kebab.model;
 
-import api.indy.kebab.persistence.converter.OrderConverter;
+import api.indy.kebab.persistence.converter.OrderItemsConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.util.Map;
 
@@ -17,14 +18,14 @@ import java.util.Map;
 public class Order {
     private long _orderId;
     private User _user;
-    private Map<MenuItem, Integer> _items;
-    private Status _status;
     private String _phoneNumber;
-    private Location _location;
-    private String _orderDatePlaced;
+    private String _orderPlacementDate;
     private String _notes;
+    private Location _location;
+    private Status _status;
     private PaymentMethod _paymentMethod;
-    private boolean _payed;
+    private Map<MenuItem, Integer> _items;
+    private boolean _paid;
 
     public enum Status {
         RECEIVED,
@@ -48,71 +49,76 @@ public class Order {
 
     public Order(
         User user,
-        Map<MenuItem,Integer>  item,
-        Status status,
         String phoneNumber,
-        Location location,
-        String orderDatePlaced,
+        String orderPlacementDate,
         String notes,
+        Location location,
+        Status status,
         PaymentMethod paymentMethod,
-        boolean payed
+        Map<MenuItem, Integer> items,
+        boolean paid
     ){
         this._user = user;
-        this._items = item;
-        this._status = status;
         this._phoneNumber = phoneNumber;
-        this._location = location;
-        this._orderDatePlaced = orderDatePlaced;
+        this._orderPlacementDate = orderPlacementDate;
         this._notes = notes;
+        this._location = location;
+        this._status = status;
         this._paymentMethod = paymentMethod;
-        this._payed = payed;
+        this._items = items;
+        this._paid = paid;
     }
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id", nullable = false)
+    @Column(name = "orderId", nullable = false)
     public long getOrderId() { return this._orderId; }
     protected void setOrderId(long orderId) { this._orderId = orderId; }
 
     @JsonIgnore
     @ManyToOne(optional = true)
-    @JoinColumn(name ="userID", nullable = true)
+    @JoinColumn(name = "userId", nullable = true)
     public User getUser() { return this._user; }
     public void setUser(User user) { this._user = user; }
-
-    @Convert(converter = OrderConverter.class)
-    @Column(name = "orderedItems", nullable = false)
-    public Map<MenuItem, Integer> getItems() { return this._items; }
-    public void setItems(Map<MenuItem, Integer> item) { this._items = item; }
-
-    @Column(name = "status", nullable = false)
-    public Status getStatus() { return this._status; }
-    public void setStatus(Status status) { this._status = status; }
 
     @Column(name = "phoneNumber", nullable = false)
     public String getPhoneNumber() { return this._phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this._phoneNumber = phoneNumber; }
 
-    @Embedded
-    public Location getLocation() {return this._location;}
-    public void setLocation(Location location) { this._location = location; }
-
-    @Column(name = "orderDatePlace", nullable = false)
-    public String getOrderDatePlaced() { return this._orderDatePlaced; }
-    public void setOrderDatePlaced(String orderDatePlaced) { this._orderDatePlaced = orderDatePlaced; }
+    @Column(name = "orderPlacementDate", nullable = false)
+    public String getOrderDatePlaced() { return this._orderPlacementDate; }
+    public void setOrderDatePlaced(String orderDatePlaced) { this._orderPlacementDate = orderDatePlaced; }
 
     @Column(name = "notes", nullable = false)
     public String getNotes() { return this._notes; }
     public void setNotes(String notes) { this._notes = notes; }
 
+    @Embedded
+    public Location getLocation() { return this._location; }
+    public void setLocation(Location location) { this._location = location; }
+
+    @Column(name = "status", nullable = false)
+    public Status getStatus() { return this._status; }
+    public void setStatus(Status status) { this._status = status; }
+
     @Column(name = "paymentMethod", nullable = false)
     public PaymentMethod getPaymentMethod() { return this._paymentMethod; }
     public void setPaymentMethod(PaymentMethod paymentMethod) { this._paymentMethod = paymentMethod; }
 
-    @Column(name = "payed", nullable = false)
-    public boolean isPayed() { return this._payed; }
-    public void setPayed(boolean payed) { this._payed = payed; }
+    @Convert(converter = OrderItemsConverter.class)
+    @Column(name = "orderedItems", nullable = false)
+    public Map<MenuItem, Integer> getItems() { return this._items; }
+    public void setItems(Map<MenuItem, Integer> items) { this._items = items; }
 
+    @Column(name = "paid", nullable = false)
+    public boolean isPayed() { return this._paid; }
+    public void setPayed(boolean paid) { this._paid = paid; }
 
+    @Transient
+    @JsonProperty("totalPrice")
+    public double getTotalPrice() {
+        return this._items.entrySet().stream()
+            .mapToDouble(e -> e.getKey().getPrice() * e.getValue()).sum();
+    }
 }
