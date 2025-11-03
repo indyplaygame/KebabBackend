@@ -87,9 +87,11 @@
 │   │   │       ├── auth                            # Authentication and Authorization
 │   │   │       ├── config                          # Application configuration
 │   │   │       ├── controller                      # REST controllers
+│   │   │       ├── decorators                      # Decorator classes
 │   │   │       ├── exceptions                      # Custom exceptions
 │   │   │       ├── main                            # Main application class
 │   │   │       ├── model                           # Data models and entities
+│   │   │       ├── persistence                     # Persistence layer
 │   │   │       ├── repository                      # Data access layer
 │   │   │       ├── service                         # Application logic layer
 │   │   │       ├── util                            # Utility classes

@@ -1,12 +1,16 @@
 package api.indy.kebab.service;
 
+import api.indy.kebab.auth.Permission;
 import api.indy.kebab.exceptions.EntityNotFoundException;
+import api.indy.kebab.exceptions.NotOwnerOfEntityException;
 import api.indy.kebab.model.Review;
 import api.indy.kebab.model.User;
 import api.indy.kebab.repository.ReviewRepository;
 import api.indy.kebab.util.Util;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,7 +51,7 @@ public class ReviewService {
      *
      * @throws IOException if an I/O error occurs during icon upload.
      */
-    public Review createReview(HttpSession session, String title, String description, MultipartFile image, float rating, Boolean anonymous) throws IOException {
+    public Review createReview(HttpSession session, String title, String description, MultipartFile image, Double rating, Boolean anonymous) throws IOException {
         if(rating % 0.5F != 0F) throw new IllegalArgumentException("Rating must be in increments of 0.5");
         if(rating < 0F || rating > 5F) throw new IllegalArgumentException("Rating must be a number between 0 and 5");
 
@@ -107,9 +111,14 @@ public class ReviewService {
      * @throws IOException if an I/O error occurs during icon upload.
      * @throws EntityNotFoundException if the review with the specified ID does not exist.
      */
-    public Review updateReview(long id, String title, String description, MultipartFile image, Float rating, Boolean anonymous) throws IOException {
+    public Review updateReview(
+            HttpSession session, long id, String title, String description, MultipartFile image, Double rating, Boolean anonymous
+    ) throws NotOwnerOfEntityException, IOException {
         Review review = this._reviewRepository.findByReviewId(id);
         if(review == null) throw new EntityNotFoundException(Review.class, id);
+
+        if(!Util.verifyOwnership(review.getUserId(), Permission.NONE, this._authService.getActiveUser(session)))
+            throw new NotOwnerOfEntityException(Review.class);
 
         if(title != null && !title.isEmpty()) review.setTitle(title);
         if(description != null && !description.isEmpty()) review.setDescription(description);
@@ -134,22 +143,43 @@ public class ReviewService {
      *
      * @param id the unique identifier of the review to delete.
      */
-    public void deleteReview(long id) {
+    public void deleteReview(HttpSession session, long id) throws NotOwnerOfEntityException {
         Review review = this._reviewRepository.findByReviewId(id);
-
         if(review == null) throw new EntityNotFoundException(Review.class, id);
+
+        if(!Util.verifyOwnership(review.getUserId(), Permission.REVIEWS_DELETE, this._authService.getActiveUser(session)))
+            throw new NotOwnerOfEntityException(Review.class);
 
         Util.deleteFile(review.getImageUrl());
         this._reviewRepository.delete(review);
     }
 
     /**
+     * Deletes the image associated with a {@link Review} entity by its unique identifier.
+     *
+     * @param id the unique identifier of the review whose image is to be deleted.
+     */
+    public void deleteReviewImage(HttpSession session, long id) throws NotOwnerOfEntityException {
+        Review review = this._reviewRepository.findByReviewId(id);
+        if(review == null) throw new EntityNotFoundException(Review.class, id);
+
+        if(!Util.verifyOwnership(review.getUserId(), Permission.REVIEWS_UPDATE, this._authService.getActiveUser(session)))
+            throw new NotOwnerOfEntityException(Review.class);
+
+        Util.deleteFile(review.getImageUrl());
+        review.setImageUrl(null);
+
+        this._reviewRepository.save(review);
+    }
+
+    /**
      * Retrieves a list of all {@link Review} entities.
      *
-     * @return a list of all reviews.
+     * @param pageable a {@link Pageable} object containing pagination information.
+     * @return a {@link Page} of {@link Review} entities.
      */
-    public List<Review> listReviews() {
-        return this._reviewRepository.findAll();
+    public Page<Review> listReviews(Pageable pageable) {
+        return this._reviewRepository.findAll(pageable);
     }
 
 }

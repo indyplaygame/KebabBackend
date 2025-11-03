@@ -3,20 +3,20 @@ package api.indy.kebab.service;
 import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.Category;
 import api.indy.kebab.model.MenuItem;
-import api.indy.kebab.repository.CategoryRepository;
 import api.indy.kebab.repository.MenuRepository;
 import api.indy.kebab.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Service class for managing {@link MenuItem} entities.
- * Provides methods for creating, retrieving, updating, and deleting categories.
+ * Provides methods for creating, retrieving, updating, and deleting menu items.
  *
  * @see MenuRepository
  * @see MenuItem
@@ -89,7 +89,7 @@ public class MenuService {
      */
     public File getMenuItemImage(long id) {
         MenuItem menuItem = this._menuRepository.findByMenuItemId(id);
-        if(menuItem == null) return null;
+        if(menuItem == null) throw new EntityNotFoundException(MenuItem.class, id);;
 
         return Util.retrieveFile(menuItem.getImageUrl());
     }
@@ -143,7 +143,6 @@ public class MenuService {
      */
     public void deleteMenuItem(long id) {
         MenuItem menuItem = this._menuRepository.findByMenuItemId(id);
-
         if(menuItem == null) throw new EntityNotFoundException(MenuItem.class, id);
 
         Util.deleteFile(menuItem.getImageUrl());
@@ -153,9 +152,10 @@ public class MenuService {
     /**
      * Retrieves a list of all {@link MenuItem} entities.
      *
-     * @return a list of all menu items.
+     * @param pageable the {@link Pageable} object containing pagination information.
+     * @return a {@link Page} of {@link MenuItem} entities.
      */
-    public List<MenuItem> listMenuItems() {
-        return this._menuRepository.findAll();
+    public Page<MenuItem> listMenuItems(Pageable pageable) {
+        return this._menuRepository.findAll(pageable);
     }
 }

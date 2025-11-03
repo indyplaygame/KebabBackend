@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @param name The name of the category. Must not be blank, only alphanumeric characters and spaces allowed, length between 3 and 50 characters.
  * @param icon The icon file for the category. Must not be empty, must be one of the allowed types (PNG, JPEG, GIF, SVG, WEBP), size not exceeding 5MB.
  * @param description The description of the category. Optional, but if provided, must not exceed 1000 characters.
+ * @param color The color associated with the category. Must be a valid hex color code.
  */
 public record CreateCategoryRequest (
     @NotBlank(groups = {ValidationGroups.OnCreate.class}, message = "Name cannot be empty")
@@ -29,5 +30,8 @@ public record CreateCategoryRequest (
     MultipartFile icon,
 
     @Length(max = 1000, message = "Description cannot exceed 1000 characters")
-    String description
+    String description,
+
+    @Pattern(regexp = "#[a-fA-F0-9]{6,8}", message = "Color must be a valid hex color code: #RRGGBB(AA)")
+    String color
 ) {}

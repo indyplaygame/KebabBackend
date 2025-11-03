@@ -1,12 +1,17 @@
 # Table of Contents
 - **[Model](#model)**
+  - **[Page](#paget)**
   - **[Category](#category)**
   - **[MenuItem](#menuitem)**
   - **[Review](#review)**
+- **[Pagination](#pagination)**
+- **[Permissions](#permissions)**
 - **[Authentication](#authentication)**
     - [<code style="color: rgb(250, 224, 124)">POST</code> Register](#register)
     - [<code style="color: rgb(250, 224, 124)">POST</code> Login](#login)
     - [<code style="color: rgb(250, 224, 124)">POST</code> Logout](#logout)
+    - [<code style="color: rgb(182, 168, 225)">PATCH</code> Grant Permissions](#grant-permissions)
+    - [<code style="color: rgb(182, 168, 225)">PATCH</code> Revoke Permissions](#revoke-permissions)
 - **[Categories](#categories)**
     - [<code style="color: rgb(250, 224, 124)">POST</code> Create](#create)
     - [<code style="color: rgb(95, 221, 154)">GET</code> Get](#get)
@@ -28,12 +33,27 @@
     - [<code style="color: rgb(95, 221, 154)">GET</code> List](#list-2)
     - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-2)
     - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-2)
+    - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete Image](#delete-image-2)
 - **[Other Endpoints](#other-endpoints)**
     - [<code style="color: rgb(95, 221, 154)">GET</code> Ping](#ping)
     - [<code style="color: rgb(95, 221, 154)">GET</code> Health Check](#health-check)
 
 # Model
 Application data models.
+
+## Page[T]
+Defines the structure of a paginated response of ```T``` objects.
+```json
+{
+  "items": "List[T]",
+  "page": "Integer",
+  "size": "Integer",
+  "totalPages": "Integer",
+  "totalItems": "Long",
+  "hasPrevious": "Boolean",
+  "hasNext": "Boolean"
+}
+```
 
 ## Category
 Defines the structure of a category object.
@@ -42,7 +62,8 @@ Defines the structure of a category object.
   "categoryId": "Long",
   "name": "String",
   "imageUrl": "String",
-  "description": "String (Optional)"
+  "description": "String (Optional)",
+  "color": "String (Optional)"
 }
 ```
 
@@ -67,7 +88,7 @@ Defines the structure of a review object.
 ```json
 {
   "reviewId": "Long",
-  "title": "String (Optional",
+  "title": "String (Optional)",
   "description": "String (Optional)",
   "imageUrl": "String (Optional)",
   "createdAt": "String (ISO 8601 DateTime)",
@@ -78,6 +99,28 @@ Defines the structure of a review object.
   "likes": "Integer"
 }
 ```
+
+# Pagination
+Standard pagination parameters for list endpoints.
+- `page`: Integer (optional, default: 0) - The page number to retrieve (0-indexed).
+- `size`: Integer (optional, default: 10) - The number of items per page.
+- `sort`: String (optional, default: "id,asc") - The sorting criteria in the format: `property,(asc|desc)`. Multiple sort criteria can be provided.
+
+# Permissions
+List of available permissions.
+
+| Permission           | Description                                        |
+|----------------------|----------------------------------------------------|
+| `permissions.grant`  | Grant permissions to users                         |
+| `permissions.revoke` | Revoke permissions from users                      |
+| `categories.create`  | Create new categories                              |
+| `categories.update`  | Update existing categories                         |  
+| `categories.delete`  | Delete existing categories                         |
+| `menu.create`        | Create new menu items                              |
+| `menu.update`        | Update existing menu items                         |
+| `menu.delete`        | Delete existing menu items                         |
+| `reviews.update`     | Update existing reviews that the user does not own |
+| `reviews.delete`     | Delete existing reviews that the user does not own |
 
 # Authentication
 Endpoints for user authentication and session management.
@@ -177,6 +220,30 @@ Endpoints for user authentication and session management.
 ```
 <br>
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/auth/register", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        username: "example",
+        email: "example@example.com",
+        firstName: "Example",
+        lastName: "Example",
+        dateOfBirth: "01/01/1970",
+        password: "Example123"
+    })
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data["message"]) // Output: "User created successfully"
+)
+```
+<br>
+
 ## Login
 **URL:** `/auth/login`<br>
 **Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
@@ -230,6 +297,26 @@ Endpoints for user authentication and session management.
 ```
 <br>
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/auth/login", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        login: "example@example.com",
+        password: "Example123"
+    })
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data["message"]) // Output: "Logged in successfully"
+)
+```
+<br>
+
 ## Logout
 **URL:** `/auth/logout`<br>
 **Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
@@ -249,6 +336,174 @@ None
   "message": "Logged out successfully"
 }
 ```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/auth/logout", {
+    method: "POST"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data["message"]) // Output: "Logged out successfully"
+)
+```
+
+## Grant Permissions
+**URL:** `/auth/permissions/{id}/grant`<br>
+**Method:** <code style="color: rgb(182, 168, 225)">PATCH</code><br>
+**Authentication:** Required<br>
+**Permissions:** `permissions.grant`<br>
+**Content-Type:** `application/json`<br>
+**Description:** Grant permissions to a user with provided `id`. List of all available permissions can be found [here](#permissions).<br>
+
+### **Request Body:**
+```json
+{
+  "permissions": "List[String]"
+}
+```
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Permissions granted successfully.<br>
+
+```json
+{
+  "message": "Permissions granted successfully"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+  "errors": {
+    "permissions": [
+      "Permissions cannot be empty"
+    ]
+}
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: No such permissions exist.<br>
+
+```json
+{
+  "error": "No such permissions exist with identifiers: identifiers..."
+}
+```
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No user found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find User with ID {id}"
+}
+```
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/auth/permissions/1/grant", {
+    method: "PATCH",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        permissions: ["menu.create","menu.update"]
+    })
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data["message"]) // Output: "Permissions granted successfully"
+)
+```
+<br>
+
+## Revoke Permissions
+**URL:** `/auth/permissions/{id}/revoke`<br>
+**Method:** <code style="color: rgb(182, 168, 225)">PATCH</code><br>
+**Authentication:** Required<br>
+**Permissions:** `permissions.revoke`<br>
+**Content-Type:** `application/json`<br>
+**Description:** Grant permissions to a user with provided `id`. List of all available permissions can be found [here](#permissions).<br>
+
+### **Request Body:**
+```json
+{ 
+  "permissions": "List[String]"
+}
+```
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Permissions revoked successfully.<br>
+
+```json
+{
+  "message": "Permissions revoked successfully"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+"errors": {
+    "permissions": [
+      "Permissions cannot be empty"
+    ]
+}
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: No such permissions exist.<br>
+
+```json
+{
+  "error": "No such permissions exist with identifiers: identifiers..."
+}
+```
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No user found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find User with ID {id}"
+}
+```
+<br>
+
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/auth/permissions/1/revoke", {
+    method: "PATCH",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        permissions: ["menu.create"]
+    })
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data["message"]) // Output: "Permissions revoked successfully"
+)
+```
 
 # Categories
 Endpoints for managing categories.
@@ -257,6 +512,7 @@ Endpoints for managing categories.
 **URL:** `/categories/create`<br>
 **Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
 **Authentication:** Required<br>
+**Permissions:** `categories.create`<br>
 **Content-Type:** `multipart/form-data`<br>
 **Description:** Create a new category.<br>
 
@@ -264,6 +520,7 @@ Endpoints for managing categories.
 - `name`: String
 - `icon`: File (png, jpeg, jpg, gif, svg, webp)
 - `description`: String (optional)
+- `color`: String (optional, hex color code #RRGGBB or #RRGGBBAA)
 
 ### **Response:**<br>
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">201 Created</code><br>
@@ -289,6 +546,9 @@ Endpoints for managing categories.
     ],
     "description": [
       "Description cannot exceed 1000 characters"
+    ],
+    "color": [
+      "Color must be a valid hex color code: #RRGGBB(AA)"
     ]
   }
 }
@@ -302,6 +562,24 @@ Endpoints for managing categories.
 {
   "error": "Failed to upload icon: {message}"
 }
+```
+
+### **Example:**
+JavaScript
+```javascript
+const formData = new FormData();
+formData.append("name", "Pizza");
+formData.append("description", "Delicious pizza category");
+formData.append("color", "#FF6B6B");
+
+fetch("http://base.url:port/categories/create", {
+    method: "POST",
+    body: formData
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Category
+)
 ```
 
 ## Get
@@ -327,6 +605,19 @@ None
 {
   "error": "Could not find Category with ID {id}"
 }
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/categories/1", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Category
+)
 ```
 <br>
 
@@ -366,12 +657,26 @@ None
 ```
 <br>
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/categories/1/icon", {
+    method: "GET"
+}).then(
+    response => response.blob() 
+).then(
+    data => console.log(data) // Output: Image
+)
+```
+<br>
+
 ## List
 **URL:** `/categories/list`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
 **Authentication:** Not Required<br>
+**Paginated:** Yes (Default size: 10, Max size: 100)<br>
 **Content-Type:** None<br>
-**Description:** Retrieve a list of all categories.<br>
+**Description:** Retrieve a paginated list of all categories.<br>
 
 ### **Request Body:**
 None
@@ -379,13 +684,26 @@ None
 ### **Response:**<br>
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
 **Description**: Categories retrieved successfully.<br>
-**Body**: `List[Category]`<br>
+**Body**: `Page[Category]`<br>
 <br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/categories/list?page=0&size=10&sort=name,asc", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Page[Category]
+)
+```
 
 ## Update
 **URL:** `/categories/{id}/update`<br>
 **Method:** <code style="color: rgb(103, 174, 246)">PUT</code><br>
 **Authentication:** Required<br>
+**Permissions:** `categories.update`<br>
 **Content-Type:** `multipart/form-data`<br>
 **Description:** Update an existing category.<br>
 
@@ -393,6 +711,7 @@ None
 - `name`: String (optional)
 - `icon`: File (png, jpeg, jpg, gif, svg, webp) (optional)
 - `description`: String (optional)
+- `color`: String (optional, hex color code #RRGGBB or #RRGGBBAA)
 
 ### **Response:**<br>
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
@@ -416,6 +735,9 @@ None
     ],
     "description": [
       "Description cannot exceed 1000 characters"
+    ],
+    "color": [
+      "Color must be a valid hex color code: #RRGGBB(AA)"
     ]
   }
 }
@@ -427,7 +749,7 @@ None
 
 ```json
 {
-  "error": "NCould not find Category with ID {id}"
+  "error": "Could not find Category with ID {id}"
 }
 ```
 <br>
@@ -441,10 +763,29 @@ None
 }
 ```
 
+### **Example:**
+JavaScript
+```javascript
+const formData = new FormData();
+formData.append("name", "Kebab");
+formData.append("description", "Delicious kebab category");
+formData.append("color", "#6200EE");
+
+fetch("http://base.url:port/categories/1/update", {
+    method: "PUT",
+    body: formData
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Category
+)
+```
+
 ## Delete
 **URL:** `/categories/{id}/delete`<br>
 **Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
 **Authentication:** Required<br>
+**Permissions:** `categories.delete`<br>
 **Content-Type:** None<br>
 **Description:** Delete an existing category.<br>
 
@@ -466,7 +807,18 @@ None
 }
 ```
 <br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/categories/1/delete", {
+    method: "DELETE"
+}).then(response => {
+    if(response.status === 204) console.log("Category deleted successfully"); // Output: Category deleted successfully
+    else return response.json();
+})
 ```
+<br>
 
 # Menu
 Endpoints for managing menu items.
@@ -475,6 +827,7 @@ Endpoints for managing menu items.
 **URL:** `/menu/create`<br>
 **Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
 **Authentication:** Required<br>
+**Permissions:** `menu.create`<br>
 **Content-Type:** `multipart/form-data`<br>
 **Description:** Create a new menu item.<br>
 
@@ -547,6 +900,28 @@ Endpoints for managing menu items.
 }
 ```
 
+### **Example:**
+JavaScript
+```javascript
+const formData = new FormData();
+formData.append("name", "Margherita Pizza");
+formData.append("description", "Classic pizza with tomato and mozzarella");
+formData.append("price", 15.99);
+formData.append("deliveryFee", 2.50);
+formData.append("available", true);
+formData.append("categoryId", 1);
+formData.append("image", fileInput.files[0]);
+
+fetch("http://base.url:port/menu/create", {
+    method: "POST",
+    body: formData
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: MenuItem
+)
+```
+
 ## Get
 **URL:** `/menu/{id}`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
@@ -570,6 +945,19 @@ None
 {
   "error": "Could not find MenuItem with ID {id}"
 }
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/menu/1", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: MenuItem
+)
 ```
 <br>
 
@@ -609,10 +997,24 @@ None
 ```
 <br>
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/menu/1/image", {
+    method: "GET"
+}).then(
+    response => response.blob()
+).then(
+    data => console.log(data) // Output: Image
+)
+```
+<br>
+
 ## List
 **URL:** `/menu/list`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
 **Authentication:** Not Required<br>
+**Pagination:** Yes (Default size: 20, Max size: 50)<br>
 **Content-Type:** None<br>
 **Description:** Retrieve a list of all menu items.<br>
 
@@ -622,13 +1024,27 @@ None
 ### **Response:**<br>
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
 **Description**: Menu items retrieved successfully.<br>
-**Body**: `List[MenuItem]`<br>
+**Body**: `Page[MenuItem]`<br>
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/menu/list?page=0&size=20&sort=name,asc", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Page[MenuItem]
+)
+```
 <br>
 
 ## Update
 **URL:** `/menu/{id}/update`<br>
 **Method:** <code style="color: rgb(103, 174, 246)">PUT</code><br>
 **Authentication:** Required<br>
+**Permissions:** `menu.update`<br>
 **Content-Type:** `multipart/form-data`<br>
 **Description:** Update an existing menu item.<br>
 
@@ -697,10 +1113,33 @@ None
 }
 ```
 
+### **Example:**
+JavaScript
+```javascript
+const formData = new FormData();
+formData.append("name", "Supreme Pizza");
+formData.append("description", "Supreme pizza with all topings");
+formData.append("price", 125.99);
+formData.append("deliveryFee", 12.50);
+formData.append("available", true);
+formData.append("categoryId", 1);
+formData.append("image", fileInput.files[0]);
+
+fetch("http://base.url:port/menu/1/update", {
+    method: "PUT",
+    body: formData
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: MenuItem
+)
+```
+
 ## Delete
 **URL:** `/menu/{id}/delete`<br>
 **Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
 **Authentication:** Required<br>
+**Permissions:** `menu.delete`<br>
 **Content-Type:** None<br>
 **Description:** Delete an existing menu item.<br>
 
@@ -723,6 +1162,18 @@ None
 ```
 <br>
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/menu/1/delete", {
+    method: "DELETE"
+}).then(response => {
+    if(response.status === 204) console.log("Menu item deleted successfully"); // Output: Menu item deleted successfully
+    else return response.json();
+})
+```
+<br>
+
 # Reviews
 Endpoints for managing reviews.
 
@@ -738,7 +1189,7 @@ Endpoints for managing reviews.
 - `description`: String (optional)
 - `image`: File (png, jpeg, jpg, gif, svg, webp) (optional)
 - `rating`: Double (multiple of 0.5 between 0.0 and 5.0)
-- `available`: Boolean (optional, default: false)
+- `anonymous`: Boolean (optional, default: false)
 
 ### **Response:**<br>
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">201 Created</code><br>
@@ -782,6 +1233,26 @@ Endpoints for managing reviews.
 }
 ```
 
+### **Example:**
+JavaScript
+```javascript
+const formData = new FormData();
+formData.append("title", "Great Pizza!");
+formData.append("description", "Amazing taste and quality");
+formData.append("rating", 4.5);
+formData.append("anonymous", false);
+formData.append("image", fileInput.files[0]);
+
+fetch("http://base.url:port/reviews/create", {
+    method: "POST",
+    body: formData
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Review
+)
+```
+
 ## Get
 **URL:** `/reviews/{id}`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
@@ -805,6 +1276,19 @@ None
 {
   "error": "Could not find Review with ID {id}"
 }
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/reviews/1", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Review
+)
 ```
 <br>
 
@@ -844,10 +1328,24 @@ None
 ```
 <br>
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/reviews/1/image", {
+    method: "GET"
+}).then(
+    response => response.blob()
+).then(
+    data => console.log(data) // Output: Image
+)
+```
+<br>
+
 ## List
 **URL:** `/reviews/list`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
 **Authentication:** Not Required<br>
+**Pagination:** Yes (Default size: 20, Max size: 50)<br>
 **Content-Type:** None<br>
 **Description:** Retrieve a list of all menu items.<br>
 
@@ -857,7 +1355,20 @@ None
 ### **Response:**<br>
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
 **Description**: Menu items retrieved successfully.<br>
-**Body**: `List[Review]`<br>
+**Body**: `Page[Review]`<br>
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/reviews/list?page=0&size=20&sort=createdAt,desc", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Page[Review]
+)
+```
 <br>
 
 ## Update
@@ -925,6 +1436,26 @@ None
 }
 ```
 
+### **Example:**
+JavaScript
+```javascript
+const formData = new FormData();
+formData.append("title", "Terrible Pizza!");
+formData.append("description", "Terrible taste and quality");
+formData.append("rating", 1.5);
+formData.append("anonymous", true);
+formData.append("image", fileInput.files[0]);
+
+fetch("http://base.url:port/reviews/1/update", {
+    method: "POST",
+    body: formData
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Review
+)
+```
+
 ## Delete
 **URL:** `/reviews/{id}/delete`<br>
 **Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
@@ -951,6 +1482,56 @@ None
 ```
 <br>
 
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/reviews/1/delete", {
+    method: "DELETE"
+}).then(response => {
+    if(response.status === 204) console.log("Review deleted successfully"); // Output: Review deleted successfully
+    else console.log(response.json());
+})
+```
+<br>
+
+## Delete Image
+**URL:** `/reviews/{id}/image/delete`<br>
+**Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
+**Authentication:** Required<br>
+**Content-Type:** None<br>
+**Description:** Delete an image associated with an existing review.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">204 No Content</code><br>
+**Description**: Review image deleted successfully.<br>
+**Body**: None<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No review found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Review with ID {id}"
+}
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/reviews/1/image/delete", {
+    method: "DELETE"
+}).then(response => {
+    if(response.status === 204) console.log("Review image deleted successfully"); // Output: Review image deleted successfully
+    else return response.json();
+})
+```
+<br>
+
 # Other Endpoints
 Endpoints for miscellaneous operations.
 
@@ -969,6 +1550,18 @@ None
 
 ```
 Pong!
+```
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/ping", {
+    method: "GET"
+}).then(
+    response => response.text()
+).then(
+    data => console.log(data) // Output: "Pong!"
+)
 ```
 
 ## Health Check
@@ -990,4 +1583,16 @@ None
   "status": "OK",
   "timestamp": "Timestamp in ISO 8601 format"
 }
+```
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/health", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data["status"]) // Output: "OK"
+)
 ```

@@ -5,12 +5,13 @@ import api.indy.kebab.model.Category;
 import api.indy.kebab.repository.CategoryRepository;
 import api.indy.kebab.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Service class for managing {@link Category} entities.
@@ -36,18 +37,19 @@ public class CategoryService {
      * @param name the name of the category.
      * @param icon the {@link MultipartFile} representing the category's icon.
      * @param description a brief description of the category.
+     * @param color the color associated with the category.
      * @return the created {@link Category} entity.
      *
      * @throws IOException if an I/O error occurs during icon upload.
      * @throws IllegalArgumentException if the name or icon is null.
      */
-    public Category createCategory(String name, MultipartFile icon, String description) throws IOException {
+    public Category createCategory(String name, MultipartFile icon, String description, String color) throws IOException {
         if(name == null || icon == null || icon.isEmpty())
             throw new IllegalArgumentException("Name and icon cannot be null");
 
         String iconUrl = Util.uploadFile(icon, ICONS_PATH);
 
-        Category category = new Category(name, iconUrl, description);
+        Category category = new Category(name, iconUrl, description, color);
         return this._categoryRepository.save(category);
     }
 
@@ -81,17 +83,19 @@ public class CategoryService {
      * @param name the new name of the category (optional).
      * @param icon the new {@link MultipartFile} representing the category's icon (optional).
      * @param description the new description of the category (optional).
+     * @param color the new color associated with the category (optional).
      * @return the updated {@link Category} entity.
      *
      * @throws IOException if an I/O error occurs during icon upload.
      * @throws EntityNotFoundException if no category with the specified ID exists.
      */
-    public Category updateCategory(long id, String name, MultipartFile icon, String description) throws IOException {
+    public Category updateCategory(long id, String name, MultipartFile icon, String description, String color) throws IOException {
         Category category = this._categoryRepository.findByCategoryId(id);
         if(category == null) throw new EntityNotFoundException(Category.class, id);
 
         if(name != null && !name.isEmpty()) category.setName(name);
         if(description != null && !description.isEmpty()) category.setDescription(description);
+        if(color != null && !color.isEmpty()) category.setColor(color);
         if(icon != null && !icon.isEmpty()) {
             Util.deleteFile(category.getIconUrl());
             category.setIconUrl(Util.uploadFile(icon, ICONS_PATH));
@@ -107,7 +111,6 @@ public class CategoryService {
      */
     public void deleteCategory(long id) {
         Category category = this._categoryRepository.findByCategoryId(id);
-
         if(category == null) throw new EntityNotFoundException(Category.class, id);
 
         Util.deleteFile(category.getIconUrl());
@@ -117,9 +120,10 @@ public class CategoryService {
     /**
      * Retrieves a list of all {@link Category} entities.
      *
-     * @return a list of all categories.
+     * @param pageable the {@link Pageable} object containing pagination information.
+     * @return a {@link Page} of {@link Category} entities.
      */
-    public List<Category> listCategories() {
-        return this._categoryRepository.findAll();
+    public Page<Category> listCategories(Pageable pageable) {
+        return this._categoryRepository.findAll(pageable);
     }
 }

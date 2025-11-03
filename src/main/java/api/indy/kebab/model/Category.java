@@ -14,13 +14,15 @@ public class Category {
     private String _name;
     private String _iconUrl;
     private String _description;
+    private String _color;
 
     protected Category() {}
 
-    public Category(String name, String iconUrl, String description) {
+    public Category(String name, String iconUrl, String description, String color) {
         this._name = name;
         this._iconUrl = iconUrl;
         this._description = description;
+        this._color = color;
     }
 
     @Id
@@ -40,4 +42,8 @@ public class Category {
     @Column(name = "description", nullable = true, length = 1000)
     public String getDescription() { return this._description; }
     public void setDescription(String description) { this._description = description; }
+
+    @Column(name = "color", nullable = true, length = 9)
+    public String getColor() { return this._color; }
+    public void setColor(String color) { this._color = color; }
 }

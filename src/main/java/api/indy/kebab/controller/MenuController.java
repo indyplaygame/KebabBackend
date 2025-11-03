@@ -1,6 +1,8 @@
 package api.indy.kebab.controller;
 
 import api.indy.kebab.auth.AuthRequired;
+import api.indy.kebab.auth.Permission;
+import api.indy.kebab.decorators.pagination.Paginated;
 import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.Category;
 import api.indy.kebab.model.MenuItem;
@@ -8,12 +10,15 @@ import api.indy.kebab.model.request.CreateCategoryRequest;
 import api.indy.kebab.model.request.CreateMenuItemRequest;
 import api.indy.kebab.model.response.ErrorResponse;
 import api.indy.kebab.model.response.NotFoundResponse;
+import api.indy.kebab.model.response.PageResponse;
 import api.indy.kebab.service.CategoryService;
 import api.indy.kebab.service.MenuService;
+import api.indy.kebab.util.Util;
 import api.indy.kebab.validation.ValidationGroups;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,11 +50,12 @@ public class MenuController {
 
     /**
      * Handles requests to create a new menu entry.
+     * Requires the {@link Permission#MENU_CREATE} permission to access.
      *
      * @param body the {@link CreateMenuItemRequest} object containing new menu entry data.
      * @return a {@link ResponseEntity} containing the created menu entry or an error.
      */
-    @AuthRequired
+    @AuthRequired(requiredPermission = Permission.MENU_CREATE)
     @PostMapping("/create")
     public ResponseEntity<Object> createMenuItem(@Validated(ValidationGroups.OnCreate.class) @ModelAttribute CreateMenuItemRequest body) {
         try {
@@ -102,15 +108,7 @@ public class MenuController {
             if(imageFile == null || !imageFile.exists())
                 return new ResponseEntity<>(new ErrorResponse("Couldn't find image for menu entry with the provided ID"), HttpStatus.NOT_FOUND);
 
-            Path path = imageFile.toPath();
-            byte[] data = Files.readAllBytes(path);
-            ByteArrayResource resource = new ByteArrayResource(data);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.valueOf(Files.probeContentType(path)));
-            headers.setContentLength(data.length);
-
-            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+            return Util.createResourceResponse(imageFile);
         } catch(IOException e) {
             return new ResponseEntity<>(new ErrorResponse("Failed to retrieve image: %s".formatted(e.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch(EntityNotFoundException e) {
@@ -120,12 +118,13 @@ public class MenuController {
 
     /**
      * Handles requests to update an existing menu entry.
+     * Requires the {@link Permission#MENU_UPDATE} permission to access.
      *
      * @param id the identifier of the menu entry to update.
      * @param body the {@link CreateMenuItemRequest} object containing new menu entry data.
      * @return a {@link ResponseEntity} containing the updated menu entry or an error.
      */
-    @AuthRequired
+    @AuthRequired(requiredPermission = Permission.MENU_UPDATE)
     @PutMapping("/{id}/update")
     public ResponseEntity<Object> updateMenuItem(@PathVariable long id, @Valid @ModelAttribute CreateMenuItemRequest body){
         try {
@@ -151,11 +150,12 @@ public class MenuController {
 
     /**
      * Handles requests to delete a menu entry by its ID.
+     * Requires the {@link Permission#MENU_DELETE} permission to access.
      *
      * @param id the identifier of the menu entry to delete.
      * @return a {@link ResponseEntity} with status code.
      */
-    @AuthRequired
+    @AuthRequired(requiredPermission = Permission.MENU_DELETE)
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Object> deleteMenuItem(@PathVariable long id) {
         try {
@@ -169,10 +169,12 @@ public class MenuController {
     /**
      * Handles requests to list all menu entries.
      *
-     * @return a {@link ResponseEntity} containing the list of menu entries.
+     * @param pageable the {@link Pageable} object containing pagination information.
+     * @return a {@link ResponseEntity} containing a paginated list of menu entries.
      */
+    @Paginated(defaultSize = 20)
     @GetMapping("/list")
-    public ResponseEntity<Object> listMenuItems() {
-        return new ResponseEntity<>(this._menuService.listMenuItems(), HttpStatus.OK);
+    public ResponseEntity<Object> listMenuItems(Pageable pageable) {
+        return new ResponseEntity<>(PageResponse.from(this._menuService.listMenuItems(pageable)), HttpStatus.OK);
     }
 }

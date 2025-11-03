@@ -1,14 +1,19 @@
 package api.indy.kebab.controller;
 
 import api.indy.kebab.auth.AuthRequired;
+import api.indy.kebab.decorators.pagination.Paginated;
 import api.indy.kebab.exceptions.EntityNotFoundException;
+import api.indy.kebab.exceptions.NotOwnerOfEntityException;
 import api.indy.kebab.model.request.CreateReviewRequest;
 import api.indy.kebab.model.response.ErrorResponse;
 import api.indy.kebab.model.response.NotFoundResponse;
+import api.indy.kebab.model.response.PageResponse;
+import api.indy.kebab.util.Util;
 import api.indy.kebab.validation.ValidationGroups;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,7 +46,7 @@ public class ReviewController {
     }
 
     /**
-     * Handles request to create a new review
+     * Handles request to create a new review.
      *
      * @param body the {@link CreateReviewRequest} object containing new review data.
      * @return a {@link ResponseEntity} containing the created review or an error
@@ -96,19 +101,30 @@ public class ReviewController {
             if(imageFile == null || !imageFile.exists())
                 return new ResponseEntity<>(new ErrorResponse("Couldn't find image for review with the provided ID"), HttpStatus.NOT_FOUND);
 
-            Path path = imageFile.toPath();
-            byte[] data = Files.readAllBytes(path);
-            ByteArrayResource resource = new ByteArrayResource(data);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.valueOf(Files.probeContentType(path)));
-            headers.setContentLength(data.length);
-
-            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+            return Util.createResourceResponse(imageFile);
         } catch(IOException e) {
             return new ResponseEntity<>(new ErrorResponse("Failed to retrieve image: %s".formatted(e.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch(EntityNotFoundException e) {
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
+     * Handles requests to delete a review's image by its ID.
+     *
+     * @param id the identifier of the review whose image is to be deleted.
+     * @return a {@link ResponseEntity} with status code.
+     */
+    @AuthRequired
+    @DeleteMapping("/{id}/image/delete")
+    public ResponseEntity<Object> deleteReviewImage(@PathVariable long id, HttpSession session) {
+        try {
+            this._reviewService.deleteReviewImage(session, id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch(EntityNotFoundException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch(NotOwnerOfEntityException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
         }
     }
 
@@ -121,9 +137,10 @@ public class ReviewController {
      */
     @AuthRequired
     @PutMapping("/{id}/update")
-    public ResponseEntity<Object> updateReview(@PathVariable long id, @Valid @ModelAttribute CreateReviewRequest body) {
+    public ResponseEntity<Object> updateReview(@PathVariable long id, @Valid @ModelAttribute CreateReviewRequest body, HttpSession session) {
         try {
             Review updatedReview = this._reviewService.updateReview(
+                session,
                 id,
                 body.title(),
                 body.description(),
@@ -139,6 +156,8 @@ public class ReviewController {
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
         } catch(IllegalArgumentException e) {
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch(NotOwnerOfEntityException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
         }
     }
 
@@ -150,23 +169,27 @@ public class ReviewController {
      */
     @AuthRequired
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<Object> deleteReview(@PathVariable long id) {
+    public ResponseEntity<Object> deleteReview(@PathVariable long id, HttpSession session) {
         try {
-            this._reviewService.deleteReview(id);
+            this._reviewService.deleteReview(session, id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch(EntityNotFoundException e) {
             return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch(NotOwnerOfEntityException e) {
+            return new ResponseEntity<>(new ErrorResponse(e.getMessage()), HttpStatus.FORBIDDEN);
         }
     }
 
     /**
      * Handles requests to list all reviews.
      *
-     * @return a {@link ResponseEntity} containing the list of reviews.
+     * @param pageable the {@link Pageable} object containing pagination information.
+     * @return a {@link ResponseEntity} containing the paginated list of reviews.
      */
+    @Paginated(defaultSize = 20)
     @GetMapping("/list")
-    public ResponseEntity<Object> listReviews() {
-        return new ResponseEntity<>(this._reviewService.listReviews(), HttpStatus.OK);
+    public ResponseEntity<Object> listReviews(Pageable pageable) {
+        return new ResponseEntity<>(PageResponse.from(this._reviewService.listReviews(pageable)), HttpStatus.OK);
     }
 
 }

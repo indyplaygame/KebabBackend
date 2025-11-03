@@ -1,5 +1,13 @@
 package api.indy.kebab.util;
 
+import api.indy.kebab.auth.Permission;
+import api.indy.kebab.exceptions.NoSuchPermissionsException;
+import api.indy.kebab.model.User;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -8,7 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Utility class providing helper methods for the application.
@@ -91,11 +99,86 @@ public class Util {
     }
 
     /**
+     * Creates a {@link ResponseEntity} containing the file as a byte array resource.
+     *
+     * @param file The {@link File} to be included in the response.
+     * @return A {@link ResponseEntity} containing the file data and appropriate headers.
+     *
+     * @throws IOException If an I/O error occurs while reading the file.
+     */
+    public static ResponseEntity<Object> createResourceResponse(File file) throws IOException {
+        Path path = file.toPath();
+        byte[] data = Files.readAllBytes(path);
+        ByteArrayResource resource = new ByteArrayResource(data);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.valueOf(Files.probeContentType(path)));
+        headers.setContentLength(data.length);
+
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }
+
+    /**
+     * Capitalizes the first letter of the given string and converts the rest to lowercase.
+     *
+     * @param str the input string to be capitalized.
+     * @return the capitalized string, or the original string if it is null or empty.
+     */
+    public static String capitalize(String str) {
+        return str == null || str.isEmpty() ? str : str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
+    }
+
+    /**
      * Returns the current timestamp in {@code ISO-8601} format.
      *
      * @return String representing the current time as text.
      */
     public static String getTimestamp() {
         return Instant.now().toString().substring(0, 19);
+    }
+
+    /**
+     * Parses a list of permission strings into a set of {@link Permission} enums.
+     *
+     * <p>This method processes each string in the provided list, converting it into a corresponding
+     * {@link Permission} enum. Strings ending with an asterisk (*) are treated as prefixes, and all
+     * permissions starting with the given prefix are added to the result. If a string does not match
+     * any valid permission, it is added to a set of invalid permissions.</p>
+     *
+     * @param permissionsString the list of permission strings to parse.
+     * @return a set of {@link Permission} enums parsed from the input strings.
+     *
+     * @throws NoSuchPermissionsException if any of the provided strings are invalid permissions.
+     */
+    public static Set<Permission> parsePermissions(List<String> permissionsString) throws NoSuchPermissionsException {
+        Set<Permission> permissions = new HashSet<>();
+        Set<String> invalidPermissions = new HashSet<>();
+
+        for(String str : permissionsString) {
+            try {
+                if(str.endsWith("*")) {
+                    String prefix = str.substring(0, str.length() - 1).replace(".", "_").toUpperCase();
+                    permissions.addAll(Arrays.stream(Permission.values()).filter(p -> p.name().startsWith(prefix)).toList());
+                } else permissions.add(Permission.valueOf(str.replace(".", "_").toUpperCase()));
+            } catch(IllegalArgumentException e) {
+                invalidPermissions.add(str);
+            }
+        }
+
+        if(!invalidPermissions.isEmpty()) throw new NoSuchPermissionsException(invalidPermissions);
+
+        return permissions;
+    }
+
+    /**
+     * Verifies if a user owns an entity or has a bypass permission.
+     *
+     * @param entityOwnerId the ID of the entity owner.
+     * @param bypassPermission the permission that allows bypassing ownership check.
+     * @param user the user to verify.
+     * @return true if the user is the owner of the entity or has the bypass permission, false otherwise.
+     */
+    public static boolean verifyOwnership(long entityOwnerId, Permission bypassPermission, User user) {
+        return user.getUserId() == entityOwnerId || (bypassPermission != Permission.NONE && user.hasPermission(bypassPermission));
     }
 }

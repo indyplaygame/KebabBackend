@@ -1,16 +1,21 @@
 package api.indy.kebab.controller;
 
 import api.indy.kebab.auth.AuthRequired;
+import api.indy.kebab.auth.Permission;
+import api.indy.kebab.decorators.pagination.Paginated;
 import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.Category;
 import api.indy.kebab.model.request.CreateCategoryRequest;
 import api.indy.kebab.model.response.ErrorResponse;
 import api.indy.kebab.model.response.NotFoundResponse;
+import api.indy.kebab.model.response.PageResponse;
 import api.indy.kebab.service.CategoryService;
+import api.indy.kebab.util.Util;
 import api.indy.kebab.validation.ValidationGroups;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,18 +47,20 @@ public class CategoryController {
 
     /**
      * Handles requests to create a new category.
+     * Requires the {@link Permission#CATEGORIES_CREATE} permission to access.
      *
      * @param body the {@link CreateCategoryRequest} object containing new category data.
      * @return a {@link ResponseEntity} containing the created category or an error.
      */
-    @AuthRequired
+    @AuthRequired(requiredPermission = Permission.CATEGORIES_CREATE)
     @PostMapping("/create")
     public ResponseEntity<Object> createCategory(@Validated(ValidationGroups.OnCreate.class) @ModelAttribute CreateCategoryRequest body) {
         try {
             Category category = this._categoryService.createCategory(
                 body.name(),
                 body.icon(),
-                body.description()
+                body.description(),
+                body.color()
             );
 
             return new ResponseEntity<>(category, HttpStatus.CREATED);
@@ -93,15 +100,7 @@ public class CategoryController {
             if(iconFile == null || !iconFile.exists())
                 return new ResponseEntity<>(new ErrorResponse("Couldn't find icon for category with the provided ID"), HttpStatus.NOT_FOUND);
 
-            Path path = iconFile.toPath();
-            byte[] data = Files.readAllBytes(path);
-            ByteArrayResource resource = new ByteArrayResource(data);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.valueOf(Files.probeContentType(path)));
-            headers.setContentLength(data.length);
-
-            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+            return Util.createResourceResponse(iconFile);
         } catch(IOException e) {
             return new ResponseEntity<>(new ErrorResponse("Failed to retrieve icon: %s".formatted(e.getMessage())), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch(EntityNotFoundException e) {
@@ -111,18 +110,21 @@ public class CategoryController {
 
     /**
      * Handles requests to update an existing category.
+     * Requires the {@link Permission#CATEGORIES_UPDATE} permission to access.
      *
      * @param id the identifier of the category to update.
      * @param body the {@link CreateCategoryRequest} object containing new category data.
      * @return a {@link ResponseEntity} containing the updated category or an error.
      */
+    @AuthRequired(requiredPermission = Permission.CATEGORIES_UPDATE)
     @PutMapping("/{id}/update")
     public ResponseEntity<Object> updateCategory(@PathVariable long id, @Valid @ModelAttribute CreateCategoryRequest body) {
         try {
             Category updatedCategory = this._categoryService.updateCategory(id,
                 body.name(),
                 body.icon(),
-                body.description()
+                body.description(),
+                body.color()
             );
 
             return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
@@ -137,10 +139,12 @@ public class CategoryController {
 
     /**
      * Handles requests to delete a category by its ID.
+     * Requires the {@link Permission#CATEGORIES_DELETE} permission to access.
      *
      * @param id the identifier of the category to delete.
      * @return a {@link ResponseEntity} with status code.
      */
+    @AuthRequired(requiredPermission = Permission.CATEGORIES_DELETE)
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Object> deleteCategory(@PathVariable long id) {
         try {
@@ -154,10 +158,12 @@ public class CategoryController {
     /**
      * Handles requests to list all categories.
      *
-     * @return a {@link ResponseEntity} containing the list of categories.
+     * @param pageable the {@link Pageable} object containing pagination information.
+     * @return a {@link ResponseEntity} containing the paginated list of categories.
      */
+    @Paginated(maxSize = 100)
     @GetMapping("/list")
-    public ResponseEntity<Object> listCategories() {
-        return new ResponseEntity<>(this._categoryService.listCategories(), HttpStatus.OK);
+    public ResponseEntity<Object> listCategories(Pageable pageable) {
+        return new ResponseEntity<>(PageResponse.from(this._categoryService.listCategories(pageable)), HttpStatus.OK);
     }
 }

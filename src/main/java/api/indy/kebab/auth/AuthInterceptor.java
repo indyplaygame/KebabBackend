@@ -1,5 +1,6 @@
 package api.indy.kebab.auth;
 
+import api.indy.kebab.model.User;
 import api.indy.kebab.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,10 +14,11 @@ import java.io.IOException;
 
 /**
  * Interceptor to handle authentication for requests.
- * Ensures that endpoints annotated with {@link AuthRequired} are accessed only by authenticated users.
+ * Ensures that endpoints annotated with {@link AuthRequired} are accessed only by authenticated users with the necessary permissions.
  *
  * @see AuthRequired
  * @see AuthService
+ * @see Permission
  */
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
@@ -31,6 +33,7 @@ public class AuthInterceptor implements HandlerInterceptor {
      * Pre-handle method to check if the request is authorized.
      * Verifies if the handler method or its class is annotated with {@link AuthRequired}.
      * If the session is invalid or the user is not authenticated, responds with HTTP {@code 401 Unauthorized}.
+     * If the user lacks the required permissions, responds with HTTP {@code 403 Forbidden}.
      *
      * @param request  the HTTP request.
      * @param response the HTTP response.
@@ -42,11 +45,19 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         if(handler instanceof HandlerMethod method) {
-            if(method.getMethodAnnotation(AuthRequired.class) == null && !method.getBeanType().isAnnotationPresent(AuthRequired.class)) return true;
+            AuthRequired annotation = method.getMethodAnnotation(AuthRequired.class);
+            if(annotation == null && !method.getBeanType().isAnnotationPresent(AuthRequired.class)) return true;
 
             HttpSession session = request.getSession(false);
             if(session == null || this._authService.getActiveUser(session) == null) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                return false;
+            }
+
+            User user = this._authService.getActiveUser(session);
+            Permission requiredPermission = annotation != null ? annotation.requiredPermission() : Permission.NONE;
+            if(requiredPermission != Permission.NONE && !user.hasPermission(requiredPermission)) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden");
                 return false;
             }
         }
