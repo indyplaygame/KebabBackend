@@ -4,6 +4,7 @@
   - **[Category](#category)**
   - **[MenuItem](#menuitem)**
   - **[Review](#review)**
+  - **[Restaurant](#restaurant)**
 - **[Pagination](#pagination)**
 - **[Permissions](#permissions)**
 - **[Authentication](#authentication)**
@@ -34,6 +35,13 @@
     - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-2)
     - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-2)
     - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete Image](#delete-image-2)
+- **[Restaurnat](#restaurant-)**
+    - [<code style="color: rgb(250, 224, 124)">POST</code> Create](#create-3)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> Get](#get-3)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> Get Image](#get-image-2)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> List](#list-3)
+    - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-3)
+    - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-3)
 - **[Other Endpoints](#other-endpoints)**
     - [<code style="color: rgb(95, 221, 154)">GET</code> Ping](#ping)
     - [<code style="color: rgb(95, 221, 154)">GET</code> Health Check](#health-check)
@@ -100,6 +108,20 @@ Defines the structure of a review object.
 }
 ```
 
+## Restaurant
+Defines the structure of a restaurant object
+```json
+{
+  "restaurantId": "Long",
+  "name": "String",
+  "description": "String (Optional)",
+  "imageUrl": "String",
+  "phoneNumber": "String (Optional)",
+  "website": "String (Optional)",
+  "location": "Location"
+}
+```
+
 # Pagination
 Standard pagination parameters for list endpoints.
 - `page`: Integer (optional, default: 0) - The page number to retrieve (0-indexed).
@@ -121,6 +143,9 @@ List of available permissions.
 | `menu.delete`        | Delete existing menu items                         |
 | `reviews.update`     | Update existing reviews that the user does not own |
 | `reviews.delete`     | Delete existing reviews that the user does not own |
+| `restaurnat.create`  | Create new restaurants                             |
+| `restaurnat.update`  | Update existing restaurants                        |
+| `restaurnat.delete`  | Delete existing restaurants                        |
 
 # Authentication
 Endpoints for user authentication and session management.
@@ -1531,6 +1556,344 @@ fetch("base.url:port/reviews/1/image/delete", {
 })
 ```
 <br>
+
+# Restaurant 
+
+Endpoints for managing restaurants
+
+## Create
+**URL:** `/restaurants/create`<br>
+**Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
+**Authentication:** Required<br>
+**Permissions:** `categories.create`<br>
+**Content-Type:** `multipart/form-data`<br>
+**Description:** Create a new category.<br>
+
+### **Request Body:**
+- `name`: String
+- `icon`: File (png, jpeg, jpg, gif, svg, webp)
+- `description`: String (optional)
+- `phoneNumber`: String (Optional)
+- `website`: String (Optional)
+- `Location`: Location
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">201 Created</code><br>
+**Description**: Restaurant created successfully.<br>
+**Body**: `Restaurant`
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+
+```json
+{
+  "errors": {
+    "name": [
+      "Name cannot be empty",
+      "Name can only contain alphanumeric characters, apostrophes, ampersands and spaces",
+      "Name must be between 3 and 190 characters"
+    ],
+    "icon": [
+      "Icon file cannot be empty",
+      "Icon must be a PNG, JPEG, GIF, SVG or WEBP image",
+      "Icon file size cannot exceed 5MB"
+    ],
+    "description": [
+      "Description cannot exceed 1000 characters"
+    ],
+    "phoneNumber": [
+      "Phone number format is invalid"
+    ],
+    "website": [
+      "Website URL format is invalid",
+      "Website URL cannot exceed 200 characters"
+    ],
+    "locationBody": [
+      "Invalid location"
+    ]
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">500 Internal Server Error</code><br>
+**Description**: Failed to upload image.<br>
+
+```json
+{
+  "error": "Failed to upload image: {message}"
+}
+```
+
+### **Example:**
+JavaScript
+```javascript
+const formData = new FormData();
+formData.append("name", "KFC");
+formData.append("description", "Fried chicken restaurant");
+formData.append("icon", fileInput.files[0]);
+formData.append("phoneNumber", "730983171")
+formData.append("website", "https://kfc.pl/")
+formData.append("location", locationbody)
+
+fetch("http://base.url:port/restaurants/create", {
+    method: "POST",
+    body: formData
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Restaurant
+)
+```
+
+## Get
+**URL:** `/restaurants/{id}`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a restaurant by its `id`.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Category retrieved successfully.<br>
+**Body**: `Category`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No category found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Restaurant with ID {id}"
+}
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/restaurants/1", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Restaurant
+)
+```
+<br>
+
+
+## Get Image
+**URL:** `/restaurants/{id}/image`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a restaurant's icon by its `id`.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Restaurants icon retrieved successfully.<br>
+**Body**: `Image`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No Restaurant found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Restaurant with ID {id}"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: Couldn't find icon for category with the provided `id`.<br>
+
+```json
+{
+  "error": "Couldn't find icon for category with the provided ID"
+}
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/restaurants/1/image", {
+    method: "GET"
+}).then(
+    response => response.blob() 
+).then(
+    data => console.log(data) // Output: Image
+)
+```
+<br>
+
+## List
+**URL:** `/restaurants/list`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Paginated:** Yes (Default size: 10, Max size: 100)<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a paginated list of all restaurants.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Restaurants retrieved successfully.<br>
+**Body**: `Page[Restaurant]`<br>
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/restaurants/list?page=0&size=10&sort=name,asc", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Page[Category]
+)
+```
+
+## Update
+**URL:** `/restaurants/{id}/update`<br>
+**Method:** <code style="color: rgb(103, 174, 246)">PUT</code><br>
+**Authentication:** Required<br>
+**Permissions:** `restaurants.update`<br>
+**Content-Type:** `multipart/form-data`<br>
+**Description:** Update an existing restaurant.<br>
+
+### **Request Body:**
+- `name`: String (Oprional)
+- `icon`: File (png, jpeg, jpg, gif, svg, webp) (Optional)
+- `description`: String (Optional)
+- `phoneNumber`: String (Optional)
+- `website`: String (Optional)
+- `Location`: Location (Optional)
+
+### **Response:**
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format.<br>
+
+```json
+{
+  "errors": {
+    "name": [
+      "Name cannot be empty",
+      "Name can only contain alphanumeric characters, apostrophes, ampersands and spaces",
+      "Name must be between 3 and 190 characters"
+    ],
+    "icon": [
+      "Icon file cannot be empty",
+      "Icon must be a PNG, JPEG, GIF, SVG or WEBP image",
+      "Icon file size cannot exceed 5MB"
+    ],
+    "description": [
+      "Description cannot exceed 1000 characters"
+    ],
+    "phoneNumber": [
+      "Phone number format is invalid"
+    ],
+    "website": [
+      "Website URL format is invalid",
+      "Website URL cannot exceed 200 characters"
+    ],
+    "locationBody": [
+      "Invalid location"
+    ]
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No restaurant found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find restaurant with ID {id}"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">500 Internal Server Error</code><br>
+**Description**: Failed to upload icon.<br>
+
+```json
+{
+  "error": "Failed to upload icon: {message}"
+}
+```
+
+
+### **Example:**
+JavaScript
+```javascript
+const formData = new FormData();
+formData.append("name", "Doner Kebab");
+formData.append("description", "Delicious kebab place");
+formData.append("website", "https://doner-kebab.pl/");
+
+fetch("http://base.url:port/restaurants/1/update", {
+    method: "PUT",
+    body: formData
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Restaurant
+)
+```
+
+## Delete
+**URL:** `/restaurants/{id}/delete`<br>
+**Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
+**Authentication:** Required<br>
+**Permissions:** `restaurant.delete`<br>
+**Content-Type:** None<br>
+**Description:** Delete an existing restaurant.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">204 No Content</code><br>
+**Description**: Restaurant deleted successfully.<br>
+**Body**: None<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No restaurant found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Restaurant with ID {id}"
+}
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/restaurants/1/delete", {
+    method: "DELETE"
+}).then(response => {
+    if(response.status === 204) console.log("Restaurant deleted successfully"); // Output: Restaurant deleted successfully
+    else return response.json();
+})
+```
+<br>
+
 
 # Other Endpoints
 Endpoints for miscellaneous operations.
