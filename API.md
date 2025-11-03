@@ -5,6 +5,7 @@
   - **[MenuItem](#menuitem)**
   - **[Location](#location)**
   - **[Review](#review)**
+  - **[Restaurant](#restaurant)**
   - **[Order](#order)**
 - **[Pagination](#pagination)**
 - **[Permissions](#permissions)**
@@ -36,10 +37,17 @@
     - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-2)
     - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-2)
     - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete Image](#delete-image-2)
-- **[Orders](#orders)**
+- **[Restaurant](#restaurant)**
     - [<code style="color: rgb(250, 224, 124)">POST</code> Create](#create-3)
     - [<code style="color: rgb(95, 221, 154)">GET</code> Get](#get-3)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> Get Image](#get-image-2)
     - [<code style="color: rgb(95, 221, 154)">GET</code> List](#list-3)
+    - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-3)
+    - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-3)
+- **[Orders](#orders)**
+    - [<code style="color: rgb(250, 224, 124)">POST</code> Create](#create-4)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> Get](#get-4)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> List](#list-4)
     - [<code style="color: rgb(95, 221, 154)">GET</code> List Own](#list-own)
     - [<code style="color: rgb(182, 168, 225)">PATCH</code> Update Phone](#update-phone)
     - [<code style="color: rgb(182, 168, 225)">PATCH</code> Update Status](#update-status)
@@ -126,6 +134,20 @@ Defines the structure of a review object.
 }
 ```
 
+## Restaurant
+Defines the structure of a restaurant object
+```json
+{
+  "restaurantId": "Long",
+  "name": "String",
+  "description": "String (Optional)",
+  "imageUrl": "String",
+  "phoneNumber": "String (Optional)",
+  "website": "String (Optional)",
+  "location": "Location"
+}
+```
+
 ## Order
 Defined the structure of an order object.
 ```json
@@ -153,20 +175,23 @@ Standard pagination parameters for list endpoints.
 # Permissions
 List of available permissions.
 
-| Permission           | Description                                         |
-|----------------------|-----------------------------------------------------|
-| `permissions.grant`  | Grant permissions to users                          |
-| `permissions.revoke` | Revoke permissions from users                       |
-| `categories.create`  | Create new categories                               |
-| `categories.update`  | Update existing categories                          |  
-| `categories.delete`  | Delete existing categories                          |
-| `menu.create`        | Create new menu items                               |
-| `menu.update`        | Update existing menu items                          |
-| `menu.delete`        | Delete existing menu items                          |
-| `reviews.update`     | Update existing reviews that the user does not own  |
-| `reviews.delete`     | Delete existing reviews that the user does not own  |
-| `orders.read`        | Read orders that the user does not own              |
-| `orders.update`      | Update orders that the user does not own            |
+| Permission           | Description                                        |
+|----------------------|----------------------------------------------------|
+| `permissions.grant`  | Grant permissions to users                         |
+| `permissions.revoke` | Revoke permissions from users                      |
+| `categories.create`  | Create new categories                              |
+| `categories.update`  | Update existing categories                         |  
+| `categories.delete`  | Delete existing categories                         |
+| `menu.create`        | Create new menu items                              |
+| `menu.update`        | Update existing menu items                         |
+| `menu.delete`        | Delete existing menu items                         |
+| `reviews.update`     | Update existing reviews that the user does not own |
+| `reviews.delete`     | Delete existing reviews that the user does not own |
+| `restaurnat.create`  | Create new restaurants                             |
+| `restaurnat.update`  | Update existing restaurants                        |
+| `restaurnat.delete`  | Delete existing restaurants                        |
+| `orders.read`        | Read orders that the user does not own             |
+| `orders.update`      | Update orders that the user does not own           |
 
 # Authentication
 Endpoints for user authentication and session management.
@@ -431,7 +456,7 @@ fetch("base.url:port/auth/logout", {
     "permissions": [
       "Permissions cannot be empty"
     ]
-  }
+}
 }
 ```
 <br>
@@ -508,7 +533,7 @@ fetch("base.url:port/auth/permissions/1/grant", {
     "permissions": [
       "Permissions cannot be empty"
     ]
-  }
+}
 }
 ```
 <br>
@@ -817,7 +842,7 @@ formData.append("name", "Kebab");
 formData.append("description", "Delicious kebab category");
 formData.append("color", "#6200EE");
 
-fetch("://base.url:port/categories/1/update", {
+fetch("base.url:port/categories/1/update", {
     method: "PUT",
     body: formData
 }).then(
@@ -958,7 +983,7 @@ formData.append("available", true);
 formData.append("categoryId", 1);
 formData.append("image", fileInput.files[0]);
 
-fetch("://base.url:port/menu/create", {
+fetch("base.url:port/menu/create", {
     method: "POST",
     body: formData
 }).then(
@@ -1171,7 +1196,7 @@ formData.append("available", true);
 formData.append("categoryId", 1);
 formData.append("image", fileInput.files[0]);
 
-fetch("://base.url:port/menu/1/update", {
+fetch("base.url:port/menu/1/update", {
     method: "PUT",
     body: formData
 }).then(
@@ -1289,7 +1314,7 @@ formData.append("rating", 4.5);
 formData.append("anonymous", false);
 formData.append("image", fileInput.files[0]);
 
-fetch("://base.url:port/reviews/create", {
+fetch("base.url:port/reviews/create", {
     method: "POST",
     body: formData
 }).then(
@@ -1492,7 +1517,7 @@ formData.append("rating", 1.5);
 formData.append("anonymous", true);
 formData.append("image", fileInput.files[0]);
 
-fetch("://base.url:port/reviews/1/update", {
+fetch("base.url:port/reviews/1/update", {
     method: "POST",
     body: formData
 }).then(
@@ -1573,6 +1598,403 @@ fetch("base.url:port/reviews/1/image/delete", {
     method: "DELETE"
 }).then(response => {
     if(response.status === 204) console.log("Review image deleted successfully"); // Output: Review image deleted successfully
+    else return response.json();
+})
+```
+<br>
+
+# Restaurant
+Endpoints for managing restaurants
+
+## Create
+**URL:** `/restaurants/create`<br>
+**Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
+**Authentication:** Required<br>
+**Permissions:** `categories.create`<br>
+**Content-Type:** `multipart/form-data`<br>
+**Description:** Create a new category.<br>
+
+### **Request Body:**
+- `name`: String
+- `description`: String (optional)
+- `image`: File (png, jpeg, jpg, gif, svg, webp)
+- `phoneNumber`: String (optional)
+- `website`: String (optional)
+- `latitude`: Double
+- `longitude`: Double
+- `country`: String (optional, default: POLAND)
+- `voivodeship`: String (optional, enum: DOLNOSLASKIE, KUJAWSKO_POMORSKIE, LUBELSKIE, LUBUSKIE, LODZKIE, MALOPOLSKIE, MAZOWIECKIE, OPOLSKIE, PODKARPACKIE, PODLASKIE, POMORSKIE, SLASKIE, SWIETOKRZYSKIE, WARMIENSKO_MAZURSKIE, WIELKOPOLSKIE, ZACHODNIOPOMORSKIE)
+- `postalCode`: String
+- `city`: String
+- `street`: String
+- `buildingNumber`: String
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">201 Created</code><br>
+**Description**: Restaurant created successfully.<br>
+**Body**: `Restaurant`
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+
+```json
+{
+  "errors": {
+    "name": [
+      "Name cannot be empty",
+      "Name can only contain alphanumeric characters, apostrophes, ampersands and spaces",
+      "Name must be between 3 and 190 characters"
+    ],
+    "image": [
+      "Icon file cannot be empty",
+      "Icon must be a PNG, JPEG, GIF, SVG or WEBP image",
+      "Icon file size cannot exceed 5MB"
+    ],
+    "description": [
+      "Description cannot exceed 1000 characters"
+    ],
+    "phoneNumber": [
+      "Phone number format is invalid"
+    ],
+    "website": [
+      "Website URL format is invalid",
+      "Website URL cannot exceed 200 characters"
+    ],
+    "location.latitude": [
+      "Latitude must be between -90 and 90"
+    ],
+    "location.longitude": [
+      "Longitude must be between -180 and 180"
+    ],
+    "location.postalCode": [
+      "Postal code cannot be empty",
+      "Postal code format is invalid",
+      "Postal code cannot exceed 9 characters",
+    ],
+    "location.city": [
+      "City cannot exceed 100 characters"
+    ],
+    "location.street": [
+      "Street cannot exceed 100 characters"
+    ],
+    "location.buildingNumber": [
+      "Building number cannot be empty",
+      "Building number format is invalid",
+      "Building number cannot exceed 10 characters"
+    ]
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">500 Internal Server Error</code><br>
+**Description**: Failed to upload image.<br>
+
+```json
+{
+  "error": "Failed to upload image: {message}"
+}
+```
+
+### **Example:**
+JavaScript
+```javascript
+const formData = new FormData();
+formData.append("name", "KFC");
+formData.append("description", "Fried chicken restaurant");
+formData.append("icon", fileInput.files[0]);
+formData.append("phoneNumber", "730983171")
+formData.append("website", "https://kfc.pl/")
+formData.append("city", "Warsaw");
+formData.append("postalCode", "00-001");
+formData.append("street", "Main Street");
+formData.append("buildingNumber", "15A");
+
+fetch("base.url:port/restaurants/create", {
+    method: "POST",
+    body: formData
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Restaurant
+)
+```
+
+## Get
+**URL:** `/restaurants/{id}`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a restaurant by its `id`.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Category retrieved successfully.<br>
+**Body**: `Category`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No category found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Restaurant with ID {id}"
+}
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/restaurants/1", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Restaurant
+)
+```
+<br>
+
+
+## Get Image
+**URL:** `/restaurants/{id}/image`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a restaurant's icon by its `id`.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Restaurants icon retrieved successfully.<br>
+**Body**: `Image`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No Restaurant found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Restaurant with ID {id}"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: Couldn't find icon for category with the provided `id`.<br>
+
+```json
+{
+  "error": "Couldn't find icon for category with the provided ID"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">500 Internal Server Error</code><br>
+**Description**: Failed to retrieve image.<br>
+
+```json
+{
+  "error": "Failed to retrieve image: {message}"
+}
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/restaurants/1/image", {
+    method: "GET"
+}).then(
+    response => response.blob() 
+).then(
+    data => console.log(data) // Output: Image
+)
+```
+<br>
+
+## List
+**URL:** `/restaurants/list`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Not Required<br>
+**Paginated:** Yes (Default size: 20, Max size: 50)<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a paginated list of all restaurants.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Restaurants retrieved successfully.<br>
+**Body**: `Page[Restaurant]`<br>
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/restaurants/list?page=0&size=10&sort=name,asc", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Page[Restaurant]
+)
+```
+
+## Update
+**URL:** `/restaurants/{id}/update`<br>
+**Method:** <code style="color: rgb(103, 174, 246)">PUT</code><br>
+**Authentication:** Required<br>
+**Permissions:** `restaurants.update`<br>
+**Content-Type:** `multipart/form-data`<br>
+**Description:** Update an existing restaurant.<br>
+
+### **Request Body:**
+- `name`: String (optional)
+- `icon`: File (png, jpeg, jpg, gif, svg, webp) (optional)
+- `description`: String (optional)
+- `phoneNumber`: String (optional)
+- `website`: String (optional)
+- `latitude`: Double (optional)
+- `longitude`: Double (optional)
+- `country`: String (optional, default: POLAND)
+- `voivodeship`: String (optional, enum: DOLNOSLASKIE, KUJAWSKO_POMORSKIE, LUBELSKIE, LUBUSKIE, LODZKIE, MALOPOLSKIE, MAZOWIECKIE, OPOLSKIE, PODKARPACKIE, PODLASKIE, POMORSKIE, SLASKIE, SWIETOKRZYSKIE, WARMIENSKO_MAZURSKIE, WIELKOPOLSKIE, ZACHODNIOPOMORSKIE)
+- `postalCode`: String (optional)
+- `city`: String (optional)
+- `street`: String (optional)
+- `buildingNumber`: String (optional)
+
+### **Response:**
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format.<br>
+
+```json
+{
+  "errors": {
+    "name": [
+      "Name can only contain alphanumeric characters, apostrophes, ampersands and spaces",
+      "Name must be between 3 and 190 characters"
+    ],
+    "image": [
+      "Icon must be a PNG, JPEG, GIF, SVG or WEBP image",
+      "Icon file size cannot exceed 5MB"
+    ],
+    "description": [
+      "Description cannot exceed 1000 characters"
+    ],
+    "phoneNumber": [
+      "Phone number format is invalid"
+    ],
+    "website": [
+      "Website URL format is invalid",
+      "Website URL cannot exceed 200 characters"
+    ],
+    "location.latitude": [
+      "Latitude must be between -90 and 90"
+    ],
+    "location.longitude": [
+      "Longitude must be between -180 and 180"
+    ],
+    "location.postalCode": [
+      "Postal code format is invalid",
+      "Postal code cannot exceed 9 characters",
+    ],
+    "location.city": [
+      "City cannot exceed 100 characters"
+    ],
+    "location.street": [
+      "Street cannot exceed 100 characters"
+    ],
+    "location.buildingNumber": [
+      "Building number format is invalid",
+      "Building number cannot exceed 10 characters"
+    ]
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No restaurant found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Restaurant with ID {id}"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">500 Internal Server Error</code><br>
+**Description**: Failed to upload image.<br>
+
+```json
+{
+  "error": "Failed to upload image: {message}"
+}
+```
+
+
+### **Example:**
+JavaScript
+```javascript
+const formData = new FormData();
+formData.append("name", "Doner Kebab");
+formData.append("description", "Delicious kebab place");
+formData.append("website", "https://doner-kebab.pl/");
+
+fetch("base.url:port/restaurants/1/update", {
+    method: "PUT",
+    body: formData
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Restaurant
+)
+```
+
+## Delete
+**URL:** `/restaurants/{id}/delete`<br>
+**Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
+**Authentication:** Required<br>
+**Permissions:** `restaurant.delete`<br>
+**Content-Type:** None<br>
+**Description:** Delete an existing restaurant.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">204 No Content</code><br>
+**Description**: Restaurant deleted successfully.<br>
+**Body**: None<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No restaurant found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Restaurant with ID {id}"
+}
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/restaurants/1/delete", {
+    method: "DELETE"
+}).then(response => {
+    if(response.status === 204) console.log("Restaurant deleted successfully"); // Output: "Restaurant deleted successfully"
     else return response.json();
 })
 ```
