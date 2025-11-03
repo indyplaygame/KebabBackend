@@ -1,10 +1,12 @@
 package api.indy.kebab.model;
 
-import api.indy.kebab.persistence.converter.OrderItemsConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -24,7 +26,7 @@ public class Order {
     private Location _location;
     private Status _status;
     private PaymentMethod _paymentMethod;
-    private Map<MenuItem, Integer> _items;
+    private List<OrderItem> _items;
     private boolean _paid;
 
     public enum Status {
@@ -65,8 +67,9 @@ public class Order {
         this._location = location;
         this._status = status;
         this._paymentMethod = paymentMethod;
-        this._items = items;
         this._paid = paid;
+
+        this._items = items.entrySet().stream().map(e -> new OrderItem(this, e.getKey(), e.getValue())).toList();
     }
 
 
@@ -82,15 +85,15 @@ public class Order {
     public User getUser() { return this._user; }
     public void setUser(User user) { this._user = user; }
 
-    @Column(name = "phoneNumber", nullable = false)
+    @Column(name = "phoneNumber", nullable = false, length = 15)
     public String getPhoneNumber() { return this._phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this._phoneNumber = phoneNumber; }
 
-    @Column(name = "orderPlacementDate", nullable = false)
+    @Column(name = "orderPlacementDate", nullable = false, length = 19)
     public String getOrderDatePlaced() { return this._orderPlacementDate; }
     public void setOrderDatePlaced(String orderDatePlaced) { this._orderPlacementDate = orderDatePlaced; }
 
-    @Column(name = "notes", nullable = false)
+    @Column(name = "notes", nullable = true, length = 255)
     public String getNotes() { return this._notes; }
     public void setNotes(String notes) { this._notes = notes; }
 
@@ -106,19 +109,24 @@ public class Order {
     public PaymentMethod getPaymentMethod() { return this._paymentMethod; }
     public void setPaymentMethod(PaymentMethod paymentMethod) { this._paymentMethod = paymentMethod; }
 
-    @Convert(converter = OrderItemsConverter.class)
-    @Column(name = "orderedItems", nullable = false)
-    public Map<MenuItem, Integer> getItems() { return this._items; }
-    public void setItems(Map<MenuItem, Integer> items) { this._items = items; }
+    @JsonIgnore
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    protected List<OrderItem> getOrderItems() { return this._items; }
+    protected void setOrderItems(List<OrderItem> items) { this._items = items; }
 
     @Column(name = "paid", nullable = false)
     public boolean isPaid() { return this._paid; }
     public void setPaid(boolean paid) { this._paid = paid; }
 
     @Transient
+    @JsonProperty("items")
+    public Map<MenuItem, Integer> getItems() {
+        return this._items.stream().collect(Collectors.toMap(OrderItem::getMenuItem, OrderItem::getQuantity));
+    }
+
+    @Transient
     @JsonProperty("totalPrice")
     public double getTotalPrice() {
-        return this._items.entrySet().stream()
-            .mapToDouble(e -> e.getKey().getPrice() * e.getValue()).sum();
+        return this._items.stream().mapToDouble(item -> item.getMenuItem().getPrice() * item.getQuantity()).sum();
     }
 }
