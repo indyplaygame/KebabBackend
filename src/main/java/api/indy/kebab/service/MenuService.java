@@ -3,7 +3,6 @@ package api.indy.kebab.service;
 import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.model.Category;
 import api.indy.kebab.model.MenuItem;
-import api.indy.kebab.repository.CategoryRepository;
 import api.indy.kebab.repository.MenuRepository;
 import api.indy.kebab.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ import java.io.IOException;
 
 /**
  * Service class for managing {@link MenuItem} entities.
- * Provides methods for creating, retrieving, updating, and deleting categories.
+ * Provides methods for creating, retrieving, updating, and deleting menu items.
  *
  * @see MenuRepository
  * @see MenuItem

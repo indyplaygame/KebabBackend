@@ -57,7 +57,7 @@ public class Order {
         PaymentMethod paymentMethod,
         Map<MenuItem, Integer> items,
         boolean paid
-    ){
+    ) {
         this._user = user;
         this._phoneNumber = phoneNumber;
         this._orderPlacementDate = orderPlacementDate;
@@ -112,8 +112,8 @@ public class Order {
     public void setItems(Map<MenuItem, Integer> items) { this._items = items; }
 
     @Column(name = "paid", nullable = false)
-    public boolean isPayed() { return this._paid; }
-    public void setPayed(boolean paid) { this._paid = paid; }
+    public boolean isPaid() { return this._paid; }
+    public void setPaid(boolean paid) { this._paid = paid; }
 
     @Transient
     @JsonProperty("totalPrice")
