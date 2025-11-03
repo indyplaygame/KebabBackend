@@ -114,6 +114,7 @@ public class RestaurantService {
         if(location != null) restaurant.setLocation(location);
         return _restaurantRepository.save(restaurant);
     }
+
     /**
      * Deletes a restaurant by its unique identifier.
      *
