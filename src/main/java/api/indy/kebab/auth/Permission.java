@@ -27,4 +27,7 @@ public enum Permission {
 
     REVIEWS_UPDATE,
     REVIEWS_DELETE,
+
+    ORDERS_READ,
+    ORDERS_UPDATE
 }

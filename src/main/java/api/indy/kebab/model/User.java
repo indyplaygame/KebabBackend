@@ -29,7 +29,7 @@ public class User {
 
     public User(String username, String email, String firstName, String middleName, String lastName, String passwordHash, String dateOfBirth) {
         this._username = username;
-        this._email = email.toUpperCase();
+        this._email = email.toLowerCase();
         this._firstName = Util.capitalize(firstName);
         this._middleName = Util.capitalize(middleName);
         this._lastName = Util.capitalize(lastName);

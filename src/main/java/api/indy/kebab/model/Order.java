@@ -33,6 +33,7 @@ public class Order {
         RECEIVED,
         PREPARING,
         READY_FOR_DELIVERY,
+        ON_THE_WAY,
         COMPLETED,
         CANCELLED,
         REFUNDED
@@ -44,7 +45,8 @@ public class Order {
         BLIK,
         APPLE_PAY,
         GOOGLE_PAY,
-        TRANSFER
+        TRANSFER,
+        PAYPAL
     }
 
     protected Order() {}
@@ -119,9 +121,23 @@ public class Order {
     public void setPaid(boolean paid) { this._paid = paid; }
 
     @Transient
-    @JsonProperty("items")
     public Map<MenuItem, Integer> getItems() {
         return this._items.stream().collect(Collectors.toMap(OrderItem::getMenuItem, OrderItem::getQuantity));
+    }
+
+    @Transient
+    @JsonProperty("userId")
+    public Long getUserId() {
+        return this._user != null ? this._user.getUserId() : null;
+    }
+
+    @Transient
+    @JsonProperty("items")
+    protected Map<Long, Integer> getItemIds() {
+        return this._items.stream().collect(Collectors.toMap(
+            item -> item.getMenuItem().getMenuItemId(),
+            OrderItem::getQuantity
+        ));
     }
 
     @Transient

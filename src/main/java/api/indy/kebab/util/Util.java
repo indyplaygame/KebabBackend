@@ -179,6 +179,8 @@ public class Util {
      * @return true if the user is the owner of the entity or has the bypass permission, false otherwise.
      */
     public static boolean verifyOwnership(long entityOwnerId, Permission bypassPermission, User user) {
+        if(user == null) return false;
+
         return user.getUserId() == entityOwnerId || (bypassPermission != Permission.NONE && user.hasPermission(bypassPermission));
     }
 }
