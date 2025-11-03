@@ -33,6 +33,7 @@ public class Order {
         RECEIVED,
         PREPARING,
         READY_FOR_DELIVERY,
+        ON_THE_WAY,
         COMPLETED,
         CANCELLED,
         REFUNDED
@@ -44,7 +45,8 @@ public class Order {
         BLIK,
         APPLE_PAY,
         GOOGLE_PAY,
-        TRANSFER
+        TRANSFER,
+        PAYPAL
     }
 
     protected Order() {}

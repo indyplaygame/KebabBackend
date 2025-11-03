@@ -7,14 +7,12 @@ import api.indy.kebab.exceptions.EntityNotFoundException;
 import api.indy.kebab.exceptions.NotOwnerOfEntityException;
 import api.indy.kebab.model.Location;
 import api.indy.kebab.model.Order;
-import api.indy.kebab.model.User;
 import api.indy.kebab.model.request.CreateLocationRequest;
 import api.indy.kebab.model.request.CreateOrderRequest;
 import api.indy.kebab.model.response.ErrorResponse;
 import api.indy.kebab.model.response.NotFoundResponse;
 import api.indy.kebab.model.response.PageResponse;
 import api.indy.kebab.service.OrderService;
-import api.indy.kebab.util.Util;
 import api.indy.kebab.validation.ValidationGroups;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +22,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for managing orders. Provides endpoints for creating, retrieving, updating, and listing order entries.
+ *
+ * @see OrderService
+ * @see Order
+ */
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -34,6 +38,13 @@ public class OrderController {
         this._orderService = orderService;
     }
 
+    /**
+     * Handles requests to create a new order.
+     *
+     * @param body the {@link CreateOrderRequest} object containing order details
+     * @param session the {@link HttpSession} of the user
+     * @return a {@link ResponseEntity} containing the created order or an error response
+     */
     @PostMapping("/create")
     public ResponseEntity<Object> createOrder(@Validated(ValidationGroups.OnCreate.class) @RequestBody CreateOrderRequest body, HttpSession session) {
         try {
@@ -68,6 +79,12 @@ public class OrderController {
         }
     }
 
+    /**
+     * Handles requests to retrieve an order by its ID.
+     *
+     * @param id the order identifier.
+     * @return a {@link ResponseEntity} containing the order object or an error
+     */
     @AuthRequired
     @GetMapping("/{id}")
     public ResponseEntity<Object> getOrderById(@PathVariable long id, HttpSession session) {
@@ -85,9 +102,26 @@ public class OrderController {
         }
     }
 
+    /**
+     * Handles the request to update the phone number associated with an order.
+     *
+     * @param id the identifier of the order to update
+     * @param phoneNumber the new phone number as plain text in the request body
+     * @param session the {@link HttpSession} of the authenticated user
+     * @return {@link ResponseEntity} containing the updated order or an error response
+     *
+     * @throws IllegalArgumentException if the phone number is invalid or the order state forbids updating
+     * @throws EntityNotFoundException if the order does not exist
+     */
     @AuthRequired
     @PatchMapping("/{id}/update-phone")
-    public ResponseEntity<Object> updateOrderPhoneNumber(@PathVariable long id, @RequestParam String phoneNumber, HttpSession session) {
+    public ResponseEntity<Object> updateOrderPhoneNumber(@PathVariable long id, @RequestBody String phoneNumber, HttpSession session) {
+        if(phoneNumber == null || phoneNumber.isBlank())
+            return new ResponseEntity<>(new ErrorResponse("Phone number cannot be empty"), HttpStatus.BAD_REQUEST);
+
+        if(!phoneNumber.matches("^\\+?[1-9](?:[ -]?\\(?\\d\\)?){6,14}$"))
+            return new ResponseEntity<>(new ErrorResponse("Phone number format is invalid"), HttpStatus.BAD_REQUEST);
+
         try {
             Order order = this._orderService.updatePhoneNumber(session, id, phoneNumber);
 
@@ -103,9 +137,20 @@ public class OrderController {
         }
     }
 
+    /**
+     * Handles the request to update the status of an order.
+     *
+     * @param id the identifier of the order to update
+     * @param status the new status for the order
+     * @param session the {@link HttpSession} of the authenticated user
+     * @return {@link ResponseEntity} containing the updated order or an error response
+     *
+     * @throws IllegalArgumentException if the status transition is invalid
+     * @throws EntityNotFoundException if the order does not exist
+     */
     @AuthRequired
     @PatchMapping("/{id}/update-status")
-    public ResponseEntity<Object> updateOrderStatus(@PathVariable long id, @RequestParam Order.Status status, HttpSession session) {
+    public ResponseEntity<Object> updateOrderStatus(@PathVariable long id, @RequestBody Order.Status status, HttpSession session) {
         try {
             Order order = this._orderService.updateStatus(session, id, status);
 
@@ -121,6 +166,16 @@ public class OrderController {
         }
     }
 
+    /**
+     * Handles the request to cancel an order.
+     *
+     * @param id the identifier of the order to cancel
+     * @param session the {@link HttpSession} of the authenticated user
+     * @return {@link ResponseEntity} containing the canceled order or an error response
+     *
+     * @throws IllegalArgumentException if the order cannot be canceled
+     * @throws EntityNotFoundException if the order does not exist
+     */
     @AuthRequired
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<Object> cancelOrder(@PathVariable long id, HttpSession session) {
@@ -139,6 +194,16 @@ public class OrderController {
         }
     }
 
+    /**
+     * Handles the request to pay for an order.
+     *
+     * @param id the identifier of the order to pay for
+     * @param session the {@link HttpSession} of the authenticated user
+     * @return {@link ResponseEntity} containing the paid order or an error response
+     *
+     * @throws IllegalArgumentException if the order cannot be paid for
+     * @throws EntityNotFoundException if the order does not exist
+     */
     @AuthRequired
     @PatchMapping("/{id}/pay")
     public ResponseEntity<Object> payForOrder(@PathVariable long id, HttpSession session) {
@@ -157,6 +222,12 @@ public class OrderController {
         }
     }
 
+    /**
+     * Handles requests to list all orders with pagination.
+     *
+     * @param pageable the pagination information.
+     * @return a {@link ResponseEntity} containing a paginated list of orders.
+     */
     @Paginated(maxSize = 20)
     @AuthRequired(requiredPermission = Permission.ORDERS_READ)
     @GetMapping("/list")
@@ -164,6 +235,13 @@ public class OrderController {
         return new ResponseEntity<>(PageResponse.from(this._orderService.listOrders(pageable)), HttpStatus.OK);
     }
 
+    /**
+     * Handles requests to list the authenticated user's orders with pagination.
+     *
+     * @param pageable the pagination information.
+     * @param session the {@link HttpSession} of the user.
+     * @return a {@link ResponseEntity} containing a paginated list of the user's orders.
+     */
     @Paginated(maxSize = 20)
     @AuthRequired(requiredPermission = Permission.ORDERS_READ)
     @GetMapping("/list/own")

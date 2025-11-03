@@ -3,7 +3,9 @@
   - **[Page](#paget)**
   - **[Category](#category)**
   - **[MenuItem](#menuitem)**
+  - **[Location](#location)**
   - **[Review](#review)**
+  - **[Order](#order)**
 - **[Pagination](#pagination)**
 - **[Permissions](#permissions)**
 - **[Authentication](#authentication)**
@@ -34,6 +36,15 @@
     - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-2)
     - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-2)
     - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete Image](#delete-image-2)
+- **[Orders](#orders)**
+    - [<code style="color: rgb(250, 224, 124)">POST</code> Create](#create-3)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> Get](#get-3)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> List](#list-3)
+    - [<code style="color: rgb(95, 221, 154)">GET</code> List Own](#list-own)
+    - [<code style="color: rgb(182, 168, 225)">PATCH</code> Update Phone](#update-phone)
+    - [<code style="color: rgb(182, 168, 225)">PATCH</code> Update Status](#update-status)
+    - [<code style="color: rgb(182, 168, 225)">PATCH</code> Cancel](#cancel)
+    - [<code style="color: rgb(182, 168, 225)">PATCH</code> Pay](#Pay)
 - **[Other Endpoints](#other-endpoints)**
     - [<code style="color: rgb(95, 221, 154)">GET</code> Ping](#ping)
     - [<code style="color: rgb(95, 221, 154)">GET</code> Health Check](#health-check)
@@ -83,6 +94,21 @@ Defines the structure of a menu item object.
 }
 ```
 
+## Location
+Defines the structure of a location object.
+```json
+{
+  "latitude": "Double (Optional)",
+  "longitude": "Double (Optional)",
+  "country": "String",
+  "voivodeship": "Enum[DOLNOSLASKIE, KUJAWSKO_POMORSKIE, LUBELSKIE, LUBUSKIE, LODZKIE, MALOPOLSKIE, MAZOWIECKIE,OPOLSKIE, PODKARPACKIE, PODLASKIE, POMORSKIE, SLASKIE, SWIETOKRZYSKIE, WARMIENSKO_MAZURSKIE, WIELKOPOLSKIE, ZACHODNIOPOMORSKIE] (Optional)",
+  "postalCode": "String (Optional)",
+  "city": "String",
+  "street": "String",
+  "buildingNumber": "String"
+}
+```
+
 ## Review
 Defines the structure of a review object.
 ```json
@@ -100,6 +126,24 @@ Defines the structure of a review object.
 }
 ```
 
+## Order
+Defined the structure of an order object.
+```json
+{
+  "orderId": "Long",
+  "userId": "Long",
+  "phoneNumber": "String",
+  "orderPlacementDate": "String (ISO 8601 DateTime)",
+  "notes": "String (Optional)",
+  "location": "Location",
+  "status": "Enum[RECEIVED, PREPARING, READY_FOR_DELIVERY, ON_THE_WAY, COMPLETED, CANCELLED, REFUNDED]",
+  "paymentMethod": "Enum[CASH, CARD, BLIK, APPLE_PAY, GOOGLE_PAY, TRANSFER, PAYPAL]",
+  "items": "List[OrderItem]",
+  "totalPrice": "Double",
+  "paid": "Boolean"
+}
+```
+
 # Pagination
 Standard pagination parameters for list endpoints.
 - `page`: Integer (optional, default: 0) - The page number to retrieve (0-indexed).
@@ -109,18 +153,20 @@ Standard pagination parameters for list endpoints.
 # Permissions
 List of available permissions.
 
-| Permission           | Description                                        |
-|----------------------|----------------------------------------------------|
-| `permissions.grant`  | Grant permissions to users                         |
-| `permissions.revoke` | Revoke permissions from users                      |
-| `categories.create`  | Create new categories                              |
-| `categories.update`  | Update existing categories                         |  
-| `categories.delete`  | Delete existing categories                         |
-| `menu.create`        | Create new menu items                              |
-| `menu.update`        | Update existing menu items                         |
-| `menu.delete`        | Delete existing menu items                         |
-| `reviews.update`     | Update existing reviews that the user does not own |
-| `reviews.delete`     | Delete existing reviews that the user does not own |
+| Permission           | Description                                         |
+|----------------------|-----------------------------------------------------|
+| `permissions.grant`  | Grant permissions to users                          |
+| `permissions.revoke` | Revoke permissions from users                       |
+| `categories.create`  | Create new categories                               |
+| `categories.update`  | Update existing categories                          |  
+| `categories.delete`  | Delete existing categories                          |
+| `menu.create`        | Create new menu items                               |
+| `menu.update`        | Update existing menu items                          |
+| `menu.delete`        | Delete existing menu items                          |
+| `reviews.update`     | Update existing reviews that the user does not own  |
+| `reviews.delete`     | Delete existing reviews that the user does not own  |
+| `orders.read`        | Read orders that the user does not own              |
+| `orders.update`      | Update orders that the user does not own            |
 
 # Authentication
 Endpoints for user authentication and session management.
@@ -385,7 +431,7 @@ fetch("base.url:port/auth/logout", {
     "permissions": [
       "Permissions cannot be empty"
     ]
-}
+  }
 }
 ```
 <br>
@@ -462,7 +508,7 @@ fetch("base.url:port/auth/permissions/1/grant", {
     "permissions": [
       "Permissions cannot be empty"
     ]
-}
+  }
 }
 ```
 <br>
@@ -572,7 +618,7 @@ formData.append("name", "Pizza");
 formData.append("description", "Delicious pizza category");
 formData.append("color", "#FF6B6B");
 
-fetch("http://base.url:port/categories/create", {
+fetch("base.url:port/categories/create", {
     method: "POST",
     body: formData
 }).then(
@@ -771,7 +817,7 @@ formData.append("name", "Kebab");
 formData.append("description", "Delicious kebab category");
 formData.append("color", "#6200EE");
 
-fetch("http://base.url:port/categories/1/update", {
+fetch("://base.url:port/categories/1/update", {
     method: "PUT",
     body: formData
 }).then(
@@ -912,7 +958,7 @@ formData.append("available", true);
 formData.append("categoryId", 1);
 formData.append("image", fileInput.files[0]);
 
-fetch("http://base.url:port/menu/create", {
+fetch("://base.url:port/menu/create", {
     method: "POST",
     body: formData
 }).then(
@@ -1125,7 +1171,7 @@ formData.append("available", true);
 formData.append("categoryId", 1);
 formData.append("image", fileInput.files[0]);
 
-fetch("http://base.url:port/menu/1/update", {
+fetch("://base.url:port/menu/1/update", {
     method: "PUT",
     body: formData
 }).then(
@@ -1243,7 +1289,7 @@ formData.append("rating", 4.5);
 formData.append("anonymous", false);
 formData.append("image", fileInput.files[0]);
 
-fetch("http://base.url:port/reviews/create", {
+fetch("://base.url:port/reviews/create", {
     method: "POST",
     body: formData
 }).then(
@@ -1446,7 +1492,7 @@ formData.append("rating", 1.5);
 formData.append("anonymous", true);
 formData.append("image", fileInput.files[0]);
 
-fetch("http://base.url:port/reviews/1/update", {
+fetch("://base.url:port/reviews/1/update", {
     method: "POST",
     body: formData
 }).then(
@@ -1529,6 +1575,521 @@ fetch("base.url:port/reviews/1/image/delete", {
     if(response.status === 204) console.log("Review image deleted successfully"); // Output: Review image deleted successfully
     else return response.json();
 })
+```
+<br>
+
+# Orders
+Endpoints for managing orders.
+
+## Create
+**URL:** `/orders/create`<br>
+**Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
+**Authentication:** Not Required<br>
+**Content-Type:** `application/json`<br>
+**Description:** Create a new order.<br>
+
+### **Request Body:**
+```json
+{
+  "phoneNumber": "String",
+  "notes": "String (optional)",
+  "paymentMethod": "String (CASH, CARD, BLIK, APPLE_PAY, GOOGLE_PAY, TRANSFER, PAYPAL)",
+  "location": "Location",
+  "items": "Map[Long, Integer] (MenuItem ID, Quantity)"
+}
+```
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">201 Created</code><br>
+**Description**: Order created successfully.<br>
+**Body**: `Order`
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+  "errors": {
+    "phoneNumber": [
+      "Phone number cannot be empty",
+      "Phone number format is invalid"
+    ],
+    "notes": [
+      "Notes cannot exceed 255 characters"
+    ],
+    "paymentMethod": [
+      "Payment method cannot be empty"
+    ],
+    "items": [
+      "Order items cannot be empty"
+    ],
+    "location.latitude": [
+      "Latitude must be between -90 and 90"
+    ],
+    "location.longitude": [
+      "Longitude must be between -90 and 90"
+    ],
+    "location.postalCode": [
+      "Postal code cannot be empty",
+      "Postal code format is invalid",
+      "Postal code cannot exceed 9 characters"
+    ],
+    "location.city": [
+      "City cannot be empty",
+      "City cannot exceed 100 characters"
+    ],
+    "location.street": [
+      "Street cannot be empty",
+      "Street cannot exceed 100 characters"
+    ],
+    "location.buildingNumber": [
+      "Building number cannot be empty",
+      "Building number format is invalid",
+      "Building number cannot exceed 10 characters"
+    ]
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Phone number, location or items are null or empty.<br>
+
+```json
+{
+  "error": "Phone number, location and items cannot be null or empty"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No menu item found with one of the provided ID.<br>
+
+```json
+{
+  "error": "Could not find MenuItem with ID {id}"
+}
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/orders/create", {
+    method: "POST",
+    body: JSON.stringify({
+        phoneNumber: "+1234567890",
+        notes: "Please deliver quickly",
+        paymentMethod: "CARD",
+        location: {
+            latitude: 37.7749,
+            longitude: -122.4194,
+            postalCode: "94103",
+            city: "San Francisco",
+            street: "Market Street",
+            buildingNumber: "1355"
+        },
+        items: {
+            1: 2,
+            3: 1
+        }
+    })
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Order
+)
+```
+<br>
+
+## Get
+**URL:** `/orders/{id}`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Required<br>
+**Content-Type:** None<br>
+**Description:** Retrieve an order by its `id`.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Order retrieved successfully.<br>
+**Body**: `Order`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">403 Forbidden</code><br>
+**Description**: User is not the owner of the order.<br>
+
+```json
+{
+  "error": "You are not the owner of this Order"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No order found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Order with ID {id}"
+}
+```
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/orders/1", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Order
+)
+```
+<br>
+
+## List
+**URL:** `/orders/list`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Required<br>
+**Pagination:** Yes (Default size: 10, Max size: 20)<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a list of all orders.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Order retrieved successfully.<br>
+**Body**: `Page[Order]`<br>
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/orders/list?page=0&size=20&sort=orderPlacementDate,desc", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Page[Order]
+)
+```
+<br>
+
+## List Own
+**URL:** `/orders/list/own`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Required<br>
+**Pagination:** Yes (Default size: 10, Max size: 20)<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a list of currently logged-in user's orders.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Order retrieved successfully.<br>
+**Body**: `Page[Order]`<br>
+<br>
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/orders/list/own?page=0&size=20&sort=orderPlacementDate,desc", {
+    method: "GET"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Page[Order]
+)
+```
+<br>
+
+## Update Phone
+**URL:** `/orders/{id}/update-phone`<br>
+**Method:** <code style="color: rgb(182, 168, 225)">PATCH</code><br>
+**Authentication:** Required<br>
+**Content-Type:** `text/plain`<br>
+**Description:** Update the phone number associated with an existing order.<br>
+
+### **Request Body:**
+- `phoneNumber`: String
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Phone number updated successfully.<br>
+**Body**: `Order`
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: The phone number format is invalid or empty.<br>
+
+```json
+{
+  "error": "Phone number cannot be empty"
+}
+```
+```json
+{
+  "error": "Phone number format is invalid"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: The status of the order does not allow updating the phone number.<br>
+
+```json
+{
+  "error": "Cannot update phone number for completed, cancelled or refunded orders"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">403 Forbidden</code><br>
+**Description**: User is not the owner of the order.<br>
+
+```json
+{
+  "error": "You are not the owner of this Order"
+}
+```
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No order found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Order with ID {id}"
+}
+```
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/orders/1/update-phone", {
+    method: "PATCH",
+    headers: {
+        "Content-Type": "text/plain"
+    },
+    body: "+1234567890"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Order
+)
+```
+<br>
+
+## Update Status
+**URL:** `/orders/{id}/update-status`<br>
+**Method:** <code style="color: rgb(182, 168, 225)">PATCH</code><br>
+**Authentication:** Required<br>
+**Content-Type:** `text/plain`<br>
+**Description:** Update the status of an existing order.<br>
+
+### **Request Body:**
+- `status`: String (RECEIVED, PREPARING, READY_FOR_DELIVERY, ON_THE_WAY, COMPLETED, CANCELLED, REFUNDED)
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Status updated successfully.<br>
+**Body**: `Order`
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: The status provided is invalid or not allowed.<br>
+
+```json
+{
+  "error": "You cannot set the order status to CANCELLED or REFUNDED using this method"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: The status of the order does not allow updating the status.<br>
+
+```json
+{
+  "error": "Cannot update status for cancelled or refunded orders"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">403 Forbidden</code><br>
+**Description**: User is not the owner of the order.<br>
+
+```json
+{
+  "error": "You are not the owner of this Order"
+}
+```
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No order found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Order with ID {id}"
+}
+```
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/orders/1/update-status", {
+    method: "PATCH",
+    headers: {
+        "Content-Type": "text/plain"
+    },
+    body: "PREPARING"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Order
+)
+```
+<br>
+
+## Cancel
+**URL:** `/orders/{id}/cancel`<br>
+**Method:** <code style="color: rgb(182, 168, 225)">PATCH</code><br>
+**Authentication:** Required<br>
+**Content-Type:** None<br>
+**Description:** Cancel an existing order.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Order cancelled successfully.<br>
+**Body**: `Order`
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: The status of the order does not allow cancelling the order.<br>
+
+```json
+{
+  "error": "Order cannot be cancelled at this stage"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: The order is already cancelled or refunded.<br>
+
+```json
+{
+  "error": "Order is already cancelled or refunded"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">403 Forbidden</code><br>
+**Description**: User is not the owner of the order.<br>
+
+```json
+{
+  "error": "You are not the owner of this Order"
+}
+```
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No order found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Order with ID {id}"
+}
+```
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/orders/1/cancel", {
+    method: "PATCH"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Order
+)
+```
+<br>
+
+## Pay
+**URL:** `/orders/{id}/cancel`<br>
+**Method:** <code style="color: rgb(182, 168, 225)">PATCH</code><br>
+**Authentication:** Required<br>
+**Content-Type:** None<br>
+**Description:** Simulate payment for an existing order.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Order paid successfully.<br>
+**Body**: `Order`
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: The status of the order does not allow paying for the order.<br>
+
+```json
+{
+  "error": "Cannot pay for a cancelled or refunded order"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: The order is already paid.<br>
+
+```json
+{
+  "error": "Order is already paid"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">403 Forbidden</code><br>
+**Description**: User is not the owner of the order.<br>
+
+```json
+{
+  "error": "You are not the owner of this Order"
+}
+```
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: No order found with the provided `id`.<br>
+
+```json
+{
+  "error": "Could not find Order with ID {id}"
+}
+```
+
+### **Example:**
+JavaScript
+```javascript
+fetch("base.url:port/orders/1/pay", {
+    method: "PATCH"
+}).then(
+    response => response.json()
+).then(
+    data => console.log(data) // Output: Order
+)
 ```
 <br>
 

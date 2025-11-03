@@ -176,7 +176,7 @@ public class OrderService {
         if(!Util.verifyOwnership(order.getUserId(), Permission.ORDERS_UPDATE, user))
             throw new NotOwnerOfEntityException(Order.class);
 
-        if(List.of(Order.Status.COMPLETED, Order.Status.READY_FOR_DELIVERY, Order.Status.PREPARING).contains(order.getStatus()))
+        if(List.of(Order.Status.COMPLETED, Order.Status.ON_THE_WAY, Order.Status.READY_FOR_DELIVERY, Order.Status.PREPARING).contains(order.getStatus()))
             throw new IllegalArgumentException("Order cannot be cancelled at this stage");
         if(order.getStatus().equals(Order.Status.CANCELLED) || order.getStatus().equals(Order.Status.REFUNDED))
             throw new IllegalArgumentException("Order is already cancelled or refunded");
