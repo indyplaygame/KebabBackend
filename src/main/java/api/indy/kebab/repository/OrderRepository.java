@@ -1,6 +1,9 @@
 package api.indy.kebab.repository;
 
 import api.indy.kebab.model.Order;
+import api.indy.kebab.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -19,4 +22,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      * @return the {@link Order} entity with the specified ID, or null if not found.
      */
     public Order findByOrderId(long id);
+
+    /**
+     * Finds orders by the user who placed them.
+     *
+     * @param user the unique identifier of the user.
+     * @param pageable the pagination information.
+     * @return a list of {@link Order} entities placed by the specified user.
+     */
+    public Page<Order> findByUser(User user, Pageable pageable);
 }

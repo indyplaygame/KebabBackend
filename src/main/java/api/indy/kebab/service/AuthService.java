@@ -181,7 +181,11 @@ public class AuthService {
      */
     public User getActiveUser(HttpSession session) {
         if(session == null) return null;
-        return this._userRepository.findByUserId((long) session.getAttribute(this.ACTIVE_USER_SESSION_KEY));
+
+        Object userId = session.getAttribute(this.ACTIVE_USER_SESSION_KEY);
+        if(userId == null) return null;
+
+        return this._userRepository.findByUserId((long) userId);
     }
 
     /**

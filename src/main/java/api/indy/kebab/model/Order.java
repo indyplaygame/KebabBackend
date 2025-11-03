@@ -119,9 +119,23 @@ public class Order {
     public void setPaid(boolean paid) { this._paid = paid; }
 
     @Transient
-    @JsonProperty("items")
     public Map<MenuItem, Integer> getItems() {
         return this._items.stream().collect(Collectors.toMap(OrderItem::getMenuItem, OrderItem::getQuantity));
+    }
+
+    @Transient
+    @JsonProperty("userId")
+    public Long getUserId() {
+        return this._user != null ? this._user.getUserId() : null;
+    }
+
+    @Transient
+    @JsonProperty("items")
+    protected Map<Long, Integer> getItemIds() {
+        return this._items.stream().collect(Collectors.toMap(
+            item -> item.getMenuItem().getMenuItemId(),
+            OrderItem::getQuantity
+        ));
     }
 
     @Transient
