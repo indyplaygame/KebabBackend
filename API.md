@@ -35,7 +35,7 @@
     - [<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-2)
     - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-2)
     - [<code style="color: rgb(234, 154, 142)">DELETE</code> Delete Image](#delete-image-2)
-- **[Restaurnat](#restaurant-)**
+- **[Restaurant](#restaurant)**
     - [<code style="color: rgb(250, 224, 124)">POST</code> Create](#create-3)
     - [<code style="color: rgb(95, 221, 154)">GET</code> Get](#get-3)
     - [<code style="color: rgb(95, 221, 154)">GET</code> Get Image](#get-image-2)
@@ -1557,8 +1557,7 @@ fetch("base.url:port/reviews/1/image/delete", {
 ```
 <br>
 
-# Restaurant 
-
+# Restaurant
 Endpoints for managing restaurants
 
 ## Create
@@ -1571,11 +1570,18 @@ Endpoints for managing restaurants
 
 ### **Request Body:**
 - `name`: String
-- `icon`: File (png, jpeg, jpg, gif, svg, webp)
 - `description`: String (optional)
-- `phoneNumber`: String (Optional)
-- `website`: String (Optional)
-- `Location`: Location
+- `image`: File (png, jpeg, jpg, gif, svg, webp)
+- `phoneNumber`: String (optional)
+- `website`: String (optional)
+- `latitude`: Double
+- `longitude`: Double
+- `country`: String (optional, default: POLAND)
+- `voivodeship`: String (optional, enum: DOLNOSLASKIE, KUJAWSKO_POMORSKIE, LUBELSKIE, LUBUSKIE, LODZKIE, MALOPOLSKIE, MAZOWIECKIE, OPOLSKIE, PODKARPACKIE, PODLASKIE, POMORSKIE, SLASKIE, SWIETOKRZYSKIE, WARMIENSKO_MAZURSKIE, WIELKOPOLSKIE, ZACHODNIOPOMORSKIE)
+- `postalCode`: String
+- `city`: String
+- `street`: String
+- `buildingNumber`: String
 
 ### **Response:**<br>
 **Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">201 Created</code><br>
@@ -1595,7 +1601,7 @@ Endpoints for managing restaurants
       "Name can only contain alphanumeric characters, apostrophes, ampersands and spaces",
       "Name must be between 3 and 190 characters"
     ],
-    "icon": [
+    "image": [
       "Icon file cannot be empty",
       "Icon must be a PNG, JPEG, GIF, SVG or WEBP image",
       "Icon file size cannot exceed 5MB"
@@ -1610,8 +1616,27 @@ Endpoints for managing restaurants
       "Website URL format is invalid",
       "Website URL cannot exceed 200 characters"
     ],
-    "locationBody": [
-      "Invalid location"
+    "location.latitude": [
+      "Latitude must be between -90 and 90"
+    ],
+    "location.longitude": [
+      "Longitude must be between -180 and 180"
+    ],
+    "location.postalCode": [
+      "Postal code cannot be empty",
+      "Postal code format is invalid",
+      "Postal code cannot exceed 9 characters",
+    ],
+    "location.city": [
+      "City cannot exceed 100 characters"
+    ],
+    "location.street": [
+      "Street cannot exceed 100 characters"
+    ],
+    "location.buildingNumber": [
+      "Building number cannot be empty",
+      "Building number format is invalid",
+      "Building number cannot exceed 10 characters"
     ]
   }
 }
@@ -1636,9 +1661,12 @@ formData.append("description", "Fried chicken restaurant");
 formData.append("icon", fileInput.files[0]);
 formData.append("phoneNumber", "730983171")
 formData.append("website", "https://kfc.pl/")
-formData.append("location", locationbody)
+formData.append("city", "Warsaw");
+formData.append("postalCode", "00-001");
+formData.append("street", "Main Street");
+formData.append("buildingNumber", "15A");
 
-fetch("http://base.url:port/restaurants/create", {
+fetch("base.url:port/restaurants/create", {
     method: "POST",
     body: formData
 }).then(
@@ -1724,6 +1752,16 @@ None
 ```
 <br>
 
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">500 Internal Server Error</code><br>
+**Description**: Failed to retrieve image.<br>
+
+```json
+{
+  "error": "Failed to retrieve image: {message}"
+}
+```
+<br>
+
 ### **Example:**
 JavaScript
 ```javascript
@@ -1741,7 +1779,7 @@ fetch("base.url:port/restaurants/1/image", {
 **URL:** `/restaurants/list`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
 **Authentication:** Not Required<br>
-**Paginated:** Yes (Default size: 10, Max size: 100)<br>
+**Paginated:** Yes (Default size: 20, Max size: 50)<br>
 **Content-Type:** None<br>
 **Description:** Retrieve a paginated list of all restaurants.<br>
 
@@ -1762,7 +1800,7 @@ fetch("base.url:port/restaurants/list?page=0&size=10&sort=name,asc", {
 }).then(
     response => response.json()
 ).then(
-    data => console.log(data) // Output: Page[Category]
+    data => console.log(data) // Output: Page[Restaurant]
 )
 ```
 
@@ -1775,12 +1813,19 @@ fetch("base.url:port/restaurants/list?page=0&size=10&sort=name,asc", {
 **Description:** Update an existing restaurant.<br>
 
 ### **Request Body:**
-- `name`: String (Oprional)
-- `icon`: File (png, jpeg, jpg, gif, svg, webp) (Optional)
-- `description`: String (Optional)
-- `phoneNumber`: String (Optional)
-- `website`: String (Optional)
-- `Location`: Location (Optional)
+- `name`: String (optional)
+- `icon`: File (png, jpeg, jpg, gif, svg, webp) (optional)
+- `description`: String (optional)
+- `phoneNumber`: String (optional)
+- `website`: String (optional)
+- `latitude`: Double (optional)
+- `longitude`: Double (optional)
+- `country`: String (optional, default: POLAND)
+- `voivodeship`: String (optional, enum: DOLNOSLASKIE, KUJAWSKO_POMORSKIE, LUBELSKIE, LUBUSKIE, LODZKIE, MALOPOLSKIE, MAZOWIECKIE, OPOLSKIE, PODKARPACKIE, PODLASKIE, POMORSKIE, SLASKIE, SWIETOKRZYSKIE, WARMIENSKO_MAZURSKIE, WIELKOPOLSKIE, ZACHODNIOPOMORSKIE)
+- `postalCode`: String (optional)
+- `city`: String (optional)
+- `street`: String (optional)
+- `buildingNumber`: String (optional)
 
 ### **Response:**
 **Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
@@ -1790,12 +1835,10 @@ fetch("base.url:port/restaurants/list?page=0&size=10&sort=name,asc", {
 {
   "errors": {
     "name": [
-      "Name cannot be empty",
       "Name can only contain alphanumeric characters, apostrophes, ampersands and spaces",
       "Name must be between 3 and 190 characters"
     ],
-    "icon": [
-      "Icon file cannot be empty",
+    "image": [
       "Icon must be a PNG, JPEG, GIF, SVG or WEBP image",
       "Icon file size cannot exceed 5MB"
     ],
@@ -1809,8 +1852,25 @@ fetch("base.url:port/restaurants/list?page=0&size=10&sort=name,asc", {
       "Website URL format is invalid",
       "Website URL cannot exceed 200 characters"
     ],
-    "locationBody": [
-      "Invalid location"
+    "location.latitude": [
+      "Latitude must be between -90 and 90"
+    ],
+    "location.longitude": [
+      "Longitude must be between -180 and 180"
+    ],
+    "location.postalCode": [
+      "Postal code format is invalid",
+      "Postal code cannot exceed 9 characters",
+    ],
+    "location.city": [
+      "City cannot exceed 100 characters"
+    ],
+    "location.street": [
+      "Street cannot exceed 100 characters"
+    ],
+    "location.buildingNumber": [
+      "Building number format is invalid",
+      "Building number cannot exceed 10 characters"
     ]
   }
 }
@@ -1822,17 +1882,17 @@ fetch("base.url:port/restaurants/list?page=0&size=10&sort=name,asc", {
 
 ```json
 {
-  "error": "Could not find restaurant with ID {id}"
+  "error": "Could not find Restaurant with ID {id}"
 }
 ```
 <br>
 
 **Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">500 Internal Server Error</code><br>
-**Description**: Failed to upload icon.<br>
+**Description**: Failed to upload image.<br>
 
 ```json
 {
-  "error": "Failed to upload icon: {message}"
+  "error": "Failed to upload image: {message}"
 }
 ```
 
@@ -1888,12 +1948,11 @@ JavaScript
 fetch("base.url:port/restaurants/1/delete", {
     method: "DELETE"
 }).then(response => {
-    if(response.status === 204) console.log("Restaurant deleted successfully"); // Output: Restaurant deleted successfully
+    if(response.status === 204) console.log("Restaurant deleted successfully"); // Output: "Restaurant deleted successfully"
     else return response.json();
 })
 ```
 <br>
-
 
 # Other Endpoints
 Endpoints for miscellaneous operations.
