@@ -119,6 +119,16 @@ public class Util {
     }
 
     /**
+     * Capitalizes the first letter of the given string and converts the rest to lowercase.
+     *
+     * @param str the input string to be capitalized.
+     * @return the capitalized string, or the original string if it is null or empty.
+     */
+    public static String capitalize(String str) {
+        return str == null || str.isEmpty() ? str : str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
+    }
+
+    /**
      * Returns the current timestamp in {@code ISO-8601} format.
      *
      * @return String representing the current time as text.
@@ -160,6 +170,14 @@ public class Util {
         return permissions;
     }
 
+    /**
+     * Verifies if a user owns an entity or has a bypass permission.
+     *
+     * @param entityOwnerId the ID of the entity owner.
+     * @param bypassPermission the permission that allows bypassing ownership check.
+     * @param user the user to verify.
+     * @return true if the user is the owner of the entity or has the bypass permission, false otherwise.
+     */
     public static boolean verifyOwnership(long entityOwnerId, Permission bypassPermission, User user) {
         return user.getUserId() == entityOwnerId || (bypassPermission != Permission.NONE && user.hasPermission(bypassPermission));
     }

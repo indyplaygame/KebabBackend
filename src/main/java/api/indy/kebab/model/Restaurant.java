@@ -32,7 +32,7 @@ public class Restaurant {
         this._description = description;
         this._imageUrl = imageUrl;
         this._phoneNumber = phoneNumber;
-        this._website = website;
+        this._website = website.toLowerCase();
         this._location = location;
     }
 
@@ -42,23 +42,23 @@ public class Restaurant {
     public long getRestaurantId() { return this._restaurantId; }
     protected void setRestaurantId(long restaurantId) { this._restaurantId = restaurantId; }
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 100)
     public String getName() { return this._name; }
     public void setName(String name) { this._name = name; }
 
-    @Column(name = "description", nullable = true)
+    @Column(name = "description", nullable = true, length = 1000)
     public String getDescription() { return this._description; }
     public void setDescription(String description) { this._description = description; }
 
-    @Column(name = "imageUrl", nullable = false)
+    @Column(name = "imageUrl", nullable = false, length = 255)
     public String getImageUrl() { return this._imageUrl; }
     public void setImageUrl(String logoUrl) { this._imageUrl = logoUrl; }
 
-    @Column(name = "phoneNumber", nullable = true)
+    @Column(name = "phoneNumber", nullable = true, length = 15)
     public String getPhoneNumber() { return this._phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this._phoneNumber = phoneNumber; }
 
-    @Column(name = "website", nullable = true)
+    @Column(name = "website", nullable = true, length = 200)
     public String getWebsite() { return this._website; }
     public void setWebsite(String website) { this._website = website; }
 
