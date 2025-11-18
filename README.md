@@ -14,7 +14,7 @@
 
 - **Java 21**
 - **Spring Boot 3.5.6**
-- **Gradle (idk how to check version)**
+- **Gradle 8.14.3 (I've learned how to check the version lol)**
 
 
 ## Features
